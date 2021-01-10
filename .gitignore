@@ -12,6 +12,9 @@
 *.map
 *.exp
 
+./frontend/node_modules
+./backend/node_modules
+
 # Precompiled Headers
 *.gch
 *.pch
