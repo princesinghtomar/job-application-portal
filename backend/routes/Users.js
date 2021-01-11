@@ -21,6 +21,7 @@ router.get("/", function(req, res) {
 // POST request 
 // Add a user to db
 router.post("/register", (req, res) => {
+    console.log("helllo")
     const newUser = new User({
         name: req.body.name,
         email: req.body.email,
@@ -40,7 +41,8 @@ router.post("/register", (req, res) => {
 // Login
 router.post("/login", (req, res) => {
 	const email = req.body.email;
-	// Find user by email
+    // Find user by email
+    console.log("Hello");
 	User.findOne({ email }).then(user => {
 		// Check if user email exists
 		if (!user) {
