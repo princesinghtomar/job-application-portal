@@ -6,6 +6,7 @@ import UsersList from './components/Users/UsersList'
 import Home from './components/Common/Home'
 import Register from './components/Common/Register'
 import login from './components/Common/login'
+import newJob from './components/Common/newjob'
 import Navbar from './components/templates/Navbar'
 import Profile from './components/Users/Profile'
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/register" component={Register}/>
         <Route path="/login" component={login}/>
         <Route path="/profile" component={Profile}/>
+        <Route path="/newJob" component={newJob}/>
       </div>
     </Router>
   );
