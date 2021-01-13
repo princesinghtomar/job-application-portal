@@ -34,7 +34,7 @@ export default class Register extends Component {
             date: Date.now()
         }
         axios.post('http://localhost:4000/user/register', newUser)
-             .then(res => {alert("Created\t" + res.data.name);console.log(res.data)})
+             .then(res => {alert("Created\t" + res.data.name);console.log(newUser)})
              ;
 
         this.setState({

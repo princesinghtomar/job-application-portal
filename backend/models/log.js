@@ -11,10 +11,10 @@ const LogSchema = new Schema({
         type: String,
         required: true
     },
-    last_login: {
-        type: Date,
-        required: false
+    motive: {
+        type: String,
+        required: true
     }
 });
 
-module.exports = Log = mongoose.model("Logs", UserSchema);
+module.exports = Log = mongoose.model("Logs", LogSchema);
