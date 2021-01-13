@@ -23,10 +23,13 @@ router.get("/", function(req, res) {
 // Add a user to db
 router.post("/register", (req, res) => {
     const newUser = new User({
-        name: req.body.name,
+        username: req.body.username,
         email: req.body.email,
-        date: req.body.date
+        password: req.body.password,
+        motive: req.body.motive
     });
+
+    console.log(newUser)
 
     newUser.save()
         .then(user => {
@@ -41,14 +44,14 @@ router.post("/register", (req, res) => {
 // Login
 router.post("/login", (req, res) => {
     const email = req.body.email;
-    const newSignin = new Login({
+    /* const newSignin = new Login({
         email: req.body.email,
         password: req.body.password,
         motive: req.body.motive
     });
-    console.log(newSignin)
+    console.log(newSignin) */
     // Find user by email
-    /* User.findOne({ email }).then(user => {
+    User.findOne({ email }).then(user => {
 		// Check if user email exists
 		if (!user) {
 			return res.status(404).json({
@@ -59,7 +62,7 @@ router.post("/login", (req, res) => {
             res.send("Email Found");
             return user;
         }
-	}); */
+	});
 });
 
 module.exports = router;

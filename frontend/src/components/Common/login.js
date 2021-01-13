@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import "../css/login.css"
+import "../css/signup.css"
 import axios from 'axios';
 
 export default class Home extends Component {
@@ -31,12 +31,6 @@ export default class Home extends Component {
 
     handleDropdown(event) {
         this.setState({ motive: event.target.value });
-    }
-
-    validateForm() {
-        return this.state.email.length > 0 &&
-            this.state.password.length > 0 &&
-            this.state.motive.length > 0;
     }
 
     onSubmit(event) {
@@ -93,14 +87,14 @@ export default class Home extends Component {
                             </label>
                             <Form.Control type="password" value={this.state.password} onChange={this.handlePassword} />
                         </Form.Group>
-                        <Form.Group size="lg" controlId="password">
+                        <Form.Group size="lg" controlId="dropdown">
                             <select value={this.state.motive} onChange={this.handleDropdown}>
                                 <option value="">Choose Motive</option>
                                 <option value="recruiter">Recruiter</option>
                                 <option value="jobapplicant">Job Applicant</option>
                             </select>
                         </Form.Group>
-                        <Button block size="lg" type="submit" value="Signin" disabled={!this.validateForm}>
+                        <Button block size="lg" type="submit" value="Signin" >
                             Login
                         </Button>
                     </form>

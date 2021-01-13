@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const UserSchema = new Schema({
-	name: {
+	username: {
 		type: String,
 		required: true
 	},
@@ -11,9 +11,13 @@ const UserSchema = new Schema({
 		type: String,
 		required: true
 	},
-	date:{
-		type: Date,
-		required: false
+	password: {
+		type: String,
+		required: true
+	},
+	motive: {
+		type: String,
+		required: true
 	}
 });
 

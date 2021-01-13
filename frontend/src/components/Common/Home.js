@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+/* import Button from "react-bootstrap/Button";
 import "../css/login.css"
-import axios from 'axios';
+import axios from 'axios'; */
 
 export default class Home extends Component {
 
@@ -13,15 +13,15 @@ export default class Home extends Component {
             password: '',
             motive: ''
         };
-
+/* 
         this.handleEmail = this.handleEmail.bind(this);
         this.handlePassword = this.handlePassword.bind(this);
         this.handleDropdown = this.handleDropdown.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+        this.onSubmit = this.onSubmit.bind(this); */
 
     }
 
-    handleEmail(event) {
+   /*  handleEmail(event) {
         this.setState({ email: event.target.value });
     }
 
@@ -36,7 +36,7 @@ export default class Home extends Component {
     validateForm() {
         return this.state.email.length > 0 && this.state.password.length > 0;
     }
-
+ 
     onSubmit(event) {
         event.preventDefault();
 
@@ -55,12 +55,13 @@ export default class Home extends Component {
             password: '',
             motive: ''
         });
-    }
+    }*/
 
     render() {
         return (
             <div>
-                <div>
+                Happy coding
+                {/* <div>
                     <h1 style={{ textAlign: "center" }}>
                         Login
                     </h1>
@@ -89,7 +90,7 @@ export default class Home extends Component {
                             Login
                         </Button>
                     </form>
-                </div>
+                </div> */}
             </div>
         )
     }
