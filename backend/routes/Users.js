@@ -48,7 +48,7 @@ router.post("/login", (req, res) => {
     });
     console.log(newSignin)
     // Find user by email
-    User.findOne({ email }).then(user => {
+    /* User.findOne({ email }).then(user => {
 		// Check if user email exists
 		if (!user) {
 			return res.status(404).json({
@@ -59,7 +59,7 @@ router.post("/login", (req, res) => {
             res.send("Email Found");
             return user;
         }
-	});
+	}); */
 });
 
 module.exports = router;

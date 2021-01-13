@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import "../css/login.css"
 import axios from 'axios';
 
 export default class Home extends Component {
@@ -30,6 +33,10 @@ export default class Home extends Component {
         this.setState({ motive: event.target.value });
     }
 
+    validateForm() {
+        return this.state.email.length > 0 && this.state.password.length > 0;
+    }
+
     onSubmit(event) {
         event.preventDefault();
 
@@ -40,14 +47,14 @@ export default class Home extends Component {
         }
 
         axios.post('http://localhost:4000/user/login', newSignin)
-            .then(res => { alert("Sign in"); console.log(newSignin) })
+            .then(res => { alert("Signed in"); console.log(newSignin) })
             ;
 
-        this.state = {
+        this.setState({
             email: '',
             password: '',
             motive: ''
-        };
+        });
     }
 
     render() {
@@ -58,26 +65,29 @@ export default class Home extends Component {
                         Login
                     </h1>
                 </div>
-                <div>
+                <div className="Login">
                     <form onSubmit={this.onSubmit}>
-                        <label>
-                            Email :
-                        <input type="text" value={this.state.email} onChange={this.handleEmail} />
+                        <Form.Group size="lg" controlId="email">
+                            <label>
+                                Email :
                         </label>
-                        <br />
-                        <label>
-                            Password :
-                        <input type="password" value={this.state.password} onChange={this.handlePassword} />
-                        </label>
-                        <br />
+                            <Form.Control autoFocus type="email" value={this.state.email} onChange={this.handleEmail} />
+                        </Form.Group>
+                        <Form.Group size="lg" controlId="password">
+                            <label>
+                                Password :
+                            </label>
+                            <Form.Control type="password" value={this.state.password} onChange={this.handlePassword} />
+                        </Form.Group>
                         <label>
                             <select value={this.state.motive} onChange={this.handleDropdown}>
                                 <option name="jobapplicant">Job Applicant</option>
                                 <option name="recruiter">Recruiter</option>
                             </select>
                         </label>
-                        <br />
-                        <input type="submit" value="Signin" />
+                        <Button block size="lg" type="submit" value="Signin" disabled={!this.validateForm}>
+                            Login
+                        </Button>
                     </form>
                 </div>
             </div>

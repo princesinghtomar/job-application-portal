@@ -1,73 +1,110 @@
 import React, { Component } from 'react';
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import "../css/login.css"
 import axios from 'axios';
 
-export default class login extends Component {
+export default class Home extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             email: '',
             password: '',
-            date: null
-        }
+            motive: ''
+        };
 
-        this.onChangeEmail = this.onChangeEmail.bind(this);
-        this.onChangePassword = this.onChangePassword.bind(this);
+        this.handleEmail = this.handleEmail.bind(this);
+        this.handlePassword = this.handlePassword.bind(this);
+        this.handleDropdown = this.handleDropdown.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+
     }
 
-    onChangeEmail(event) {
+    handleEmail(event) {
         this.setState({ email: event.target.value });
     }
 
-    onChangePassword(event) {
+    handlePassword(event) {
         this.setState({ password: event.target.value });
     }
 
-    onSubmit(e) {
-        e.preventDefault();
+    handleDropdown(event) {
+        this.setState({ motive: event.target.value });
+    }
 
-        const newLogin = {
+    validateForm() {
+        return this.state.email.length > 0 &&
+            this.state.password.length > 0 &&
+            this.state.motive.length > 0;
+    }
+
+    onSubmit(event) {
+        event.preventDefault();
+
+        const newSignin = {
             email: this.state.email,
             password: this.state.password,
-            date: Date.now()
+            motive: this.state.motive
         }
-        axios.post('http://localhost:4000/user/login', newLogin)
-            .then(res => { console.log(newLogin) })
-            ;
+        console.log(this.state.email.length);
+        console.log(this.state.password.length);
+        console.log(this.state.motive.length);
+
+        var temp = this.state.email.length > 0 &&
+            this.state.password.length > 0 &&
+            this.state.motive.length > 0;
+
+        console.log(temp);
+
+        if (temp) {
+            /* console.log(this.validateForm) */
+            axios.post('http://localhost:4000/user/login', newSignin)
+                .then(res => { alert("Signed in"); })
+                ;
+        }
 
         this.setState({
             email: '',
             password: '',
-            date: null
+            motive: ''
         });
     }
 
     render() {
         return (
             <div>
-                <form onSubmit={this.onSubmit}>
-                    <div className="form-group">
-                        <label>Email: </label>
-                        <input type="text"
-                            className="form-control"
-                            value={this.state.email}
-                            onChange={this.onChangeEmail}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Password: </label>
-                        <input type="password"
-                            className="form-control"
-                            value={this.state.password}
-                            onChange={this.onChangePassword}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <input type="submit" value="Sign in" className="btn btn-primary" />
-                    </div>
-                </form>
+                <div>
+                    <h1 style={{ textAlign: "center" }}>
+                        Login
+                    </h1>
+                </div>
+                <div className="Login">
+                    <form onSubmit={this.onSubmit}>
+                        <Form.Group size="lg" controlId="email">
+                            <label>
+                                Email :
+                        </label>
+                            <Form.Control autoFocus type="email" value={this.state.email} onChange={this.handleEmail} />
+                        </Form.Group>
+                        <Form.Group size="lg" controlId="password">
+                            <label>
+                                Password :
+                            </label>
+                            <Form.Control type="password" value={this.state.password} onChange={this.handlePassword} />
+                        </Form.Group>
+                        <Form.Group size="lg" controlId="password">
+                            <select value={this.state.motive} onChange={this.handleDropdown}>
+                                <option value="">Choose Motive</option>
+                                <option value="recruiter">Recruiter</option>
+                                <option value="jobapplicant">Job Applicant</option>
+                            </select>
+                        </Form.Group>
+                        <Button block size="lg" type="submit" value="Signin" disabled={!this.validateForm}>
+                            Login
+                        </Button>
+                    </form>
+                </div>
             </div>
         )
     }
