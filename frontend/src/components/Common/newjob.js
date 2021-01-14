@@ -18,14 +18,26 @@ export default class newjobregister extends Component {
             max_positions: '',
             date_posting: '',
             deadline: '',
-            required_skills: [''],//this is giving some problem check it okay inheritence and composition
+            required_temp: '',
+            required_skills: '',//this is giving some problem check it okay inheritence and composition
             job_type: '',
             duration: '',
             salary: '',
             rating: '',
             status: true
         }
-
+        this.handleClick = e => {
+            e.preventDefault();
+            var temp = this.state.required_skills + ' ';
+            temp = temp + ' ' + this.state.required_temp;
+            this.state.required_skills = temp   
+            console.log(this.state.required_skills);
+            console.log(this.state.required_temp);
+            console.log(temp)
+            document.getElementById("inputrskills").innerHTML = temp;
+            this.state.required_temp = '';
+            this.setState({ buttonstate: !this.state.buttonstate });
+        };
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onChangeEmail = this.onChangeEmail.bind(this);
         this.onChangeName = this.onChangeName.bind(this);
@@ -68,12 +80,23 @@ export default class newjobregister extends Component {
     }
 
     onChangeDeadline(event) {
-        
+
         this.setState({ deadline: event.target.value })
     }
 
     onChangeRequired_skills(event) {
-        this.setState({ required_skills: Language.Components.languages })
+        this.state.required_temp = event.target.value;
+        this.setState({ required_temp: event.target.value })
+    }
+
+    handleClick(event) {
+        var temp = this.state.required_skills + ' ';
+        temp = temp + ' ' + this.state.required_temp;
+        console.log(this.required_skills);
+        console.log(this.required_temp);
+        console.log(temp)
+        document.getElementById("inputrskills").innerHTML = temp;
+
     }
 
     onChangeJob_type(event) {
@@ -82,13 +105,13 @@ export default class newjobregister extends Component {
 
     onChangeDuration(event) {
         var temp = event.target.value;
-        temp = temp>0?temp:1;
+        temp = temp > 0 ? temp : 1;
         this.setState({ duration: temp })
     }
 
     onChangeSalary(event) {
         var temp = event.target.value;
-        if(temp<0){
+        if (temp < 0) {
             temp = 0;
         }
         this.setState({ salary: temp })
@@ -97,15 +120,17 @@ export default class newjobregister extends Component {
     onSubmit(e) {
         e.preventDefault();
 
+        console.log(this.state.required_skills);
+
         const newJob = {
             title: this.state.title,
             email: this.state.email,
             name: this.state.name,
             max_applicants: this.state.max_applicants,
+            required_skills: this.state.required_skills.trim(),
             max_positions: this.state.max_positions,
             date_posting: Date.now(),
             deadline: this.state.deadline,
-            required_skills: this.state.required_skills,
             job_type: this.state.job_type,
             duration: this.state.duration,
             salary: this.state.salary,
@@ -115,15 +140,15 @@ export default class newjobregister extends Component {
 
         console.log(newJob)
 
-        /*var temp = this.state.email.length > 0 &&
+        var temp = this.state.email.length > 0 &&
             this.state.name.length > 0 &&
             this.state.title.length > 0;
 
         if (temp) {
-            axios.post('http://localhost:4000/user/register', newJob)
+            axios.post('http://localhost:4000/job/newjob', newJob)
                 .then(res => { alert("Created\t" + res.data.title); console.log(newJob) })
                 ;
-        } */
+        }
     }
 
     render() {
@@ -140,7 +165,7 @@ export default class newjobregister extends Component {
                             <Form.Label>
                                 Job Title :
                             </Form.Label>
-                            <Form.Control autoFocus type="title" value={this.state.title}
+                            <Form.Control autoFocus type="text" value={this.state.title}
                                 onChange={this.onChangeTitle} />
                         </Form.Group>
                         <Form.Group size="lg" controlId="email">
@@ -175,14 +200,20 @@ export default class newjobregister extends Component {
                             <Form.Label>
                                 Deadline of filling the form :
                             </Form.Label>
-                            <Form.Control autofocus type="date" value={this.state.deadline }
-                                onChange={this.onChangeDeadline } />
+                            <Form.Control autofocus type="date" value={this.state.deadline}
+                                onChange={this.onChangeDeadline} />
                         </Form.Group>
                         <Form.Group size="lg" controlId="requiredskills">
                             <Form.Label>
                                 Required Skills :
                             </Form.Label>
-                            <Language />
+                            <div><p id="inputrskills"><br /></p></div>
+                            <Form.Control autoFocus type="text" value={this.state.required_temp}
+                                onChange={this.onChangeRequired_skills} />
+                                <br />
+                            <Button block size="md" onClick={this.handleClick}>
+                                Add languages / technologies
+                            </Button>
                         </Form.Group>
                         <Form.Group size="lg" controlId="dropdown_list">
                             <select value={this.state.job_type} onChange={this.onChangeJob_type}>

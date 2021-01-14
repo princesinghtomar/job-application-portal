@@ -33,6 +33,7 @@ class UsersList extends Component {
     componentDidMount() {
         axios.get('http://localhost:4000/user')
              .then(response => {
+                 console.log(response.data)
                  this.setState({users: response.data, sortedUsers:response.data});
              })
              .catch(function(error) {
