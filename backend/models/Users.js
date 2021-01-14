@@ -18,6 +18,10 @@ const UserSchema = new Schema({
 	motive: {
 		type: String,
 		required: true
+	},
+	company: {
+		type: String,
+		required: false
 	}
 });
 

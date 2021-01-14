@@ -13,13 +13,15 @@ export default class Register extends Component {
             username: '',
             email: '',
             password: '',
-            motive: ''
+            motive: 'jobapplicant',
+            company_name: ''
         }
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangeEmail = this.onChangeEmail.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
         this.onChangeMotive = this.onChangeMotive.bind(this);
+        this.onChangeCompany_name = this.onChangeCompany_name.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
@@ -37,6 +39,20 @@ export default class Register extends Component {
 
     onChangeMotive(event) {
         this.setState({ motive: event.target.value });
+        var temp = event.target.value;
+        console.log(temp);
+        if (temp == "recruiter") {
+            var x = document.getElementById("recruiter_id");
+            x.style.display = "block";
+        }
+        else {
+            var x = document.getElementById("recruiter_id");
+            x.style.display = "none";
+        }
+    }
+
+    onChangeCompany_name(event) {
+        this.setState({ company_name: event.target.value });
     }
 
     onSubmit(e) {
@@ -46,7 +62,8 @@ export default class Register extends Component {
             username: this.state.username,
             email: this.state.email,
             password: this.state.password,
-            motive: this.state.motive
+            motive: this.state.motive,
+            company_name: this.state.company_name
         }
 
         var temp = this.state.email.length > 0 &&
@@ -54,18 +71,35 @@ export default class Register extends Component {
             this.state.motive.length > 0 &&
             this.state.username.length > 0;
 
-        if (temp) {
-            axios.post('http://localhost:4000/user/register', newUser)
-                .then(res => { alert("Created\t" + res.data.username); console.log(newUser) })
-                ;
+        if (this.state.motive == "recruiter") {
+            if (this.state.company_name.length <= 0) {
+                temp = false;
+            }
         }
 
-       /*  this.setState({
-            username: '',
-            email: '',
-            password: '',
-            motive: ''
-        }); */
+        console.log(temp);
+
+        if (temp) {
+            /* console.log(this.validateForm) */
+            document.getElementById("para_id").innerHTML = "<br/>";
+            axios.post('http://localhost:4000/user/login', newUser)
+                .then(res => { alert("Signed in"); })
+                ;
+        }
+        else {
+            document.getElementById("para_id").innerHTML = "* All Fields" +
+                " are Required";
+            var temp1 = document.getElementById("para_id").innerHTML;
+            console.log(temp1);
+        }
+
+        /*  this.setState({
+             username: '',
+             email: '',
+             password: '',
+             motive: '',
+             company_name: ''
+         }); */
     }
 
     render() {
@@ -75,6 +109,11 @@ export default class Register extends Component {
                     <h1 style={{ textAlign: "center" }}>
                         Signup
                     </h1>
+                </div>
+                <div>
+                    <p id="para_id" style={{ textAlign: 'center', color: 'red' }}>
+                        <br />
+                    </p>
                 </div>
                 <div className="Signup">
                     <form onSubmit={this.onSubmit}>
@@ -103,6 +142,12 @@ export default class Register extends Component {
                                 <option value="jobapplicant">Job Applicant</option>
                             </select>
                         </Form.Group>
+                        <div id="recruiter_id" style={{ display: "none" }}>
+                            <Form.Group size="lg" controlId="after_recruiter">
+                                <label> Company Name : </label>
+                                <Form.Control type="text" value={this.state.company_name} onChange={this.onChangeCompany_name} />
+                            </Form.Group>
+                        </div>
                         <Button block size="lg" type="submit" value="Signin">
                             Login
                         </Button>
