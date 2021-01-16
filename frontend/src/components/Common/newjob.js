@@ -179,28 +179,28 @@ export default class newjobregister extends Component {
                             <Form.Label>
                                 Your Name :
                             </Form.Label>
-                            <Form.Control autofocus type="text" value={this.state.name}
+                            <Form.Control autoFocus type="text" value={this.state.name}
                                 onChange={this.onChangeName} />
                         </Form.Group>
                         <Form.Group size="lg" controlId="max_applicants">
                             <Form.Label>
                                 Max Applicants :
                             </Form.Label>
-                            <Form.Control autofocus type="number" value={this.state.max_applicants}
+                            <Form.Control autoFocus type="number" value={this.state.max_applicants}
                                 onChange={this.onChangeMax_applicants} />
                         </Form.Group>
                         <Form.Group size="lg" controlId="max_positions">
                             <Form.Label>
                                 Max Positions :
                             </Form.Label>
-                            <Form.Control autofocus type="number" value={this.state.max_positions}
+                            <Form.Control autoFocus type="number" value={this.state.max_positions}
                                 onChange={this.onChangeMax_positions} />
                         </Form.Group>
                         <Form.Group size="lg" controlId="deadline">
                             <Form.Label>
                                 Deadline of filling the form :
                             </Form.Label>
-                            <Form.Control autofocus type="date" value={this.state.deadline}
+                            <Form.Control autoFocus type="date" value={this.state.deadline}
                                 onChange={this.onChangeDeadline} />
                         </Form.Group>
                         <Form.Group size="lg" controlId="requiredskills">
@@ -227,14 +227,14 @@ export default class newjobregister extends Component {
                             <Form.Label>
                                 Duration (in months) :
                             </Form.Label>
-                            <Form.Control autofocus type="Number" value={this.state.duration}
+                            <Form.Control autoFocus type="Number" value={this.state.duration}
                                 onChange={this.onChangeDuration} />
                         </Form.Group>
                         <Form.Group size="lg" controlId="salary">
                             <Form.Label>
                                 Salary :
                             </Form.Label>
-                            <Form.Control autofocus type="number" value={this.state.salary}
+                            <Form.Control autoFocus type="number" value={this.state.salary}
                                 onChange={this.onChangeSalary} />
                         </Form.Group>
                         <Button block size="lg" type="submit" value="Signin">

@@ -9,6 +9,7 @@ import login from './components/Common/login'
 import newJob from './components/Common/newjob'
 import Navbar from './components/templates/Navbar'
 import Profile from './components/Users/Profile'
+import Userl from './components/Users/Userlistreal'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/login" component={login}/>
         <Route path="/profile" component={Profile}/>
         <Route path="/newJob" component={newJob}/>
+        <Route path="/Userl" component={Userl}/>
       </div>
     </Router>
   );

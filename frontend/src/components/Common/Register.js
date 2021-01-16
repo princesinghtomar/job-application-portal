@@ -13,7 +13,7 @@ export default class Register extends Component {
             username: '',
             email: '',
             password: '',
-            motive: 'jobapplicant',
+            motive: '',
             company_name: ''
         }
 
@@ -133,7 +133,7 @@ export default class Register extends Component {
                             <label>
                                 Password :
                             </label>
-                            <Form.Control autofocus type="password" value={this.state.password} onChange={this.onChangePassword} />
+                            <Form.Control autoFocus type="password" value={this.state.password} onChange={this.onChangePassword} />
                         </Form.Group>
                         <Form.Group size="lg" controlId="dropdown">
                             <select value={this.state.motive} onChange={this.onChangeMotive}>

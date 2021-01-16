@@ -11,7 +11,7 @@ export default class Home extends Component {
         this.state = {
             email: '',
             password: '',
-            motive: 'jobapplicant',
+            motive: '',
             company_name: ''
         };
 
@@ -35,13 +35,14 @@ export default class Home extends Component {
         this.setState({ motive: event.target.value });
         var temp = event.target.value;
         console.log(temp);
+        var xi;
         if (temp == "recruiter") {
-            var x = document.getElementById("recruiter_id");
-            x.style.display = "block";
+            xi = document.getElementById("recruiter_id");
+            xi.style.display = "block";
         }
         else {
-            var x = document.getElementById("recruiter_id");
-            x.style.display = "none";
+            xi = document.getElementById("recruiter_id");
+            xi.style.display = "none";
         }
     }
 
@@ -136,7 +137,7 @@ export default class Home extends Component {
                         <div id="recruiter_id" style={{display:"none"}}>
                             <Form.Group size="lg" controlId="after_recruiter">
                                 <label> Company Name : </label>
-                                <Form.Control type="text" value={this.state.company_name} onChange={this.onChangeCompany_name} />
+                                <Form.Control type="text" value={this.state.company_name} onChange={this.handleCompany_name} />
                             </Form.Group>
                         </div>
                         <Button block size="lg" type="submit" value="Signin" >

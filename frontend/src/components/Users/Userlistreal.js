@@ -22,13 +22,14 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
 
-class JobsList extends Component {
+class Userl extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            jobs: [],
-            fuzzyjobs: [],
+            users: [],
+            fuzzyusers: [],
+            logindata: [],
             query: '',
             min: '',
             max: '',
@@ -46,10 +47,19 @@ class JobsList extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:4000/job')
+        axios.get('http://localhost:4000/user')
             .then(response => {
                 console.log(response.data)
-                this.setState({ jobs: response.data, fuzzyjobs: response.data });
+                this.setState({ users: response.data, fuzzyusers: response.data });
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+
+        axios.get('http://localhost:4000/login')
+            .then(response => {
+                console.log(response.data)
+                this.setState({ logindata: response.data});
             })
             .catch(function (error) {
                 console.log(error);
@@ -59,34 +69,34 @@ class JobsList extends Component {
     onChangeSearch(event) {
         var arraytemp = []
         if (event.target.value.length > 0 || this.state.max.length > 0 || this.state.min.length > 0) {
-            arraytemp = this.state.fuzzyjobs;
+            arraytemp = this.state.fuzzyusers;
         }
         else {
-            arraytemp = this.state.jobs;
+            arraytemp = this.state.users;
         }
         const dat = event.target.value;
         const fuse = new Fuse(arraytemp, { keys: ['email', 'title', 'name'] });
         var data = fuse.search(dat);
         if (event.target.value.length == 0 && this.state.max.length == 0 && this.state.min.length == 0) {
-            data = this.state.jobs;
+            data = this.state.users;
         }
         this.setState({
-            fuzzyjobs: data,
+            fuzzyusers: data,
             query: event.target.value
         });
-        console.log(this.state.fuzzyjobs);
+        console.log(this.state.fuzzyusers);
         console.log(this.state.query);
     }
 
     handleClick(e) {
         e.preventDefault();
-        const fuse = new Fuse(this.state.jobs, { keys: ['email', 'title', 'name','Job type'] });
-        const data = this.state.query ? fuse.search(this.state.query) : this.state.jobs;
-        /* this.state.fuzzyjobs = data; */
+        const fuse = new Fuse(this.state.users, { keys: ['email', 'title', 'name', 'User type'] });
+        const data = this.state.query ? fuse.search(this.state.query) : this.state.users;
+        /* this.state.fuzzyusers = data; */
         this.setState({
-            fuzzyjobs: data
+            fuzzyusers: data
         });
-        console.log(this.state.fuzzyjobs);
+        console.log(this.state.fuzzyusers);
         console.log(this.state.query);
     };
 
@@ -94,10 +104,10 @@ class JobsList extends Component {
         console.log("onChangemin")
         var arraytemp = []
         if (this.state.query.length > 0 || this.state.max.length > 0 || this.state.min.length > 0) {
-            arraytemp = this.state.fuzzyjobs;
+            arraytemp = this.state.fuzzyusers;
         }
         else {
-            arraytemp = this.state.jobs;
+            arraytemp = this.state.users;
         }
         const min_val = event.target.value;
         var array = [];
@@ -110,16 +120,16 @@ class JobsList extends Component {
             }
         }
         else {
-            array = this.state.jobs;
+            array = this.state.users;
         }
         if (event.target.value.length == 0 && this.state.query.length == 0 && this.state.min.length == 0) {
-            array = this.state.jobs;
+            array = this.state.users;
         }
         this.setState({
             min: event.target.value,
-            fuzzyjobs: array
+            fuzzyusers: array
         });
-        console.log(this.state.fuzzyjobs)
+        console.log(this.state.fuzzyusers)
         console.log(this.state.min);
         console.log(event.target.value);
     }
@@ -128,10 +138,10 @@ class JobsList extends Component {
         console.log("onChangemax")
         var arraytemp = []
         if (this.state.query.length > 0 || this.state.min.length > 0 || this.state.max.length > 0) {
-            arraytemp = this.state.fuzzyjobs;
+            arraytemp = this.state.fuzzyusers;
         }
         else {
-            arraytemp = this.state.jobs;
+            arraytemp = this.state.users;
         }
         const max_val = event.target.value;
         var array = [];
@@ -144,16 +154,16 @@ class JobsList extends Component {
             }
         }
         else {
-            array = this.state.jobs;
+            array = this.state.users;
         }
         if (event.target.value.length == 0 && this.state.min.length == 0 && this.state.query.length == 0) {
-            array = this.state.jobs;
+            array = this.state.users;
         }
         this.setState({
             max: event.target.value,
-            fuzzyjobs: array
+            fuzzyusers: array
         });
-        console.log(this.state.fuzzyjobs)
+        console.log(this.state.fuzzyusers)
         console.log(this.state.max);
         console.log(event.target.value);
     }
@@ -167,10 +177,10 @@ class JobsList extends Component {
          */
         var array = []
         if (this.state.query.length > 0 || this.state.min.length > 0 || this.state.max.length > 0) {
-            array = this.state.fuzzyjobs;
+            array = this.state.fuzzyusers;
         }
         else {
-            array = this.state.jobs;
+            array = this.state.users;
         }
         console.log(id);
         console.log(flag);
@@ -189,33 +199,33 @@ class JobsList extends Component {
             }
         });
         /* if(array.length <= 0){
-            array = this.state.jobs;
+            array = this.state.users;
         } */
         if (id === 1) {
             this.setState({
-                fuzzyjobs: array,
+                fuzzyusers: array,
                 sortName1: !this.state.sortName1,
             });
         } else {
             if (id === 2) {
                 this.setState({
-                    fuzzyjobs: array,
+                    fuzzyusers: array,
                     sortName2: !this.state.sortName2,
                 });
             } else {
                 if (id === 3) {
                     this.setState({
-                        fuzzyjobs: array,
+                        fuzzyusers: array,
                         sortName3: !this.state.sortName3,
                     });
                 }
             }
         }
         if (this.state.query.length == 0 && this.state.max.length == 0 && this.state.min.length == 0) {
-            array = this.state.jobs;
+            array = this.state.users;
         }
         console.log(array);
-        console.log(this.state.fuzzyjobs);
+        console.log(this.state.fuzzyusers);
         console.log(this.state.query);
     }
 
@@ -240,7 +250,7 @@ class JobsList extends Component {
                         <Grid item xs={12} md={3} lg={3}>
                             <List component="nav" aria-label="mailbox folders">
                                 <ListItem>
-                                    <h3>Job Filters</h3>
+                                    <h3>User Filters</h3>
                                 </ListItem>
                             </List>
                         </Grid>
@@ -281,7 +291,7 @@ class JobsList extends Component {
                                 <ListItem button divider>
                                     <Autocomplete
                                         id="combo-box-demo"
-                                        options={this.state.jobs}
+                                        options={this.state.users}
                                         getOptionLabel={(option) => option.name}
                                         style={{ width: 300 }}
                                         renderInput={(params) => <TextField {...params} label="Space for copy/paster" variant="outlined" />}
@@ -294,8 +304,8 @@ class JobsList extends Component {
                                 <Table size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Title</TableCell>
-                                            <TableCell>Name</TableCell>
+                                            <TableCell>id</TableCell>
+                                            <TableCell>password</TableCell>
                                             <TableCell>Email</TableCell>
                                             <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
                                                 {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
@@ -306,14 +316,45 @@ class JobsList extends Component {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {this.state.fuzzyjobs.map((job, ind) => (
+                                        {this.state.fuzzyusers.map((user, ind) => (
                                             <TableRow key={ind}>
-                                                <TableCell>{job.title}</TableCell>
-                                                <TableCell>{job.name}</TableCell>
-                                                <TableCell>{job.email}</TableCell>
-                                                <TableCell>{job.salary}</TableCell>
-                                                <TableCell>{job.duration}</TableCell>
-                                                <TableCell>{job.rating}</TableCell>
+                                                <TableCell>{user.id}</TableCell>
+                                                <TableCell>{user.password}</TableCell>
+                                                <TableCell>{user.email}</TableCell>
+                                                <TableCell>{user.salary}</TableCell>
+                                                <TableCell>{user.duration}</TableCell>
+                                                <TableCell>{user.rating}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12}>
+                            <Paper>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>id</TableCell>
+                                            <TableCell>password</TableCell>
+                                            <TableCell>Email</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
+                                                {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
+                                                {this.renderIcon(this.state.sortName2)}</Button>Duration</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
+                                                {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {this.state.logindata.map((logs, ind) => (
+                                            <TableRow key={ind}>
+                                                <TableCell>{logs.id}</TableCell>
+                                                <TableCell>{logs.password}</TableCell>
+                                                <TableCell>{logs.email}</TableCell>
+                                                <TableCell>{logs.salary}</TableCell>
+                                                <TableCell>{logs.duration}</TableCell>
+                                                <TableCell>{logs.rating}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -327,4 +368,4 @@ class JobsList extends Component {
     }
 }
 
-export default JobsList;
+export default Userl;
