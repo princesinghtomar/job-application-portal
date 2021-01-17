@@ -26,6 +26,18 @@ const UserSchema = new Schema({
 	company: {
 		type: String,
 		required: false
+	},
+	contact: {
+		type: String,
+		required: false
+	},
+	education: {
+		type: String,
+		required: false
+	},
+	languages: {
+		type: String,
+		required: false
 	}
 });
 

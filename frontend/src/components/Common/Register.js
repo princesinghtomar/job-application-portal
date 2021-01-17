@@ -14,7 +14,8 @@ export default class Register extends Component {
             email: '',
             password: '',
             motive: '',
-            company_name: ''
+            company_name: '',
+            contact_number: ''
         }
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
@@ -22,6 +23,7 @@ export default class Register extends Component {
         this.onChangePassword = this.onChangePassword.bind(this);
         this.onChangeMotive = this.onChangeMotive.bind(this);
         this.onChangeCompany_name = this.onChangeCompany_name.bind(this);
+        this.onChangeContact_number = this.onChangeContact_number.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
@@ -44,15 +46,21 @@ export default class Register extends Component {
         if (temp == "recruiter") {
             var x = document.getElementById("recruiter_id");
             x.style.display = "block";
+            document.getElementById("recruiter_id2").style.display = "block";
         }
         else {
             var x = document.getElementById("recruiter_id");
             x.style.display = "none";
+            document.getElementById("recruiter_id2").style.display = "none";
         }
     }
 
     onChangeCompany_name(event) {
         this.setState({ company_name: event.target.value });
+    }
+
+    onChangeContact_number(event) {
+        this.setState({ contact_number: event.target.value });
     }
 
     onSubmit(e) {
@@ -63,7 +71,8 @@ export default class Register extends Component {
             email: this.state.email,
             password: this.state.password,
             motive: this.state.motive,
-            company_name: this.state.company_name
+            company_name: this.state.company_name,
+            contact_number: this.state.contact_number
         }
 
         var temp = this.state.email.length > 0 &&
@@ -72,7 +81,7 @@ export default class Register extends Component {
             this.state.username.length > 0;
 
         if (this.state.motive == "recruiter") {
-            if (this.state.company_name.length <= 0) {
+            if (this.state.company_name.length <= 0 || this.state.contact_number.length <= 0 ) {
                 temp = false;
             }
         }
@@ -146,6 +155,12 @@ export default class Register extends Component {
                             <Form.Group size="lg" controlId="after_recruiter">
                                 <label> Company Name : </label>
                                 <Form.Control type="text" value={this.state.company_name} onChange={this.onChangeCompany_name} />
+                            </Form.Group>
+                        </div>
+                        <div id="recruiter_id2" style={{ display: "none" }}>
+                            <Form.Group size="lg" controlId="after_recruiter">
+                                <label> Contact Number : </label>
+                                <Form.Control type="text" value={this.state.contact_number} onChange={this.onChangeContact_number} />
                             </Form.Group>
                         </div>
                         <Button block size="lg" type="submit" value="Signin">

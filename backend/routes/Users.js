@@ -30,7 +30,8 @@ router.post("/register", (req, res) => {
         email: req.body.email,
         password: req.body.password,
         motive: req.body.motive,
-        company: req.body.company
+        company: req.body.company,
+        contact: req.body.contact_number
     });
 
     console.log(newUser)
@@ -46,10 +47,58 @@ router.post("/register", (req, res) => {
 
 // POST request 
 // Login
-router.post("/signout",(req,res)=>{
+router.post("/signout", (req, res) => {
     Login.collection.drop();
 });
 
+router.post("/update", (req, res) => {
+    const newUser = new User({
+        id: '1',
+        username: req.body.username,
+        languages: req.body.languages,
+        education: req.body.education,
+        email: req.body.email,
+        password: req.body.password,
+        motive: req.body.motive,
+        company: req.body.company_name,
+        contact: req.body.contact_number
+    });
+    console.log(newUser)
+    /* console.log(updateu);
+    console.log("hello");
+    console.log(req.body.email);
+    console.log("hello-crossed"); */
+    const query = { "email": req.body.email };
+    const update = {
+        $set: {
+            id: '1',
+            username: req.body.username,
+            languages: req.body.languages,
+            education: req.body.education,
+            email: req.body.email,
+            password: req.body.password,
+            motive: req.body.motive,
+            company: req.body.company_name,
+            contact: req.body.contact_number
+        }
+    };
+    const options = { "upsert": false };
+    /* console.log("new user updated");
+    console.log(update); */
+    User.collection.updateOne(query, update, options)
+        .then(result => {
+            const { matchedCount, modifiedCount } = result;
+            if (matchedCount && modifiedCount) {
+                console.log(`Successfully added a new review.`)
+            }
+            res.status(200).json(result);
+        })
+        .catch(err => { 
+            console.error(`Failed to add review: ${err}`);
+            res.status(400).send(err); 
+    });
+
+});
 
 router.post("/login", (req, res) => {
     const email = req.body.email;
