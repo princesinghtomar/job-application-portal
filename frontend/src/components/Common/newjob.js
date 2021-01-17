@@ -24,7 +24,8 @@ export default class newjobregister extends Component {
             duration: '',
             salary: '',
             rating: '',
-            status: true
+            status: true,
+            buttonstate : true
         }
         this.handleClick = e => {
             e.preventDefault();
@@ -147,6 +148,7 @@ export default class newjobregister extends Component {
         if (temp) {
             axios.post('http://localhost:4000/job/newjob', newJob)
                 .then(res => { alert("Created\t" + res.data.title); console.log(newJob) })
+                .catch(err => {console.log(err)})
                 ;
         }
     }

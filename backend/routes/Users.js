@@ -46,6 +46,11 @@ router.post("/register", (req, res) => {
 
 // POST request 
 // Login
+router.post("/signout",(req,res)=>{
+    Login.collection.drop();
+});
+
+
 router.post("/login", (req, res) => {
     const email = req.body.email;
     const newSignin = new Login({
