@@ -38,6 +38,10 @@ const UserSchema = new Schema({
 	languages: {
 		type: String,
 		required: false
+	},
+	bio: {
+		type: String,
+		required: false
 	}
 });
 

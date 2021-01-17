@@ -31,17 +31,23 @@ router.post("/register", (req, res) => {
         password: req.body.password,
         motive: req.body.motive,
         company: req.body.company,
-        contact: req.body.contact_number
+        contact: req.body.contact_number,
+        education:'',
+        languages: '',
+        bio: ''
     });
-
-    console.log(newUser)
-
-    newUser.save()
-        .then(user => {
-            res.status(200).json(user);
+    User.collection.findOne({ "email": req.body.email })
+        .then(result => {
+            if (result) {
+                res.status(200).json("Email already taken");
+            } else {
+                console.log(newUser)
+                newUser.save()
+            }
         })
         .catch(err => {
-            res.status(400).send(err);
+            console.log("Error: In the '/user/register' backend server");
+            console.log(err);
         });
 });
 
@@ -61,7 +67,8 @@ router.post("/update", (req, res) => {
         password: req.body.password,
         motive: req.body.motive,
         company: req.body.company_name,
-        contact: req.body.contact_number
+        contact: req.body.contact_number,
+        bio: req.body.bio
     });
     console.log(newUser)
     /* console.log(updateu);
@@ -79,7 +86,8 @@ router.post("/update", (req, res) => {
             password: req.body.password,
             motive: req.body.motive,
             company: req.body.company_name,
-            contact: req.body.contact_number
+            contact: req.body.contact_number,
+            bio: req.body.bio
         }
     };
     const options = { "upsert": false };
@@ -93,10 +101,10 @@ router.post("/update", (req, res) => {
             }
             res.status(200).json(result);
         })
-        .catch(err => { 
+        .catch(err => {
             console.error(`Failed to add review: ${err}`);
-            res.status(400).send(err); 
-    });
+            res.status(400).send(err);
+        });
 
 });
 
@@ -179,7 +187,7 @@ router.post("/login", (req, res) => {
         })
         .catch(err => console.error(`Failed to find document: ${err}`));
 
-    /* User.collection.drop();
+   /*  User.collection.drop();
     Login.collection.drop(); */
 });
 

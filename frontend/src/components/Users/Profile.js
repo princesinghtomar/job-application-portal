@@ -16,7 +16,9 @@ class Profile extends Component {
             username: '',
             company_name: '',
             contact_number: '',
+            bio: '',
             tempusername: '',
+            tempbio: '',
             languages: 'c++',
             addlanguage: '',
             rating: '4',
@@ -116,9 +118,15 @@ class Profile extends Component {
             ) {
                 this.setState({
                     username: this.state.users[i].username,
-                    contact_number: this.state.contact_number
+                    contact_number: this.state.users[i].contact,
+                    company_name: this.state.users[i].company,
+                    bio: this.state.users[i].bio,
+                    tempbio: this.state.users[i].bio
                 });
+                console.log("Helllloo");
+                console.log(this.state.tempbio);
                 flag = !flag;
+                break;
             }
         }
         if (flag) {
@@ -126,17 +134,26 @@ class Profile extends Component {
                 "There is some ambiguity log data and users data (# matching failed)"
             return;
         }
+        if (this.state.logedin_user[0].motive == "recruiter") {
+            document.getElementById("recruiter_section").style.display = "block";
+            document.getElementById("applicant_section").style.display = "none";
+        }
+        else {
+            document.getElementById("recruiter_section").style.display = "none";
+            document.getElementById("applicant_section").style.display = "block";
+        }
     }
 
     Savevalue(event) {
         event.preventDefault();
         var flag = false;
         const switch_val = [
-            this.state.username,
             this.state.languages,
             this.state.education,
+            this.state.username,
             this.state.company_name,
             this.state.contact_number,
+            this.state.bio
         ]
         const UpdateUser = {
             username: this.state.username,
@@ -146,36 +163,45 @@ class Profile extends Component {
             password: this.state.logedin_user[0].password,
             motive: this.state.logedin_user[0].motive,
             company_name: this.state.company_name,
-            contact_number: this.state.contact_number
+            contact_number: this.state.contact_number,
+            bio: this.state.bio
         }
         /* console.log("hello1"); */
-        var flag2 = 2;
+        var sflag = 0;
+        var eflag = 2;
+        var flag_imp = true;
         if (this.state.logedin_user[0].motive == "recruiter") {
-            flag2 = 2;
+            sflag = 3;
+            eflag = 5;
         }
-        var value2 = switch_val.length - flag2;
-        var value = parseInt(switch_val.length) - parseInt(flag2)
-        console.log(value);
-        console.log(value2);
-        /* console.log(switch_val); */
-        for (var i = 0; i < parseInt(switch_val.length) - parseInt(flag2); i++) {
+        console.log(this.state.users)
+        if (this.state.bio.length > 250) {
+            document.getElementById("para_id").innerHTML = "" +
+                "250 word limit in bio Please Change it"
+            return;
+        }
+        console.log(switch_val[3]);
+        for (var i = sflag+1; i < eflag; i++) {
             /* console.log("asdasd"); */
             console.log(switch_val[i] + ' ' + switch_val[i].length + ' ' + i);
             if (switch_val[i].length <= 0) {
                 /* console.log(switch_val[i]); */
+                flag_imp = true;
                 document.getElementById("para_id").innerHTML = "" +
                     "Please Enter all the Field's correctly"
                 return;
             } else {
-                if (i == switch_val.length - 2) {
+                if (i == switch_val.length) {
                     document.getElementById("para_id").innerHTML = "<br />";
                 }
             }
         }
         console.log(UpdateUser);
-        axios.post('http://localhost:4000/user/update', {UpdateUser})
-            .then(() => { console.log('Resolved 1') })
-            .catch(() => { console.log('Rejected 1') })
+        if (flag_imp) {
+            axios.post('http://localhost:4000/user/update', { UpdateUser })
+                .then(() => { console.log('Resolved 1') })
+                .catch(() => { console.log('Rejected 1') })
+        }
 
     }
 
@@ -218,53 +244,84 @@ class Profile extends Component {
                         <div>
                             <label><pre>Email :  {this.state.logedin_user[0].email}</pre></label>
                         </div>
-                        <div id="showornot" >
-
-                        </div>
-                        <div>
-                            <p>
-                                <label><pre>Languages/technologies :  {this.state.languages}</pre></label><br />
-                            </p>
-                            <p>
-                                <input type="text" placeholder="add languages" value={this.state.addlanguage}
-                                    onChange={e => { this.setState({ addlanguage: e.target.value }) }} />
-                                <pre> </pre>
-                                <Button size="sm" onClick={this.handleClick}>
-                                    <h3>Add</h3>
-                                </Button>
-                                <Button size="sm" onClick={e => { this.setState({ languages: '' }) }}>
-                                    <h3>clear</h3>
-                                </Button>
-                            </p>
-                        </div>
                         <div>
                             <p>
                                 <label><pre >Rating :  {this.state.rating}</pre></label>
                             </p>
                         </div>
+                        <div id="recruiter_section" style={{ display: "none" }}>
+                            <div>
+                                <p>
+                                    <label><pre>Contact Number :  {this.state.contact_number}</pre></label><br />
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    <label><pre>Company Number :  {this.state.company_name}</pre></label><br />
+                                </p>
+                            </div>
+                        </div>
                         <div>
                             <p>
-                                <label><pre>Education: {edulist}</pre></label>
+                                <label><pre> Bio :{this.state.bio} </pre></label>
                             </p>
-                            <p><label><pre>Institute name </pre></label>
-                                <input type="text" placeholder="New Institute Name" value={this.state.tempeduname}
-                                    onChange={e => { this.setState({ tempeduname: e.target.value }) }} /><br />
-                                <label><pre>Starting Year </pre></label>
-                                <input type="Number" placeholder="Start Date" value={this.state.tempedusdate}
-                                    onChange={e => { this.setState({ tempedusdate: e.target.value }) }} /><br />
-                                <label><pre>Ending Year </pre></label>
-                                <input type="Number" placeholder="End Date" value={this.state.tempeduedate}
-                                    onChange={e => { this.setState({ tempeduedate: e.target.value }) }} /><br />
-                                <Button size="sm" onClick={this.handleeduClick}>
-                                    <h3>Add Institute</h3>
-                                </Button><br />
-                                <label><pre>Enter intitute id to delete that institute </pre></label>
-                                <input type="Number" placeholder="id" value={this.state.deleteedu}
-                                    onChange={e => { this.setState({ deleteedu: e.target.value }) }} /> <br />
-                                <Button size="md" onClick={this.handleedudelClick}>
-                                    <h3>Delete</h3>
-                                </Button><br />
+                            <p>
+                                <input type="text" placeholder="Enter your Bio" value={this.state.tempbio}
+                                    onChange={e => { this.setState({ tempbio: e.target.value }) }} />
+                                <Button size="lg" onClick={e => { this.setState({ bio: this.state.tempbio }) }}>
+                                    Update your Bio
+                                </Button> <pre>  </pre>
+                                <Button size="lg" onClick={e => {
+                                    this.setState({
+                                        bio: '',
+                                        tempbio: ''
+                                    })
+                                }}>
+                                    Clear your Bio
+                                </Button>
                             </p>
+                        </div>
+                        <div id="applicant_section" style={{ display: "block" }}>
+                            <div>
+                                <p>
+                                    <label><pre>Languages/technologies :  {this.state.languages}</pre></label><br />
+                                </p>
+                                <p>
+                                    <input type="text" placeholder="add languages" value={this.state.addlanguage}
+                                        onChange={e => { this.setState({ addlanguage: e.target.value }) }} />
+                                    <pre> </pre>
+                                    <Button size="sm" onClick={this.handleClick}>
+                                        <h3>Add</h3>
+                                    </Button>
+                                    <Button size="sm" onClick={e => { this.setState({ languages: '' }) }}>
+                                        <h3>clear</h3>
+                                    </Button>
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    <label><pre>Education: {edulist}</pre></label>
+                                </p>
+                                <p><label><pre>Institute name </pre></label>
+                                    <input type="text" placeholder="New Institute Name" value={this.state.tempeduname}
+                                        onChange={e => { this.setState({ tempeduname: e.target.value }) }} /><br />
+                                    <label><pre>Starting Year </pre></label>
+                                    <input type="Number" placeholder="Start Date" value={this.state.tempedusdate}
+                                        onChange={e => { this.setState({ tempedusdate: e.target.value }) }} /><br />
+                                    <label><pre>Ending Year </pre></label>
+                                    <input type="Number" placeholder="End Date" value={this.state.tempeduedate}
+                                        onChange={e => { this.setState({ tempeduedate: e.target.value }) }} /><br />
+                                    <Button size="sm" onClick={this.handleeduClick}>
+                                        <h3>Add Institute</h3>
+                                    </Button><br />
+                                    <label><pre>Enter intitute id to delete that institute </pre></label>
+                                    <input type="Number" placeholder="id" value={this.state.deleteedu}
+                                        onChange={e => { this.setState({ deleteedu: e.target.value }) }} /> <br />
+                                    <Button size="md" onClick={this.handleedudelClick}>
+                                        <h3>Delete</h3>
+                                    </Button><br />
+                                </p>
+                            </div>
                         </div>
                         <div>
                             <p>
