@@ -24,7 +24,7 @@ export default class newjobregister extends Component {
             duration: '',
             salary: '',
             rating: '',
-            status: true,
+            status: 1,  //0 -> open , 1 -> over
             buttonstate : true
         }
         this.handleClick = e => {
@@ -106,8 +106,10 @@ export default class newjobregister extends Component {
 
     onChangeDuration(event) {
         var temp = event.target.value;
-        temp = temp > 0 ? temp : 1;
-        this.setState({ duration: temp })
+        if(temp>=0 && temp <=7){
+            this.setState({ duration: temp })
+            return;
+        }
     }
 
     onChangeSalary(event) {
@@ -147,7 +149,7 @@ export default class newjobregister extends Component {
 
         if (temp) {
             axios.post('http://localhost:4000/job/newjob', newJob)
-                .then(res => { alert("Created\t" + res.data.title); console.log(newJob) })
+                .then(res => { alert("Created\t" + res.data.title); console.log(newJob); console.log(res) })
                 .catch(err => {console.log(err)})
                 ;
         }
@@ -227,7 +229,7 @@ export default class newjobregister extends Component {
                         </Form.Group>
                         <Form.Group size="lg" controlId="duration">
                             <Form.Label>
-                                Duration (in months) :
+                                {"Duration (in months) (0 <= value <= 7) :"}
                             </Form.Label>
                             <Form.Control autoFocus type="Number" value={this.state.duration}
                                 onChange={this.onChangeDuration} />

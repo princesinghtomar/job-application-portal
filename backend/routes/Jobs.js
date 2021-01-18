@@ -5,7 +5,6 @@ var router = express.Router();
 const User = require("../models/Users");
 const Login = require("../models/log");
 const Job = require("../models/job");
-const Edu = require("../models/education");
 const { route } = require("./Users");
 
 // GET request 
@@ -39,7 +38,7 @@ router.post("/newjob", (req, res) => {
     console.log(newJob);
     newJob.save()
         .then(job => {
-            res.status(200).json(job);
+            res.status(200).json("fully saved");
         })
         .catch(err => {
             res.status(400).send(err);

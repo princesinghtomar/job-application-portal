@@ -109,7 +109,7 @@ class Profile extends Component {
     }
 
     updateusername() {
-        console.log(this.state.users[1].email);
+        console.log(this.state.users[0].email);
         var flag = true;
         for (var i = 0; i < this.state.users.length; i++) {
             if (this.state.logedin_user[0].email == this.state.users[i].email &&
@@ -181,7 +181,7 @@ class Profile extends Component {
             return;
         }
         console.log(switch_val[3]);
-        for (var i = sflag+1; i < eflag; i++) {
+        for (var i = sflag + 1; i < eflag; i++) {
             /* console.log("asdasd"); */
             console.log(switch_val[i] + ' ' + switch_val[i].length + ' ' + i);
             if (switch_val[i].length <= 0) {
@@ -260,26 +260,26 @@ class Profile extends Component {
                                     <label><pre>Company Number :  {this.state.company_name}</pre></label><br />
                                 </p>
                             </div>
-                        </div>
-                        <div>
-                            <p>
-                                <label><pre> Bio :{this.state.bio} </pre></label>
-                            </p>
-                            <p>
-                                <input type="text" placeholder="Enter your Bio" value={this.state.tempbio}
-                                    onChange={e => { this.setState({ tempbio: e.target.value }) }} />
-                                <Button size="lg" onClick={e => { this.setState({ bio: this.state.tempbio }) }}>
-                                    Update your Bio
+                            <div>
+                                <p>
+                                    <label><pre> Bio :{this.state.bio} </pre></label>
+                                </p>
+                                <p>
+                                    <input type="text" placeholder="Enter your Bio" value={this.state.tempbio}
+                                        onChange={e => { this.setState({ tempbio: e.target.value }) }} />
+                                    <Button size="lg" onClick={e => { this.setState({ bio: this.state.tempbio }) }}>
+                                        Update your Bio
                                 </Button> <pre>  </pre>
-                                <Button size="lg" onClick={e => {
-                                    this.setState({
-                                        bio: '',
-                                        tempbio: ''
-                                    })
-                                }}>
-                                    Clear your Bio
+                                    <Button size="lg" onClick={e => {
+                                        this.setState({
+                                            bio: '',
+                                            tempbio: ''
+                                        })
+                                    }}>
+                                        Clear your Bio
                                 </Button>
-                            </p>
+                                </p>
+                            </div>
                         </div>
                         <div id="applicant_section" style={{ display: "block" }}>
                             <div>

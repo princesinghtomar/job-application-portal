@@ -10,7 +10,6 @@ const JobSchema = {
     email: {
         type: String,
         required: true,
-        unique: true
     },
     name: {
         type: String,
@@ -53,7 +52,7 @@ const JobSchema = {
         required: true
     },
     status: {
-        type: Boolean,
+        type: Number,
         required: true
     }
 }

@@ -4,7 +4,6 @@ var router = express.Router();
 const User = require("../models/Users");
 const Login = require("../models/log");
 const Job = require("../models/job");
-const Edu = require("../models/education");
 
 // GET request 
 // Getting all the users
@@ -20,8 +19,8 @@ router.get("/", function (req, res) {
 
 
 router.post("/login", (req, res) => {
-    const newLog = new Log({
-        id:'1',
+    const newLog = new Login({
+        id: '1',
         email: req.body.email,
         password: req.body.password,
         motive: req.body.motive,

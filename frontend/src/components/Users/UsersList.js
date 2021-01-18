@@ -16,11 +16,13 @@ import Divider from '@material-ui/core/Divider';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
-
+import moment from 'moment';
 import SearchIcon from "@material-ui/icons/Search";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
+/* const [value, setValue] = React.useState(JobsList.state.job_type[0]);
+const [inputValue, setInputValue] = React.useState(''); */
 
 class JobsList extends Component {
 
@@ -30,8 +32,14 @@ class JobsList extends Component {
             jobs: [],
             fuzzyjobs: [],
             query: '',
-            min: '',
-            max: '',
+            logedinuser: '',
+            appliedjobs: '',
+            min: 0,
+            max: 0,
+            job_type: ["full_time", "part_time", "work_from_home"],
+            duration: ['0', '1', '2', '3', '4', '5', '6', '7'],
+            value_job_type: '',
+            value_duration: '',
             sortName1: true,
             sortName2: true,
             sortName3: true,
@@ -40,30 +48,48 @@ class JobsList extends Component {
         this.renderIcon = this.renderIcon.bind(this);
         this.sortChange = this.sortChange.bind(this);
         this.onChangeSearch = this.onChangeSearch.bind(this);
-        this.onChangemin = this.onChangemin.bind(this);
-        this.onChangemax = this.onChangemax.bind(this);
+        this.onChangeminmax = this.onChangeminmax.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.onClickjobbutton = this.onClickjobbutton.bind(this);
+        this.buttontext = this.buttontext.bind(this);
     }
 
     componentDidMount() {
         axios.get('http://localhost:4000/job')
             .then(response => {
                 console.log(response.data)
-                this.setState({ jobs: response.data, fuzzyjobs: response.data });
+                this.setState({
+                    jobs: response.data.filter(word => (new Date(word.deadline)).getTime() > Date.now()),
+                    fuzzyjobs: response.data.filter(word => (new Date(word.deadline)).getTime() > Date.now())
+                });
             })
             .catch(function (error) {
+                console.log(error);
+            })
+
+        axios.get('http://localhost:4000/login')
+            .then(response => {
+                console.log(response.data)
+                this.setState({ logedinuser: response.data });
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+
+        axios.get('http://localhost:4000/jobapplied')
+            .then(response => {
+                console.log("hello");
+                console.log(response.data)
+                this.setState({ appliedjobs: response.data });
+            })
+            .catch(function (error) {
+                console.log("helloo");
                 console.log(error);
             })
     }
 
     onChangeSearch(event) {
-        var arraytemp = []
-        if (event.target.value.length > 0 || this.state.max.length > 0 || this.state.min.length > 0) {
-            arraytemp = this.state.fuzzyjobs;
-        }
-        else {
-            arraytemp = this.state.jobs;
-        }
+        var arraytemp = this.state.jobs
         const dat = event.target.value;
         const fuse = new Fuse(arraytemp, { keys: ['email', 'title', 'name'] });
         var data = fuse.search(dat);
@@ -80,7 +106,7 @@ class JobsList extends Component {
 
     handleClick(e) {
         e.preventDefault();
-        const fuse = new Fuse(this.state.jobs, { keys: ['email', 'title', 'name','Job type'] });
+        const fuse = new Fuse(this.state.jobs, { keys: ['email', 'title', 'name', 'Job type'] });
         const data = this.state.query ? fuse.search(this.state.query) : this.state.jobs;
         /* this.state.fuzzyjobs = data; */
         this.setState({
@@ -90,71 +116,64 @@ class JobsList extends Component {
         console.log(this.state.query);
     };
 
-    onChangemin(event) {
+    onClickjobbutton(value) {
+        var id = value.title + value.email;
+        var d2 = new Date(value.deadline);
+        var d3 = d2.getTime();
+        console.log(d3);
+        console.log(Date.now());
+    }
+
+    buttontext(value) {
+        const id = value.title + value.email;
+        var temp = 0
+        if (this.state.appliedjobs.length > 0) {
+            var temp = this.state.appliedjobs.filter(word => word.job_id == value._id);
+        }
+        if (value.max_applicants <= temp.length) {
+            console.log("heeloo");
+        }
+    }
+
+    onChangeminmax(event) {
         console.log("onChangemin")
-        var arraytemp = []
-        if (this.state.query.length > 0 || this.state.max.length > 0 || this.state.min.length > 0) {
-            arraytemp = this.state.fuzzyjobs;
-        }
-        else {
-            arraytemp = this.state.jobs;
-        }
-        const min_val = event.target.value;
+        var arraytemp = this.state.jobs;
+        const min_val = this.state.min;
+        const max_val = this.state.max;
         var array = [];
-        console.log(arraytemp.length);
-        if (min_val > 0) {
+        console.log("hello");
+        console.log(this.state.value);
+        if (min_val > 0 && max_val) {
             for (var i = 0; i < arraytemp.length; i++) {
-                if (min_val <= arraytemp[i].salary) {
+                if (min_val <= arraytemp[i].salary && max_val >= arraytemp[i].salary) {
                     array.push(arraytemp[i]);
                 }
             }
-        }
-        else {
-            array = this.state.jobs;
-        }
-        if (event.target.value.length == 0 && this.state.query.length == 0 && this.state.min.length == 0) {
-            array = this.state.jobs;
+        } else {
+            if (max_val > 0) {
+                for (var i = 0; i < arraytemp.length; i++) {
+                    if (max_val >= arraytemp[i].salary) {
+                        array.push(arraytemp[i]);
+                    }
+                }
+            }
+            else {
+                if (min_val > 0) {
+                    for (var i = 0; i < arraytemp.length; i++) {
+                        if (min_val <= arraytemp[i].salary) {
+                            array.push(arraytemp[i]);
+                        }
+                    }
+                } else {
+                    array = this.state.jobs;
+                }
+            }
         }
         this.setState({
-            min: event.target.value,
-            fuzzyjobs: array
+            fuzzyjobs: array,
         });
         console.log(this.state.fuzzyjobs)
         console.log(this.state.min);
-        console.log(event.target.value);
-    }
-
-    onChangemax(event) {
-        console.log("onChangemax")
-        var arraytemp = []
-        if (this.state.query.length > 0 || this.state.min.length > 0 || this.state.max.length > 0) {
-            arraytemp = this.state.fuzzyjobs;
-        }
-        else {
-            arraytemp = this.state.jobs;
-        }
-        const max_val = event.target.value;
-        var array = [];
-        console.log(arraytemp.length);
-        if (max_val > 0) {
-            for (var i = 0; i < arraytemp.length; i++) {
-                if (max_val >= arraytemp[i].salary) {
-                    array.push(arraytemp[i]);
-                }
-            }
-        }
-        else {
-            array = this.state.jobs;
-        }
-        if (event.target.value.length == 0 && this.state.min.length == 0 && this.state.query.length == 0) {
-            array = this.state.jobs;
-        }
-        this.setState({
-            max: event.target.value,
-            fuzzyjobs: array
-        });
-        console.log(this.state.fuzzyjobs)
-        console.log(this.state.max);
         console.log(event.target.value);
     }
 
@@ -272,19 +291,52 @@ class JobsList extends Component {
                                     <form noValidate autoComplete="off">
                                         <label>Salary</label>
                                         <TextField id="standard-basic" value={this.state.min}
-                                            label="Enter Min" fullWidth={true} onChange={this.onChangemin} />
+                                            label="Enter Min" fullWidth={true} onChange={e => { this.setState({ min: e.target.value }) }} />
                                         <TextField id="standard-basic" value={this.state.max}
-                                            label="Enter Max" fullWidth={true} onChange={this.onChangemax} />
+                                            label="Enter Max" fullWidth={true} onChange={e => { this.setState({ max: e.target.value }) }} />
+                                        <Button sz="md" onClick={this.onChangeminmax} >[Search on min max]</Button>
                                     </form>
                                 </ListItem>
                                 <Divider />
                                 <ListItem button divider>
                                     <Autocomplete
+                                        value={this.state.value_job_type}
+                                        onChange={(event, value) => {
+                                            console.log(value);
+                                            var val = this.state.jobs.filter(word => word.job_type == value);
+                                            this.setState({
+                                                fuzzyjobs: val,
+                                                min: '',
+                                                max: '',
+                                                value_duration: ''
+                                            });
+                                        }}
                                         id="combo-box-demo"
-                                        options={this.state.jobs}
-                                        getOptionLabel={(option) => option.name}
+                                        options={this.state.job_type}
+                                        getOptionLabel={(option) => option}
                                         style={{ width: 300 }}
-                                        renderInput={(params) => <TextField {...params} label="Space for copy/paster" variant="outlined" />}
+                                        renderInput={(params) => <TextField {...params} label="Search Job type" variant="outlined" />}
+                                    />
+                                </ListItem>
+                                <Divider />
+                                <ListItem button divider>
+                                    <Autocomplete
+                                        value={this.state.value_duration}
+                                        onChange={(event, value) => {
+                                            console.log(value);
+                                            var val = this.state.jobs.filter(word => word.duration == value);
+                                            this.setState({
+                                                fuzzyjobs: val,
+                                                min: '',
+                                                max: '',
+                                                value_job_type: ''
+                                            });
+                                        }}
+                                        id="combo-box-demo"
+                                        options={this.state.duration}
+                                        getOptionLabel={(option) => option}
+                                        style={{ width: 300 }}
+                                        renderInput={(params) => <TextField {...params} label="Search Durantion" variant="outlined" />}
                                     />
                                 </ListItem>
                             </List>
@@ -303,6 +355,8 @@ class JobsList extends Component {
                                                 {this.renderIcon(this.state.sortName2)}</Button>Duration</TableCell>
                                             <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
                                                 {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell>
+                                            <TableCell>Deadline</TableCell>
+                                            <TableCell>Status</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -314,6 +368,9 @@ class JobsList extends Component {
                                                 <TableCell>{job.salary}</TableCell>
                                                 <TableCell>{job.duration}</TableCell>
                                                 <TableCell>{job.rating}</TableCell>
+                                                <TableCell>{moment(job.deadline).format('LLLL')}</TableCell>
+                                                <TableCell><Button onClick={() => this.onClickjobbutton(job)}>
+                                                    <p id={job.title + job.email}>{this.buttontext(job)}</p></Button> </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
