@@ -12,6 +12,7 @@ import Profile from './components/Users/Profile'
 import Userl from './components/Users/Userlistreal'
 import Sop from './components/Applicant_only/sop'
 import Recruiterlist from './components/Users/Recruiterlist'
+import Jobdetails from './components/Users/Jobdetails'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/Userl" component={Userl}/>
         <Route path="/sop" component={Sop}/>
         <Route path="/kapa" component={Recruiterlist} />
+        <Route path="/jobapplied" component={Jobdetails} />
       </div>
     </Router>
   );

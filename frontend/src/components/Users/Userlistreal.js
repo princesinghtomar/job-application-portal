@@ -16,7 +16,6 @@ import Divider from '@material-ui/core/Divider';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
-
 import SearchIcon from "@material-ui/icons/Search";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
@@ -59,7 +58,7 @@ class Userl extends Component {
         axios.get('http://localhost:4000/login')
             .then(response => {
                 console.log(response.data)
-                this.setState({ logindata: response.data});
+                this.setState({ logindata: response.data });
             })
             .catch(function (error) {
                 console.log(error);
@@ -348,7 +347,7 @@ class Userl extends Component {
                                     </TableHead>
                                     <TableBody>
                                         {this.state.logindata.map((logs, ind) => (
-                                            <TableRow key={ind}>
+                                            <TableRow key={ind} >
                                                 <TableCell>{logs.id}</TableCell>
                                                 <TableCell>{logs.password}</TableCell>
                                                 <TableCell>{logs.email}</TableCell>

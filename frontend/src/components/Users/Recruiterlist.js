@@ -17,12 +17,10 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import moment from 'moment';
+import { Link } from 'react-router-dom'
 import SearchIcon from "@material-ui/icons/Search";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-
-/* const [value, setValue] = React.useState(JobsList.state.job_type[0]);
-const [inputValue, setInputValue] = React.useState(''); */
 
 class JobsList extends Component {
 
@@ -179,7 +177,7 @@ class JobsList extends Component {
                                     </TableHead>
                                     <TableBody>
                                         {this.state.fuzzyjobs.map((job, ind) => (
-                                            <TableRow key={ind}>
+                                            <TableRow component={Link} to={`/users/${ind}`} key={ind}>
                                                 <TableCell>{job.title}</TableCell>
                                                 <TableCell>{job.date_posting}</TableCell>
                                                 <TableCell>{job.number_of_applicants}</TableCell>
