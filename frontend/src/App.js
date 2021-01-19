@@ -10,7 +10,8 @@ import newJob from './components/Common/newjob'
 import Navbar from './components/templates/Navbar'
 import Profile from './components/Users/Profile'
 import Userl from './components/Users/Userlistreal'
-import Sop from './components/Applicant_only/sop';
+import Sop from './components/Applicant_only/sop'
+import Recruiterlist from './components/Users/Recruiterlist'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/newJob" component={newJob}/>
         <Route path="/Userl" component={Userl}/>
         <Route path="/sop" component={Sop}/>
+        <Route path="/kapa" component={Recruiterlist} />
       </div>
     </Router>
   );

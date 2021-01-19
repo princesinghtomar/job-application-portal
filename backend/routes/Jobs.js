@@ -33,7 +33,8 @@ router.post("/newjob", (req, res) => {
         duration: req.body.duration,
         salary: req.body.salary,
         rating: req.body.rating,
-        status: req.body.status
+        status: req.body.status,
+        number_of_applicants: 0
     });
     console.log(newJob);
     newJob.save()

@@ -11,7 +11,7 @@ class Sharedtextarea extends Component {
   render() {
     return (
       <div>
-        <label>Enter value : </label>
+        <label><pre>Enter value : </pre> </label>
         <input type="textare" 
           name="textValue"
           onChange={this.props.handleChange}

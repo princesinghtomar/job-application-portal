@@ -10,6 +10,10 @@ const JobApplied = new Schema({
     applicant_id: {
         type: String,
         required: true
+    },
+    sop:{
+        type:String,
+        required:true
     }
 });
 

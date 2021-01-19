@@ -175,7 +175,8 @@ class Profile extends Component {
             eflag = 5;
         }
         console.log(this.state.users)
-        if (this.state.bio.length > 250) {
+        var value = this.state.bio.split(" ");
+        if (value.length >= 250) {
             document.getElementById("para_id").innerHTML = "" +
                 "250 word limit in bio Please Change it"
             return;
@@ -267,7 +268,9 @@ class Profile extends Component {
                                 <p>
                                     <input type="text" placeholder="Enter your Bio" value={this.state.tempbio}
                                         onChange={e => { this.setState({ tempbio: e.target.value }) }} />
-                                    <Button size="lg" onClick={e => { this.setState({ bio: this.state.tempbio }) }}>
+                                    <Button size="lg" onClick={e => { 
+                                        this.setState({ bio: this.state.tempbio }) 
+                                }}>
                                         Update your Bio
                                 </Button> <pre>  </pre>
                                     <Button size="lg" onClick={e => {

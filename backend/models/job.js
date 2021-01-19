@@ -54,6 +54,10 @@ const JobSchema = {
     status: {
         type: Number,
         required: true
+    },
+    Number_of_applicants:{
+        type:Number,
+        required : true
     }
 }
 

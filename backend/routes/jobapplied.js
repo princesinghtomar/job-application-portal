@@ -23,7 +23,8 @@ router.get("/", function (req, res) {
 router.post("/jobappliedsave", (req, res) => {
     const newjobapp = new JobApplied({
         job_id: req.body.job_id,
-        applicant_id: req.body.applicant_id
+        applicant_id: req.body.applicant_id,
+        sop: req.body.sop
     });
     console.log(newjobapp);
     newjobapp.save()
