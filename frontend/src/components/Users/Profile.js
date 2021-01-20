@@ -16,13 +16,14 @@ class Profile extends Component {
             username: '',
             company_name: '',
             contact_number: '',
+            id_param: this.props.match.params.id,
             bio: '',
             tempusername: '',
             tempbio: '',
-            languages: 'c++',
+            languages: '',
             addlanguage: '',
             rating: '4',
-            education: [{ "id": '0', "name": '', "sdate": '', "edate": '' }],
+            education: [{ "id": 0, "name": '', "sdate": '', "edate": '' }],
             tempeduname: '',
             tempedusdate: '',
             tempeduedate: '',
@@ -53,6 +54,7 @@ class Profile extends Component {
     }
 
     onChangeusername(event) {
+        console.log(this.state.id_param);
         this.setState({ tempusername: event.target.value });
     }
 
@@ -110,6 +112,8 @@ class Profile extends Component {
 
     updateusername() {
         console.log(this.state.users[0].email);
+        var ka = this.state.id_param.split('-');
+        console.log(ka);
         var flag = true;
         for (var i = 0; i < this.state.users.length; i++) {
             if (this.state.logedin_user[0].email == this.state.users[i].email &&
@@ -121,9 +125,12 @@ class Profile extends Component {
                     contact_number: this.state.users[i].contact,
                     company_name: this.state.users[i].company,
                     bio: this.state.users[i].bio,
-                    tempbio: this.state.users[i].bio
+                    tempbio: this.state.users[i].bio,
+                    education: this.state.users[i].education,
+                    languages: this.state.users[i].languages,
+                    motive: ka[1]
                 });
-                console.log("Helllloo");
+                console.log(this.state.users[i].education)
                 console.log(this.state.tempbio);
                 flag = !flag;
                 break;
@@ -156,7 +163,7 @@ class Profile extends Component {
             this.state.bio
         ]
         const UpdateUser = {
-            username: this.state.username,
+            username: this.state.tempusername,
             languages: this.state.languages,
             education: this.state.education,
             email: this.state.logedin_user[0].email,
@@ -166,7 +173,7 @@ class Profile extends Component {
             contact_number: this.state.contact_number,
             bio: this.state.bio
         }
-        /* console.log("hello1"); */
+        console.log(UpdateUser.education);
         var sflag = 0;
         var eflag = 2;
         var flag_imp = true;
@@ -183,10 +190,8 @@ class Profile extends Component {
         }
         console.log(switch_val[3]);
         for (var i = sflag + 1; i < eflag; i++) {
-            /* console.log("asdasd"); */
             console.log(switch_val[i] + ' ' + switch_val[i].length + ' ' + i);
             if (switch_val[i].length <= 0) {
-                /* console.log(switch_val[i]); */
                 flag_imp = true;
                 document.getElementById("para_id").innerHTML = "" +
                     "Please Enter all the Field's correctly"
@@ -199,7 +204,7 @@ class Profile extends Component {
         }
         console.log(UpdateUser);
         if (flag_imp) {
-            axios.post('http://localhost:4000/user/update', { UpdateUser })
+            axios.post('http://localhost:4000/user/update', UpdateUser)
                 .then(() => { console.log('Resolved 1') })
                 .catch(() => { console.log('Rejected 1') })
         }
@@ -217,10 +222,11 @@ class Profile extends Component {
 
     render() {
         const edulist = this.state.education.map(items => {
+            console.log(items);
             return <pre><p key={items.id}>id: {items.id}, name: {items.name}, Start date: {items.sdate}, End date: {items.edate} </p></pre>
         })
         return (
-            <div><h3>
+            <div>
                 <div style={{ display: "block" }}>
                     <div className="Start">
                         <h1 style={{ textAlign: "center" }}>
@@ -233,55 +239,54 @@ class Profile extends Component {
                         </p>
                     </div>
                     <div>
-                        <div>
+                        Click to go to Dashboard : <a href={"/users/" + this.state.motive + "/" + this.state.id_param} >Click</a>
+                    </div>
+                    <br /><br />
+                    <div>
+                        <div id="common_section" style={{ display: "block" }}>
                             <p>
-                                <label><pre >UserName :  {this.state.username}</pre></label><br />
+                                <pre>
+                                    <label>UserName : {this.state.username + ' '}</label>
+                                    <input type="text" placeholder="New Username write here"
+                                        value={this.state.tempusername} name="Username"
+                                        onChange={this.onChangeusername} />
+
+                                </pre>
+                                <pre><label>Email :  {this.state.logedin_user[0].email}</label></pre>
+                                <pre><label>Rating :  {this.state.rating}</label></pre>
                             </p>
-                            <p>
-                                <input type="text" placeholder="New Username write here" value={this.state.tempusername} name="Username"
-                                    onChange={this.onChangeusername} />
-                            </p>
-                        </div>
-                        <div>
-                            <label><pre>Email :  {this.state.logedin_user[0].email}</pre></label>
-                        </div>
-                        <div>
-                            <p>
-                                <label><pre >Rating :  {this.state.rating}</pre></label>
-                            </p>
-                        </div>
-                        <div id="recruiter_section" style={{ display: "none" }}>
-                            <div>
-                                <p>
-                                    <label><pre>Contact Number :  {this.state.contact_number}</pre></label><br />
-                                </p>
-                            </div>
-                            <div>
-                                <p>
-                                    <label><pre>Company Number :  {this.state.company_name}</pre></label><br />
-                                </p>
-                            </div>
-                            <div>
-                                <p>
-                                    <label><pre> Bio :{this.state.bio} </pre></label>
-                                </p>
-                                <p>
-                                    <input type="text" placeholder="Enter your Bio" value={this.state.tempbio}
-                                        onChange={e => { this.setState({ tempbio: e.target.value }) }} />
-                                    <Button size="lg" onClick={e => { 
-                                        this.setState({ bio: this.state.tempbio }) 
-                                }}>
-                                        Update your Bio
-                                </Button> <pre>  </pre>
-                                    <Button size="lg" onClick={e => {
-                                        this.setState({
-                                            bio: '',
-                                            tempbio: ''
-                                        })
-                                    }}>
-                                        Clear your Bio
-                                </Button>
-                                </p>
+                            <div id="recruiter_section" style={{ display: "none" }}>
+                                <div>
+                                    <p>
+                                        <label><pre>Contact Number :  {this.state.contact_number}</pre></label><br />
+                                    </p>
+                                </div>
+                                <div>
+                                    <p>
+                                        <label><pre>Company Name :  {this.state.company_name}</pre></label><br />
+                                    </p>
+                                </div>
+                                <div>
+                                    <p>
+                                        <label><pre> Bio :{this.state.bio} </pre></label>
+                                    </p>
+                                    <p>
+                                        <pre>
+                                            <input type="text" placeholder="Enter your Bio" value={this.state.tempbio}
+                                                onChange={e => { this.setState({ tempbio: e.target.value }) }} /> <Button size="sm"
+                                                    onClick={e => { this.setState({ bio: this.state.tempbio }) }}>
+                                                Update your Bio
+                                        </Button> <Button size="sm" onClick={e => {
+                                                this.setState({
+                                                    bio: '',
+                                                    tempbio: ''
+                                                })
+                                            }}>
+                                                Clear your Bio
+                                        </Button>
+                                        </pre>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         <div id="applicant_section" style={{ display: "block" }}>
@@ -290,46 +295,48 @@ class Profile extends Component {
                                     <label><pre>Languages/technologies :  {this.state.languages}</pre></label><br />
                                 </p>
                                 <p>
-                                    <input type="text" placeholder="add languages" value={this.state.addlanguage}
-                                        onChange={e => { this.setState({ addlanguage: e.target.value }) }} />
-                                    <pre> </pre>
-                                    <Button size="sm" onClick={this.handleClick}>
-                                        <h3>Add</h3>
-                                    </Button>
-                                    <Button size="sm" onClick={e => { this.setState({ languages: '' }) }}>
-                                        <h3>clear</h3>
-                                    </Button>
+                                    <pre>
+                                        <input type="text" placeholder="add languages" value={this.state.addlanguage}
+                                            onChange={e => { this.setState({ addlanguage: e.target.value }) }} />  <Button size="sm"
+                                                onClick={this.handleClick}>
+                                            Add
+                                            </Button> <Button size="sm" onClick={e => { this.setState({ languages: '' }) }}>
+                                            clear
+                                        </Button>
+                                    </pre>
                                 </p>
                             </div>
                             <div>
                                 <p>
                                     <label><pre>Education: {edulist}</pre></label>
                                 </p>
-                                <p><label><pre>Institute name </pre></label>
-                                    <input type="text" placeholder="New Institute Name" value={this.state.tempeduname}
-                                        onChange={e => { this.setState({ tempeduname: e.target.value }) }} /><br />
-                                    <label><pre>Starting Year </pre></label>
-                                    <input type="Number" placeholder="Start Date" value={this.state.tempedusdate}
-                                        onChange={e => { this.setState({ tempedusdate: e.target.value }) }} /><br />
-                                    <label><pre>Ending Year </pre></label>
-                                    <input type="Number" placeholder="End Date" value={this.state.tempeduedate}
-                                        onChange={e => { this.setState({ tempeduedate: e.target.value }) }} /><br />
+                                <p>
+                                    <pre><label>Institute name </label>
+                                        <input type="text" placeholder="New Institute Name" value={this.state.tempeduname}
+                                            onChange={e => { this.setState({ tempeduname: e.target.value }) }} /><br /></pre>
+                                    <pre><label>Starting Year </label>
+                                        <input type="Number" placeholder="Start Date" value={this.state.tempedusdate}
+                                            onChange={e => { this.setState({ tempedusdate: e.target.value }) }} /><br /></pre>
+                                    <pre><label>Ending Year </label>
+                                        <input type="Number" placeholder="End Date" value={this.state.tempeduedate}
+                                            onChange={e => { this.setState({ tempeduedate: e.target.value }) }} /><br /></pre>
                                     <Button size="sm" onClick={this.handleeduClick}>
-                                        <h3>Add Institute</h3>
-                                    </Button><br />
-                                    <label><pre>Enter intitute id to delete that institute </pre></label>
-                                    <input type="Number" placeholder="id" value={this.state.deleteedu}
-                                        onChange={e => { this.setState({ deleteedu: e.target.value }) }} /> <br />
-                                    <Button size="md" onClick={this.handleedudelClick}>
-                                        <h3>Delete</h3>
-                                    </Button><br />
+                                        Add Institute
+                                    </Button><br /><br />
+                                    <pre><label>Enter intitute id to delete that institute </label>
+                                        <input type="Number" placeholder="id" value={this.state.deleteedu}
+                                            onChange={e => { this.setState({ deleteedu: e.target.value }) }} /> <Button
+                                                size="sm" onClick={this.handleedudelClick}>
+                                            Delete
+                                    </Button><br /><br />
+                                    </pre>
                                 </p>
                             </div>
                         </div>
                         <div>
                             <p>
-                                <Button size="md" onClick={this.Savevalue}>
-                                    <h3>save changes</h3>
+                                <Button size="sm" onClick={this.Savevalue}>
+                                    save changes
                                 </Button><br />
                             </p>
                         </div>
@@ -337,10 +344,10 @@ class Profile extends Component {
                     <div >
                         <br />
                         <Button style={{ alignSelf: 'center' }} size="sm" value="Signout" onClick={this.OnSignout}>
-                            <h3>Sign out</h3>
+                            Sign out
                         </Button>
                     </div>
-                </div></h3>
+                </div>
             </div >
         )
     }

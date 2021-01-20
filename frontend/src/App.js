@@ -18,17 +18,17 @@ function App() {
   return (
     <Router>
       <div className="container">
-        <Navbar/>
+        {/* <Navbar/> */}
         <br/>
         <Route path="/" exact component={Home}/>
-        <Route path="/users" exact component={UsersList}/>
+        <Route path="/users/jobapplicant/:id" name="id" exact  component={UsersList}/>
         <Route path="/register" component={Register}/>
         <Route path="/login" component={login}/>
-        <Route path="/profile" component={Profile}/>
+        <Route path="/profile/:id" name="id" component={Profile}/>
         <Route path="/newJob" component={newJob}/>
         <Route path="/Userl" component={Userl}/>
         <Route path="/sop" component={Sop}/>
-        <Route path="/kapa" component={Recruiterlist} />
+        <Route path="/users/recruiter/:id" name="id" component={Recruiterlist} />
         <Route path="/jobapplied" component={Jobdetails} />
       </div>
     </Router>

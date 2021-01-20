@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Form from "react-bootstrap/Form";
+import { Link } from 'react-router-dom'
 /* import Button from "react-bootstrap/Button";
 import "../css/login.css"
 import axios from 'axios'; */
@@ -13,54 +14,74 @@ export default class Home extends Component {
             password: '',
             motive: ''
         };
-/* 
-        this.handleEmail = this.handleEmail.bind(this);
-        this.handlePassword = this.handlePassword.bind(this);
-        this.handleDropdown = this.handleDropdown.bind(this);
-        this.onSubmit = this.onSubmit.bind(this); */
+        /* 
+                this.handleEmail = this.handleEmail.bind(this);
+                this.handlePassword = this.handlePassword.bind(this);
+                this.handleDropdown = this.handleDropdown.bind(this);
+                this.onSubmit = this.onSubmit.bind(this); */
 
     }
 
-   /*  handleEmail(event) {
-        this.setState({ email: event.target.value });
-    }
-
-    handlePassword(event) {
-        this.setState({ password: event.target.value });
-    }
-
-    handleDropdown(event) {
-        this.setState({ motive: event.target.value });
-    }
-
-    validateForm() {
-        return this.state.email.length > 0 && this.state.password.length > 0;
-    }
+    /*  handleEmail(event) {
+         this.setState({ email: event.target.value });
+     }
  
-    onSubmit(event) {
-        event.preventDefault();
-
-        const newSignin = {
-            email: this.state.email,
-            password: this.state.password,
-            motive: this.state.motive
-        }
-
-        axios.post('http://localhost:4000/user/login', newSignin)
-            .then(res => { alert("Signed in"); console.log(newSignin) })
-            ;
-
-        this.setState({
-            email: '',
-            password: '',
-            motive: ''
-        });
-    }*/
+     handlePassword(event) {
+         this.setState({ password: event.target.value });
+     }
+ 
+     handleDropdown(event) {
+         this.setState({ motive: event.target.value });
+     }
+ 
+     validateForm() {
+         return this.state.email.length > 0 && this.state.password.length > 0;
+     }
+  
+     onSubmit(event) {
+         event.preventDefault();
+ 
+         const newSignin = {
+             email: this.state.email,
+             password: this.state.password,
+             motive: this.state.motive
+         }
+ 
+         axios.post('http://localhost:4000/user/login', newSignin)
+             .then(res => { alert("Signed in"); console.log(newSignin) })
+             ;
+ 
+         this.setState({
+             email: '',
+             password: '',
+             motive: ''
+         });
+     }*/
 
     render() {
         return (
             <div>
-                Happy coding
+                <div>
+                    <h1>
+                        <p style={{ textAlign: 'center', color: "purple" }}>
+                            Job Application portal
+                        </p>
+                    </h1>
+                    <hr />
+                    <br />
+                </div>
+                <h3>
+                    <div>
+                        <p style={{ textAlign: 'center' }}>
+                            <pre>Press to Log in: <a href="/login"> Login </a> </pre>
+                        </p>
+                    </div>
+                    <div>
+                        <p style={{ textAlign: 'center' }}>
+                            <pre>New User! Press to register: <a href="/Register"> Register </a> </pre>
+                        </p>
+                    </div>
+                </h3>
                 {/* <div>
                     <h1 style={{ textAlign: "center" }}>
                         Login

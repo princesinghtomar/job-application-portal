@@ -29,7 +29,7 @@ router.post("/register", (req, res) => {
         email: req.body.email,
         password: req.body.password,
         motive: req.body.motive,
-        company: req.body.company,
+        company: req.body.company_name,
         contact: req.body.contact_number,
         education: '',
         languages: '',
@@ -70,7 +70,7 @@ router.post("/update", (req, res) => {
         contact: req.body.contact_number,
         bio: req.body.bio
     });
-    console.log(newUser)
+    console.log(newUser);
     /* console.log(updateu);
     console.log("hello");
     console.log(req.body.email);

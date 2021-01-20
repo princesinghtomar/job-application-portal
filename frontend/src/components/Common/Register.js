@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Form from "react-bootstrap/Form";
+import { Redirect } from 'react-router-dom';
 import Button from "react-bootstrap/Button";
 import "../css/login.css"
 import axios from 'axios';
@@ -15,7 +16,8 @@ export default class Register extends Component {
             password: '',
             motive: '',
             company_name: '',
-            contact_number: ''
+            contact_number: '',
+            tologin: false
         }
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
@@ -81,7 +83,7 @@ export default class Register extends Component {
             this.state.username.length > 0;
 
         if (this.state.motive == "recruiter") {
-            if (this.state.company_name.length <= 0 || this.state.contact_number.length <= 0 ) {
+            if (this.state.company_name.length <= 0 || this.state.contact_number.length <= 0) {
                 temp = false;
             }
         }
@@ -92,8 +94,13 @@ export default class Register extends Component {
             /* console.log(this.validateForm) */
             document.getElementById("para_id").innerHTML = "<br/>";
             axios.post('http://localhost:4000/user/register', newUser)
-                .then(res => { alert("Signed in"); })
-                ;
+            .then(res => {
+                alert("Registered");
+                this.setState({ tologin: true });
+                })
+                .catch(err => {
+                    console.log("Failed to Register")
+                });
         }
         else {
             document.getElementById("para_id").innerHTML = "* All Fields" +
@@ -101,17 +108,12 @@ export default class Register extends Component {
             var temp1 = document.getElementById("para_id").innerHTML;
             console.log(temp1);
         }
-
-        /*  this.setState({
-             username: '',
-             email: '',
-             password: '',
-             motive: '',
-             company_name: ''
-         }); */
     }
 
     render() {
+        if (this.state.tologin) {
+            return <Redirect to='/login' />
+        }
         return (
             <div>
                 <div>
@@ -164,7 +166,7 @@ export default class Register extends Component {
                             </Form.Group>
                         </div>
                         <Button block size="lg" type="submit" value="Signin">
-                            Login
+                            Register
                         </Button>
                     </form>
                 </div>

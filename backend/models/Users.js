@@ -32,7 +32,7 @@ const UserSchema = new Schema({
 		required: false
 	},
 	education: {
-		type: String,
+		type: Array,
 		required: false
 	},
 	languages: {

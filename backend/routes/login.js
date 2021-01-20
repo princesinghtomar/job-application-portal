@@ -36,14 +36,6 @@ router.post("/login", (req, res) => {
             /* console.log("heellle") */
             res.status(400).send(err);
         });
-
-    /* newUser.deleteAll()
-        .then(log => {
-            res.status(200).json(log);
-        })
-        .catch(err => {
-            res.status(400).send(err);
-        }); */
 });
 
 module.exports = router;

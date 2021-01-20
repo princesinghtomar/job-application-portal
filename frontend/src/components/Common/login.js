@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Form from "react-bootstrap/Form";
+import { BrowserRouter, Redirect, Route } from 'react-router-dom'
 import Button from "react-bootstrap/Button";
 import "../css/signup.css"
 import axios from 'axios';
@@ -12,7 +13,8 @@ export default class Home extends Component {
             email: '',
             password: '',
             motive: '',
-            company_name: ''
+            company_name: '',
+            gotoprofile: false
         };
 
         this.handleEmail = this.handleEmail.bind(this);
@@ -68,9 +70,9 @@ export default class Home extends Component {
             this.state.password.length > 0 &&
             this.state.motive.length > 0;
 
-        if(this.state.motive=="recruiter"){
-            if(this.state.company_name.length <= 0){
-                temp=false;
+        if (this.state.motive == "recruiter") {
+            if (this.state.company_name.length <= 0) {
+                temp = false;
             }
         }
 
@@ -80,8 +82,11 @@ export default class Home extends Component {
             /* console.log(this.validateForm) */
             document.getElementById("para_id").innerHTML = "<br/>";
             axios.post('http://localhost:4000/user/login', newSignin)
-                .then(res => { alert("Signed in"); })
-                ;
+                .then(res => { 
+                    /* alert("Signed in"); */
+                    this.setState({gotoprofile:true});
+                })
+                .catch(err => { console.log(err); });
         }
         else {
             document.getElementById("para_id").innerHTML = "* Please Enter" +
@@ -99,6 +104,11 @@ export default class Home extends Component {
     }
 
     render() {
+        if(this.state.gotoprofile){
+            var id = this.state.email + '-' + this.state.motive;
+            console.log(id);
+            return <Redirect to={`/profile/${id}`} />
+        }
         return (
             <div>
                 <div>
@@ -107,9 +117,11 @@ export default class Home extends Component {
                     </h1>
                 </div>
                 <div>
-                    <p id="para_id" style={{ textAlign: 'center', color: 'red' }}>
-                        <br />
-                    </p>
+                    <h4>
+                        <p id="para_id" style={{ textAlign: 'center', color: 'red' }}>
+                            <br />
+                        </p>
+                    </h4>
                 </div>
                 <div className="Login">
                     <form onSubmit={this.onSubmit}>
@@ -134,7 +146,7 @@ export default class Home extends Component {
                                 <option value="jobapplicant">Job Applicant</option>
                             </select>
                         </Form.Group>
-                        <div id="recruiter_id" style={{display:"none"}}>
+                        <div id="recruiter_id" style={{ display: "none" }}>
                             <Form.Group size="lg" controlId="after_recruiter">
                                 <label> Company Name : </label>
                                 <Form.Control type="text" value={this.state.company_name} onChange={this.handleCompany_name} />
