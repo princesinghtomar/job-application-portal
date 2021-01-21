@@ -34,7 +34,7 @@ router.post("/register", (req, res) => {
         education: '',
         languages: '',
         bio: '',
-        openapplication: ''
+        openapplication: 0
     });
     User.collection.findOne({ "email": req.body.email })
         .then(result => {

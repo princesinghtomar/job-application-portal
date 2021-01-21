@@ -13,6 +13,8 @@ import TextField from '@material-ui/core/TextField';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme } from "@material-ui/core/styles";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -20,10 +22,34 @@ import moment from 'moment';
 import SearchIcon from "@material-ui/icons/Search";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-
+/* const redTheme = createMuiTheme({
+    palette: {
+        primary: {
+            light: '#757ce8',
+            main: '#3f50b5',
+            dark: '#002884',
+            contrastText: '#fff',
+        },
+        secondary: {
+            light: '#ff7961',
+            main: '#f44336',
+            dark: '#ba000d',
+            contrastText: '#000',
+        },
+    },
+}); */
+/* const blueTheme = createMuiTheme({ palette: { primary: blue } }) */
 /* const [value, setValue] = React.useState(JobsList.state.job_type[0]);
 const [inputValue, setInputValue] = React.useState(''); */
 
+/* const theme = createMuiTheme({
+    palette: {
+        primary: 'purple',
+        secondary: 'green',
+        error: 'red',
+    },
+});
+ */
 class JobsList extends Component {
 
     constructor(props) {
@@ -31,9 +57,12 @@ class JobsList extends Component {
         this.state = {
             jobs: [],
             fuzzyjobs: [],
+            user: [],
             query: '',
-            logedinuser: '',
             appliedjobs: '',
+            id_param: this.props.match.params.id,
+            email: this.props.match.params.id.split('-')[0],
+            motive: this.props.match.params.id.split('-')[1],
             min: 0,
             max: 0,
             job_type: ["full_time", "part_time", "work_from_home"],
@@ -43,13 +72,15 @@ class JobsList extends Component {
             sortName1: true,
             sortName2: true,
             sortName3: true,
+            sop: '',
+            openapplication: 0
         };
 
         this.renderIcon = this.renderIcon.bind(this);
         this.sortChange = this.sortChange.bind(this);
-        this.onChangeSearch = this.onChangeSearch.bind(this);
+        /* this.onChangeSearch = this.onChangeSearch.bind(this); */
         this.onChangeminmax = this.onChangeminmax.bind(this);
-        this.handleClick = this.handleClick.bind(this);
+        /* this.handleClick = this.handleClick.bind(this); */
         this.onClickjobbutton = this.onClickjobbutton.bind(this);
         this.buttontext = this.buttontext.bind(this);
     }
@@ -67,20 +98,29 @@ class JobsList extends Component {
                 console.log(error);
             })
 
-        axios.get('http://localhost:4000/login')
-            .then(response => {
-                console.log(response.data)
-                this.setState({ logedinuser: response.data });
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-
         axios.get('http://localhost:4000/jobapplied')
             .then(response => {
                 console.log("hello");
                 console.log(response.data)
-                this.setState({ appliedjobs: response.data });
+                console.log(this.state.email);
+                this.setState({
+                    appliedjobs: response.data.filter(word => (word.email == this.state.email))
+                });
+            })
+            .catch(function (error) {
+                console.log("helloo");
+                console.log(error);
+            })
+
+        axios.get('http://localhost:4000/user')
+            .then(response => {
+                console.log("heleeelo");
+                console.log(response.data)
+                console.log(this.state.email);
+                this.setState({
+                    users: response.data.filter(word => (word.email == this.state.email))
+                        .filter(word => (word.motive == this.state.motive)),
+                });
             })
             .catch(function (error) {
                 console.log("helloo");
@@ -88,12 +128,14 @@ class JobsList extends Component {
             })
     }
 
-    onChangeSearch(event) {
+    /* onChangeSearch(event) {
         var arraytemp = this.state.jobs
         const dat = event.target.value;
         const fuse = new Fuse(arraytemp, { keys: ['email', 'title', 'name'] });
         var data = fuse.search(dat);
-        if (event.target.value.length == 0 && this.state.max.length == 0 && this.state.min.length == 0) {
+        if (event.target.value.length == 0 &&
+            this.state.max.length == 0 &&
+            this.state.min.length == 0) {
             data = this.state.jobs;
         }
         this.setState({
@@ -102,36 +144,130 @@ class JobsList extends Component {
         });
         console.log(this.state.fuzzyjobs);
         console.log(this.state.query);
-    }
+    } */
 
-    handleClick(e) {
+    /* handleClick(e) {
         e.preventDefault();
         const fuse = new Fuse(this.state.jobs, { keys: ['email', 'title', 'name', 'Job type'] });
         const data = this.state.query ? fuse.search(this.state.query) : this.state.jobs;
-        /* this.state.fuzzyjobs = data; */
+        //this.state.fuzzyjobs = data;
         this.setState({
             fuzzyjobs: data
         });
         console.log(this.state.fuzzyjobs);
         console.log(this.state.query);
-    };
+    }; */
 
     onClickjobbutton(value) {
         var id = value.title + value.email;
-        var d2 = new Date(value.deadline);
-        var d3 = d2.getTime();
-        console.log(d3);
-        console.log(Date.now());
+        /* console.log(id); */
+        var temp = []
+        if (this.state.appliedjobs.length > 0) {
+            temp = this.state.appliedjobs.filter(word => word.job_id == value._id);
+            var max = value.max_applicants;
+            var current = temp.length;
+            var temp1 = [];
+            if (temp.length > 0) {
+                var temp1 = temp.filter(word => ((word.email == this.state.email) &&
+                    (word.motive == this.state.motive)))
+                if (temp1.length > 0) {
+                    return;
+                    //return <text style={{ color: 'Green' }}>Applied</text>
+                }
+                else {
+                    if (max > current) {
+                        return;
+                        //return <text style={{ color: 'Red' }}>Full</text>
+                    }
+                }
+            }
+        }
+        var user = this.state.users.filter(word => (word.motive == this.state.motive));
+        var openjobapplication = this.state.appliedjobs.filter(word => (word.status > 0));
+        console.log(this.state.users);
+        console.log(user);
+        if (user.length > 0) {
+            console.log("here");
+            console.log(user[0])
+            /* if (user[0].length > 0) { */
+            if (openjobapplication.length <= 10) {
+                const enteredName = prompt('Please enter your Statement of Purpose ( SOP )');
+                this.setState({
+                    sop: enteredName,
+                })
+                console.log("enteredname");
+                console.log(enteredName);
+                if(!enteredName){
+                    return;
+                }
+                if (enteredName.length > 0) {
+                    var arraydata = enteredName.split(' ');
+                    if(arraydata.length >= 250){
+                        alert("word length dhould be less then 150 words")
+                        return;
+                    }
+                    console.log(this.state.sop);
+                    const newjobapplication = {
+                        job_id: value._id,
+                        applicant_id: user[0]._id,
+                        applicant_email: this.state.email,
+                        sop: this.state.sop
+                    }
+                    axios.post('http://localhost:4000/user/login', newjobapplication)
+                        .then(res => {
+                            alert("created");
+                            /* this.setState({ gotoprofile: true }); */
+                        })
+                        .catch(err => { console.log(err); });
+                } else{
+                    return
+                }
+            } else {
+                alert("You already have 10 open apllications");
+                return;
+            }
+        } else {
+            console.log('121');
+            return
+            // error message type here don't lnow why its here 
+        }
+        /*} else {
+           console.log('122');
+           return;
+           // error message forward to login / register page
+       } */
+        //return <text style={{ color: 'Yellow' }}>Full</text>
     }
 
     buttontext(value) {
         const id = value.title + value.email;
-        var temp = 0
+        var temp = []
         if (this.state.appliedjobs.length > 0) {
-            var temp = this.state.appliedjobs.filter(word => word.job_id == value._id);
+            temp = this.state.appliedjobs.filter(word => word.job_id == value._id);
+            var max = value.max_applicants;
+            var current = temp.length;
+            var temp1 = [];
+            if (temp.length > 0) {
+                var temp1 = temp.filter(word => ((word.email == this.state.email) &&
+                    (word.motive == this.state.motive)))
+                if (temp1.length > 0) {
+                    return <text style={{ color: 'Green' }}>Applied</text>
+                }
+                else {
+                    if (max > current) {
+                        return <text style={{ color: 'Red' }}>Full</text>
+                    }
+                    else {
+                        return <text style={{ color: 'Yellow' }}>Apply</text>
+                    }
+                }
+            }
+            else {
+                return <text style={{ color: 'Yellow' }}>Apply</text>
+            }
         }
-        if (value.max_applicants <= temp.length) {
-            console.log("heeloo");
+        else {
+            return <text style={{ color: 'Yellow' }}>apply</text>
         }
     }
 
@@ -230,7 +366,9 @@ class JobsList extends Component {
                 }
             }
         }
-        if (this.state.query.length == 0 && this.state.max.length == 0 && this.state.min.length == 0) {
+        if (this.state.query.length == 0 &&
+            this.state.max.length == 0 &&
+            this.state.min.length == 0) {
             array = this.state.jobs;
         }
         console.log(array);
@@ -251,6 +389,11 @@ class JobsList extends Component {
         }
     }
 
+    /* handleClick(event){
+        const enteredName = prompt('Please enter your name')
+        this.setState({ enteredName: enteredName })
+    } */
+
     render() {
         return (
             <div>
@@ -260,6 +403,16 @@ class JobsList extends Component {
                             <List component="nav" aria-label="mailbox folders">
                                 <ListItem>
                                     <h3>Job Filters</h3>
+                                    {/* <div>
+                                        <p>Previously entered user name: {this.state.enteredName}</p>
+
+                                        <input type="text" onChange={this.handleChange} />
+                                        <input
+                                            type="button"
+                                            value="Alert the text input"
+                                            onClick={this.handleClick}
+                                        />
+                                    </div> */}
                                 </ListItem>
                             </List>
                         </Grid>
@@ -270,7 +423,7 @@ class JobsList extends Component {
                                     label="Search"
                                     fullWidth
                                     value={this.state.query}
-                                    onChange={this.onChangeSearch}
+                                    /* onChange={this.onChangeSearch} */
                                     InputProps={{
                                         endAdornment: (
                                             <InputAdornment>
@@ -291,10 +444,15 @@ class JobsList extends Component {
                                     <form noValidate autoComplete="off">
                                         <label>Salary</label>
                                         <TextField id="standard-basic" value={this.state.min}
-                                            label="Enter Min" fullWidth={true} onChange={e => { this.setState({ min: e.target.value }) }} />
+                                            label="Enter Min" fullWidth={true} onChange={e => {
+                                                this.setState({ min: e.target.value })
+                                            }} />
                                         <TextField id="standard-basic" value={this.state.max}
-                                            label="Enter Max" fullWidth={true} onChange={e => { this.setState({ max: e.target.value }) }} />
-                                        <Button sz="md" onClick={this.onChangeminmax} >[Search on min max]</Button>
+                                            label="Enter Max" fullWidth={true} onChange={e => {
+                                                this.setState({ max: e.target.value })
+                                            }} />
+                                        <Button sz="md" onClick={this.onChangeminmax} >
+                                            [Search on min max]</Button>
                                     </form>
                                 </ListItem>
                                 <Divider />
@@ -369,8 +527,13 @@ class JobsList extends Component {
                                                 <TableCell>{job.duration}</TableCell>
                                                 <TableCell>{job.rating}</TableCell>
                                                 <TableCell>{moment(job.deadline).format('LLLL')}</TableCell>
-                                                <TableCell><Button onClick={() => this.onClickjobbutton(job)}>
-                                                    <p id={job.title + job.email}>{this.buttontext(job)}</p></Button> </TableCell>
+                                                <TableCell>
+                                                    <button id={job.title + job.email} style={{
+                                                        borderRadius: 5,
+                                                        backgroundColor: "#21b6ae",
+                                                    }}
+                                                        onClick={() => this.onClickjobbutton(job)}>
+                                                        {this.buttontext(job)}</button></TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>

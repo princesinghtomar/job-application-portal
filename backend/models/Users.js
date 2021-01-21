@@ -43,9 +43,9 @@ const UserSchema = new Schema({
 		type: String,
 		required: false
 	},
-	openapplication:{
-		type:String,
-		required:false
+	openapplication: {
+		type: Number,
+		required: false
 	}
 });
 

@@ -11,9 +11,17 @@ const JobApplied = new Schema({
         type: String,
         required: true
     },
-    sop:{
-        type:String,
-        required:true
+    applicant_email: {
+        type: String,
+        required: true
+    },
+    sop: {
+        type: String,
+        required: true
+    },
+    status: {
+        type:Number,
+        required: false
     }
 });
 

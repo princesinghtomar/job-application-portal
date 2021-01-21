@@ -36,12 +36,13 @@ class Sop extends Component {
         var value = this.state.sop.split(" ");
         if (value.length > 250) {
             document.getElementById("warning").innerHTML = "" +
-                "<h3>Word limit is 250 words</h3>"
+                "Word limit is 250 words"
             return;
         }
         const newappliedjob = {
             job_id: this.state.job_id,
-            user_id: this.state.user_id,
+            applicant_id: this.state.user_id,
+            applicant_emai: this.state.user_email,
             sop: this.state.sop
         }
         axios.post('http://localhost:4000/jobappliedsave')
