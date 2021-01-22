@@ -28,6 +28,7 @@ router.post("/jobappliedsave", (req, res) => {
         sop: req.body.sop,
         status: req.body.status
     });
+    console.log("jobappliedBelow :")
     console.log(newjobapp);
     newjobapp.save()
         .then(user => {

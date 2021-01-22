@@ -123,6 +123,7 @@ class Profile extends Component {
                 this.setState({
                     username: this.state.users[i].username,
                     contact_number: this.state.users[i].contact,
+                    tempusername : this.state.users[i].username,
                     company_name: this.state.users[i].company,
                     bio: this.state.users[i].bio,
                     tempbio: this.state.users[i].bio,

@@ -29,6 +29,8 @@ class Userl extends Component {
             users: [],
             fuzzyusers: [],
             logindata: [],
+            job: [],
+            jobapplied: [],
             query: '',
             min: '',
             max: '',
@@ -59,6 +61,24 @@ class Userl extends Component {
             .then(response => {
                 console.log(response.data)
                 this.setState({ logindata: response.data });
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+
+        axios.get('http://localhost:4000/job')
+            .then(response => {
+                console.log(response.data)
+                this.setState({ job: response.data });
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+
+        axios.get('http://localhost:4000/jobapplied')
+            .then(response => {
+                console.log(response.data)
+                this.setState({ jobapplied: response.data });
             })
             .catch(function (error) {
                 console.log(error);
@@ -303,9 +323,9 @@ class Userl extends Component {
                                 <Table size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>id</TableCell>
-                                            <TableCell>password</TableCell>
-                                            <TableCell>Email</TableCell>
+                                            <TableCell>user -id</TableCell>
+                                            <TableCell>user -password</TableCell>
+                                            <TableCell>user -Email</TableCell>
                                             <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
                                                 {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
                                             <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
@@ -334,9 +354,9 @@ class Userl extends Component {
                                 <Table size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>id</TableCell>
-                                            <TableCell>password</TableCell>
-                                            <TableCell>Email</TableCell>
+                                            <TableCell>logedin - id</TableCell>
+                                            <TableCell>logedin - password</TableCell>
+                                            <TableCell>logedin - Email</TableCell>
                                             <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
                                                 {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
                                             <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
@@ -347,6 +367,70 @@ class Userl extends Component {
                                     </TableHead>
                                     <TableBody>
                                         {this.state.logindata.map((logs, ind) => (
+                                            <TableRow key={ind} >
+                                                <TableCell>{logs.id}</TableCell>
+                                                <TableCell>{logs.password}</TableCell>
+                                                <TableCell>{logs.email}</TableCell>
+                                                <TableCell>{logs.salary}</TableCell>
+                                                <TableCell>{logs.duration}</TableCell>
+                                                <TableCell>{logs.rating}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12}>
+                            <Paper>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>job - id</TableCell>
+                                            <TableCell>job - password</TableCell>
+                                            <TableCell>job - Email</TableCell>
+                                            <TableCell>job - max_applicants</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
+                                                {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
+                                                {this.renderIcon(this.state.sortName2)}</Button>Duration</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
+                                                {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {this.state.job.map((logs, ind) => (
+                                            <TableRow key={ind} >
+                                                <TableCell>{logs.id}</TableCell>
+                                                <TableCell>{logs.password}</TableCell>
+                                                <TableCell>{logs.email}</TableCell>
+                                                <TableCell>{logs.max_applicants}</TableCell>
+                                                <TableCell>{logs.salary}</TableCell>
+                                                <TableCell>{logs.duration}</TableCell>
+                                                <TableCell>{logs.rating}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12}>
+                            <Paper>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>jobapplied - id</TableCell>
+                                            <TableCell>jobapplied - password</TableCell>
+                                            <TableCell>jobapplied - Email</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
+                                                {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
+                                                {this.renderIcon(this.state.sortName2)}</Button>Duration</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
+                                                {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {this.state.jobapplied.map((logs, ind) => (
                                             <TableRow key={ind} >
                                                 <TableCell>{logs.id}</TableCell>
                                                 <TableCell>{logs.password}</TableCell>

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 //create schema
-const JobApplied = new Schema({
+const JobAppliedSchema = new Schema({
     job_id: {
         type: String,
         required: true,
@@ -20,9 +20,9 @@ const JobApplied = new Schema({
         required: true
     },
     status: {
-        type:Number,
+        type: Number,
         required: false
     }
 });
 
-module.exports = JobA = mongoose.model("JobApply", JobApplied);
+module.exports = JobA = mongoose.model("JobApply", JobAppliedSchema);
