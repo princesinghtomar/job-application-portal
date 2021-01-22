@@ -86,7 +86,7 @@ router.post("/update", (req, res) => {
             bio: req.body.bio
         }
     };
-    const options = { "upsert": false };]
+    const options = { "upsert": false };
     User.collection.updateOne(query, update, options)
         .then(result => {
             const { matchedCount, modifiedCount } = result;

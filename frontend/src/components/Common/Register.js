@@ -91,7 +91,6 @@ export default class Register extends Component {
         console.log(temp);
 
         if (temp) {
-            /* console.log(this.validateForm) */
             document.getElementById("para_id").innerHTML = "<br/>";
             axios.post('http://localhost:4000/user/register', newUser)
             .then(res => {

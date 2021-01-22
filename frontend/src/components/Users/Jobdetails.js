@@ -90,12 +90,6 @@ class Jobdetails extends Component {
                                             <TableCell>id</TableCell>
                                             <TableCell>password</TableCell>
                                             <TableCell>Email</TableCell>
-                                            {/* <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
-                                                {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
-                                                {this.renderIcon(this.state.sortName2)}</Button>Duration</TableCell>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
-                                                {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell> */}
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
