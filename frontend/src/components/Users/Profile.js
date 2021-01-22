@@ -288,6 +288,11 @@ class Profile extends Component {
                                         </pre>
                                     </p>
                                 </div>
+                                <div>
+                                    <p>
+                                        Want to create new job opening : <a href={'/newjob/' + this.state.id_param}> Create New jobs</a>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         <div id="applicant_section" style={{ display: "block" }}>

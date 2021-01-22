@@ -25,7 +25,7 @@ function App() {
         <Route path="/register" component={Register}/>
         <Route path="/login" component={login}/>
         <Route path="/profile/:id" name="id" component={Profile}/>
-        <Route path="/newJob" component={newJob}/>
+        <Route path="/newJob/:id" name="id" component={newJob}/>
         <Route path="/Userl" component={Userl}/>
         <Route path="/myapplication/jobapplicant/:id" name="id" component={Myapplication}/>
         <Route path="/users/recruiter/:id" name="id" component={Recruiterlist} />

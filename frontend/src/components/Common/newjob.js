@@ -12,7 +12,7 @@ export default class newjobregister extends Component {
 
         this.state = {
             title: '',
-            email: '',
+            email: this.props.match.params.id.split('-')[0],
             name: '',
             max_applicants: '',
             max_positions: '',
@@ -127,7 +127,7 @@ export default class newjobregister extends Component {
 
         const newJob = {
             title: this.state.title,
-            email: this.state.email,
+            email: this.props.match.params.id.split('-')[0],
             name: this.state.name,
             max_applicants: this.state.max_applicants,
             required_skills: this.state.required_skills.trim(),
@@ -177,7 +177,7 @@ export default class newjobregister extends Component {
                                 Your Email :
                             </Form.Label>
                             <Form.Control autoFocus type="email" value={this.state.email}
-                                onChange={this.onChangeEmail} />
+                                /* onChange={this.onChangeEmail}  *//>
                         </Form.Group>
                         <Form.Group size="lg" controlId="name">
                             <Form.Label>
