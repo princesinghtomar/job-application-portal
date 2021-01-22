@@ -10,7 +10,7 @@ import newJob from './components/Common/newjob'
 import Navbar from './components/templates/Navbar'
 import Profile from './components/Users/Profile'
 import Userl from './components/Users/Userlistreal'
-import Sop from './components/Applicant_only/sop'
+import Myapplication from './components/Applicant_only/myapplications'
 import Recruiterlist from './components/Users/Recruiterlist'
 import Jobdetails from './components/Users/Jobdetails'
 
@@ -27,7 +27,7 @@ function App() {
         <Route path="/profile/:id" name="id" component={Profile}/>
         <Route path="/newJob" component={newJob}/>
         <Route path="/Userl" component={Userl}/>
-        <Route path="/sop/:id" name="id" component={Sop}/>
+        <Route path="/myapplication/:id" name="id" component={Myapplication}/>
         <Route path="/users/recruiter/:id" name="id" component={Recruiterlist} />
         <Route path="/jobapplied" component={Jobdetails} />
       </div>

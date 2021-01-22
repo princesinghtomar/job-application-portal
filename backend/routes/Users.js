@@ -71,10 +71,6 @@ router.post("/update", (req, res) => {
         bio: req.body.bio
     });
     console.log(newUser);
-    /* console.log(updateu);
-    console.log("hello");
-    console.log(req.body.email);
-    console.log("hello-crossed"); */
     const query = { "email": req.body.email };
     const update = {
         $set: {
@@ -90,9 +86,7 @@ router.post("/update", (req, res) => {
             bio: req.body.bio
         }
     };
-    const options = { "upsert": false };
-    /* console.log("new user updated");
-    console.log(update); */
+    const options = { "upsert": false };]
     User.collection.updateOne(query, update, options)
         .then(result => {
             const { matchedCount, modifiedCount } = result;
@@ -143,7 +137,6 @@ router.post("/login", (req, res) => {
                     .then(result1 => {
                         if (result1) {
                             try {
-                                /* console.log("hellotry"); */
                                 Login.collection.updateOne(query, update, options)
                                     .then(result => {
                                         const { matchedCount, modifiedCount } = result;
@@ -153,7 +146,6 @@ router.post("/login", (req, res) => {
                                     })
                                     .catch(err => console.error(`Failed to add review: ${err}`))
                             } catch (e) {
-                                /* console.log("hellocatch"); */
                                 console.log(e);
                             }
                             console.log(`Successfully found document User.collection.findOne({ email: newSignin.email }): ${result1}.`);
@@ -169,11 +161,9 @@ router.post("/login", (req, res) => {
                         if (result1) {
                             newSignin.save()
                                 .then(user => {
-                                    /* console.log("heellle") */
                                     res.status(200).json(user);
                                 })
                                 .catch(err => {
-                                    /* console.log("heellle") */
                                     res.status(400).send(err);
                                 });
                             console.log(`Successfully found document (User.collection.findOne({ id: '1' })) : ${result1}.`);
@@ -186,10 +176,6 @@ router.post("/login", (req, res) => {
             }
         })
         .catch(err => console.error(`Failed to find document: ${err}`));
-
-    /* User.collection.drop();
-    Login.collection.drop();
-    Job.collection.drop(); */
 });
 
 module.exports = router;

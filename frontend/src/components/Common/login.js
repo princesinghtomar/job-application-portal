@@ -79,11 +79,9 @@ export default class Home extends Component {
         console.log(temp);
 
         if (temp) {
-            /* console.log(this.validateForm) */
             document.getElementById("para_id").innerHTML = "<br/>";
             axios.post('http://localhost:4000/user/login', newSignin)
                 .then(res => { 
-                    /* alert("Signed in"); */
                     this.setState({gotoprofile:true});
                 })
                 .catch(err => { console.log(err); });

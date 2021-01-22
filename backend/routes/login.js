@@ -29,11 +29,9 @@ router.post("/login", (req, res) => {
     console.log(newLog)
     newLog.save()
         .then(user => {
-            /* console.log("heellle") */
             res.status(200).json(user);
         })
         .catch(err => {
-            /* console.log("heellle") */
             res.status(400).send(err);
         });
 });
