@@ -27,7 +27,7 @@ function App() {
         <Route path="/profile/:id" name="id" component={Profile}/>
         <Route path="/newJob" component={newJob}/>
         <Route path="/Userl" component={Userl}/>
-        <Route path="/myapplication/:id" name="id" component={Myapplication}/>
+        <Route path="/myapplication/jobapplicant/:id" name="id" component={Myapplication}/>
         <Route path="/users/recruiter/:id" name="id" component={Recruiterlist} />
         <Route path="/jobapplied" component={Jobdetails} />
       </div>

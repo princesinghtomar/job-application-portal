@@ -46,4 +46,34 @@ router.post("/newjob", (req, res) => {
         });
 });
 
+router.post("/update/rating", (req, res) => {
+    console.log(req.body._id)
+    const query = {
+        "email": req.body.email,
+        "title": req.body.title,
+        "salary": req.body.salary,
+        "required_skills": req.body.required_skills,
+        "job_type": req.body.job_type,
+        "max_postions": req.bosy.max_positions
+    };
+    const update = {
+        $set: {
+            rating: req.body.rating
+        }
+    };
+    const options = { "upsert": false };
+    Job.collection.updateOne(query, update, options)
+        .then(result => {
+            const { matchedCount, modifiedCount } = result;
+            if (matchedCount && modifiedCount) {
+                console.log(`Successfully added a new review.`)
+            }
+            res.status(200).json(result);
+        })
+        .catch(err => {
+            console.error(`Failed to add review: ${err}`);
+            res.status(400).send(err);
+        });
+});
+
 module.exports = router;

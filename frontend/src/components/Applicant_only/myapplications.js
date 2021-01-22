@@ -1,75 +1,159 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { BrowserRouter, Route } from 'react-router-dom'
-import PropTypes from 'prop-types'
+import PropTypes, { array } from 'prop-types'
 import Form from "react-bootstrap/Form";
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Sharedtextarea from "../templates/sharedtextarea"
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
+import moment from 'moment';
 
 class Sop extends Component {
     constructor(props) {
         super(props);
         this.state = {
             user: [],
-            job_id: '',
-            user_id: '',
-            sop: ''
+            appliedjobs: [],
+            email: this.props.match.params.id.split('-')[0],
+            jobs: [],
+            job_rating: new Array(100)
         };
-        this.onClickfunction = this.onClickfunction.bind(this);
+        this.onClickjobbutton = this.onClickjobbutton.bind(this);
     }
 
     componentDidMount() {
         axios.get('http://localhost:4000/user')
             .then(response => {
-                console.log(response.data);
                 this.setState({ users: response.data });
             })
             .catch(function (error) {
                 console.log(error);
             })
-        //redirected page with document id which you had to store in the database
+        axios.get('http://localhost:4000/jobapplied')
+            .then(response => {
+                this.setState({ appliedjobs: response.data.filter(word => (word.applicant_email == this.state.email)) })
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
+        axios.get('http://localhost:4000/job')
+            .then(response => {
+                var result = []
+                for (var i = 0; i < this.state.appliedjobs.length; i++) {
+                    var value = response.data.filter(word => word._id == this.state.appliedjobs[i].job_id);
+                    result.push.apply(result, value);
+                }
+                console.log(result);
+                result = result.filter(function (item, index, inputarray) {
+                    return inputarray.indexOf(item) == index;
+                });
+                console.log(result);
+                this.setState({ jobs: result });
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
     }
 
-    onClickfunction() {
-        console.log(this.state.sop);
-        var value = this.state.sop.split(" ");
-        if (value.length > 250) {
-            document.getElementById("warning").innerHTML = "" +
-                "Word limit is 250 words"
-            return;
-        }
-        const newappliedjob = {
-            job_id: this.state.job_id,
-            applicant_id: this.state.user_id,
-            applicant_emai: this.state.user_email,
-            sop: this.state.sop
-        }
-        axios.post('http://localhost:4000/jobappliedsave')
-            .then(() => { console.log('Resolved 1') })
-            .catch(() => { console.log('Rejected 1') })
+    onClickjobbutton(value) {
+        /* const updateJob = {
+            title: value.title,
+            email: value.email,
+            name: value.name,
+            max_applicants: value.max_applicants,
+            max_positions: value.max_positions,
+            date_posting: value.date_posting,
+            deadline: value.deadline,
+            required_skills: value.required_skills,
+            job_type: value.job_type,
+            duration: value.duration,
+            salary: value.salary,
+            rating: value.rating,
+            status: value.status,
+            number_of_applicants: value.max_applicants
+        } */
+        axios.post('http://localhost:4000/job/update/rating',value)
+        .then(res =>{ 
+            console.log(res)
+        })
+        .catch(err => {
+            console.log(err)
+        });
+
     }
 
     render() {
         return (
             <div>
                 <div style={{ textAlign: "center", color: "Blue" }}>
-                    <h1>Enter your Statement of Purpose</h1><br />
+                    <h1>My Applications</h1><br />
                 </div>
                 <div id="warning" style={{ textAlign: "center", color: "red" }}>
                     <br />
                 </div>
-                <div>
-                    <Sharedtextarea
-                        handleChange={e => { this.setState({ sop: e.target.value }) }}
-                    />
-                </div>
-                <br></br>
-                <div>
-                    <Button size="lg" onClick={this.onClickfunction}>
-                        Submit
-                    </Button>
-                </div>
+                <Grid container spacing={2}>
+                    <Grid container>
+                        <Grid item xs={12} md={12} lg={12}>
+                            <Paper>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>id</TableCell>
+                                            <TableCell>Title</TableCell>
+                                            <TableCell>Date of Joining</TableCell>
+                                            <TableCell>Salary</TableCell>
+                                            <TableCell>Name of recruiter</TableCell>
+                                            {/* <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
+                                                {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
+                                                {this.renderIcon(this.state.sortName2)}</Button>Duration</TableCell>
+                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
+                                                {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell> */}
+                                            <TableCell>Rating</TableCell>
+                                            <TableCell>Change Rating</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {this.state.jobs.map((job, ind) => (
+                                            <TableRow key={ind}>
+                                                <TableCell>{ind}</TableCell>
+                                                <TableCell>{job.title}</TableCell>
+                                                <TableCell>{job.date_of_joining}</TableCell>
+                                                <TableCell>{job.salary}</TableCell>
+                                                <TableCell>{job.name}</TableCell>
+                                                <TableCell>{/* <input value={job.rating} ></input> */}
+                                                    <TextField value={this.state.job_rating[ind]} label={job.rating} type="Number"
+                                                        onChange={e => {
+                                                            var array = this.state.jobs.map((word, ind1) =>
+                                                            (ind1 === ind && e.target.value > 0 && e.target.value < 6 ? { ...word, rating: e.target.value } : word
+                                                            ))
+                                                            this.setState({ jobs: array });
+                                                        }}
+                                                    ></TextField>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <button id={job._id + job.applicant_email} style={{
+                                                        borderRadius: 5,
+                                                        backgroundColor: "#21b6ae",
+                                                    }}
+                                                        onClick={() => this.onClickjobbutton(job)}>
+                                                        change</button></TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </div>
         )
     }

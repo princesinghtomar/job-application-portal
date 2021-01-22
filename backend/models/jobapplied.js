@@ -22,6 +22,10 @@ const JobAppliedSchema = new Schema({
     status: {
         type: Number,
         required: false
+    },
+    date_of_joining: {
+        type: String,
+        required: false
     }
 });
 

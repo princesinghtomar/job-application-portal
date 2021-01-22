@@ -90,6 +90,7 @@ class JobsList extends Component {
                 console.log("heleeelo");
                 console.log(response.data)
                 console.log(this.state.email);
+                console.log(this.props);
                 this.setState({
                     users: response.data.filter(word => (word.email == this.state.email))
                         .filter(word => (word.motive == this.state.motive)),
