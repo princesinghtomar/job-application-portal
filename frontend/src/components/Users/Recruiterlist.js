@@ -70,13 +70,16 @@ class JobsList extends Component {
         document.getElementById("update").style.display = "none";
         document.getElementById("noupdate").style.display = "block";
         const value = this.state.fuzzyjobs;
-        axios.post('http://localhost:4000/job/update/maxanddeadline', value)
-            .then(res => {
-                console.log(res)
-            })
-            .catch(err => {
-                console.log(err)
-            });
+        console.log(this.state.fuzzyjobs);
+        for (var i = 0; i < this.state.fuzzyjobs.length; i++) {
+            axios.post('http://localhost:4000/job/update/maxanddeadline', this.state.fuzzyjobs[i])
+                .then(res => {
+                    console.log(res)
+                })
+                .catch(err => {
+                    console.log(err)
+                });
+        }
     }
 
     render() {
@@ -147,8 +150,11 @@ class JobsList extends Component {
                                                     <TableCell>
                                                         <TextField value={this.state.temp_deadline} /* label={job.deadline} */ type='date'
                                                             onChange={e => {
-                                                                var array = this.state.fuzzyjobs.map((word, ind1) =>
-                                                                    (ind === ind1 && e.target.value > job.deadline ? { ...word, deadline: e.target.value } : word));
+                                                                var array = this.state.fuzzyjobs;
+                                                                if (e.target.value > job.deadline) {
+                                                                    array = this.state.fuzzyjobs.map((word, ind1) =>
+                                                                        (ind === ind1 && e.target.value > job.deadline ? { ...word, deadline: e.target.value } : word));
+                                                                }
                                                                 this.setState({
                                                                     fuzzyjobs: array,
                                                                     temp_deadline: e.target.value
@@ -156,7 +162,7 @@ class JobsList extends Component {
                                                             }}>
                                                         </TextField>
                                                     </TableCell>
-                                                    <TableCell><button onClick={this.ondelete(job, ind)}
+                                                    <TableCell><button onClick={() => this.ondelete(job, ind)}
                                                         style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}>
                                                         del</button>
                                                     </TableCell>
@@ -169,7 +175,7 @@ class JobsList extends Component {
                         </div>
                         <div style={{ textAlign: 'center', color: "purple" }}><br /><br />
                             <button style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}
-                                onClick={this.onupdate}
+                                onClick={() => this.onupdate()}
                             >Confirm Updates</button>
                         </div>
                     </div>

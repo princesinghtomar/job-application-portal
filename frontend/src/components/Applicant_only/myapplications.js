@@ -80,6 +80,7 @@ class Sop extends Component {
             status: value.status,
             number_of_applicants: value.max_applicants
         } */
+        console.log(value)
         axios.post('http://localhost:4000/job/update/rating', value)
             .then(res => {
                 console.log(res)

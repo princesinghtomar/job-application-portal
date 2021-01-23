@@ -14,7 +14,7 @@ router.get("/", function (req, res) {
             console.log(err);
         } else {
             res.json(jobapplied);
-            console.log(jobapplied);
+            /* console.log(jobapplied); */
         }
     })
 });

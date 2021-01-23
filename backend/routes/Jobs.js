@@ -46,14 +46,15 @@ router.post("/newjob", (req, res) => {
 });
 
 router.post("/update/rating", (req, res) => {
-    console.log(req.body._id)
+    console.log(req.body._id);
+    console.log(req.params)
     const query = {
         "email": req.body.email,
         "title": req.body.title,
         "salary": req.body.salary,
         "required_skills": req.body.required_skills,
         "job_type": req.body.job_type,
-        "max_postions": req.bosy.max_positions
+        "max_positions": req.body.max_positions
     };
     const update = {
         $set: {
@@ -77,27 +78,22 @@ router.post("/update/rating", (req, res) => {
 
 router.post("/update/maxanddeadline", (req, res) => {
     console.log(req.body);
-    console.log(req.params.id);
     const query = {
         "email": req.body.email,
-        "title": req.body.title,
-        "salary": req.body.salary,
-        "required_skills": req.body.required_skills,
-        "job_type": req.body.job_type,
     };
     console.log("hello");
+    console.log(query);
     console.log(req.body.max_applicants < req.body.max_positions);
-    console.log((req.body.max_applicants < req.body.max_positions) ? max_applicants : req.body.max_applicants);
-    console.group(req.body.max_applicants);
-    console.log(max_applicants);
+    var temp = (req.body.max_applicants < req.body.max_positions) ? max_applicants : req.body.max_applicants;
     console.log("helloo");
     const update = {
         $set: {
-            max_applicants: req.body.max_applicants,
-            max_positions: req.body.max_applicants < req.body.max_positions ? parseInt(req.body.max_positions) : parseInt(req.body.max_applicants),
+            max_applicants: parseInt,
+            max_positions: parseInt(req.body.max_positions),
             deadline: req.body.deadline
         }
     };
+    console.log(update)
     const options = { "upsert": false };
     Job.collection.updateOne(query, update, options)
         .then(result => {
@@ -116,20 +112,18 @@ router.post("/update/maxanddeadline", (req, res) => {
 router.post("/delete", (req, res) => {
     console.log(req.body);
     const query = {
-        "email": req.body.email,
-        "title": req.body.title,
-        "salary": req.body.salary,
-        "required_skills": req.body.required_skills,
-        "job_type": req.body.job_type,
+        "_id": req.body._id,
     };
-    //{ _id: req.params.id }
-    Job.findOneAndDelete(query, (err, Job) => {
-        if (!err) {
-            res.json({ msg: "customer deleted", deleted: Job });
-        } else {
-            console.log("Error removing :" + err);
-        }
-    });
+    console.log(query);
+    Job.deleteOne(query)
+        .then((res, Job) => {
+            if (res) {
+                res.json({ msg: "customer deleted", deleted: Job });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
 });
 
 module.exports = router;

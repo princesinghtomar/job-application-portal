@@ -4,6 +4,7 @@ var router = express.Router();
 const User = require("../models/Users");
 const Login = require("../models/log");
 const Job = require("../models/job");
+const JobApplied = require("../models/jobapplied")
 
 // GET request 
 // Getting all the users
