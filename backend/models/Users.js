@@ -46,6 +46,10 @@ const UserSchema = new Schema({
 	openapplication: {
 		type: Number,
 		required: false
+	},
+	rating: {
+		type: Number,
+		required: false
 	}
 });
 

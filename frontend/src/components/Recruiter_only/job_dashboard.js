@@ -100,7 +100,7 @@ class JobsList extends Component {
     SRbuttontext(val) {
         //print Shortlist / Accept
         if (val.status == 0) {
-            return <text>Reject</text>
+            return <text>Rejected</text>
         }
         else {
             if (val.status == 1) {
@@ -118,12 +118,54 @@ class JobsList extends Component {
     }
 
     onClickRejectbutton(val) {
-        var value = this.state.jobs.filter(word => word._id == val.job_id);
-        console.log(value);
+        const temp2 = {
+            status: 0,
+            required_id: val._id
+        }
+        console.log(val._id);
+        axios.post('http://localhost:4000/jobapplied/updatestatus', temp2)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            });
     }
 
     onClickSRbutton(val) {
-
+        var value_status = val.status;
+        console.log(val);
+        if (val.status == 0) {
+            return
+        }
+        else {
+            if (val.status == 1) {
+                const temp = {
+                    status: 2,
+                    required_id: val._id
+                }
+                axios.post('http://localhost:4000/jobapplied/updatestatus', temp)
+                    .then(res => {
+                        console.log(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+            }
+            else {
+                const temp1 = {
+                    status: 2,
+                    required_id: val._id
+                }
+                axios.post('http://localhost:4000/jobapplied/updatestatus', temp1)
+                    .then(res => {
+                        console.log(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+            }
+        }
     }
 
     buttontext(value) {
@@ -221,13 +263,16 @@ class JobsList extends Component {
     render() {
         const value_render = this.state.fuzzyjobs.map((val, ind) => {
             console.log("hello");
-            var temp = Object.entries(this.state.users); 
+            var temp = this.state.users;
             var needed_index = -1;
             for (var i = 0; i < this.state.users.length; i++) {
-                if (val.applicant_id == temp[i][1]._id) {
+                if (val.applicant_id == temp[i]._id) {
                     needed_index = i;
                     break;
                 }
+            }
+            if (needed_index == -1) {
+                return <text>User had been deleted from the Database</text>
             }
             console.log(needed_index);
 
@@ -241,7 +286,7 @@ class JobsList extends Component {
                     </TableCell>
                     <TableCell>{val.date_of_joining}</TableCell>
                     <TableCell>{
-                        temp[needed_index].education}
+                        JSON.stringify(temp[needed_index].education)}
                     </TableCell>
                     <TableCell>{val.sop}</TableCell>
                     <TableCell>{
@@ -294,7 +339,7 @@ class JobsList extends Component {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        { value_render }
+                                        {value_render}
                                     </TableBody>
                                 </Table>
                             </Paper>
@@ -307,50 +352,3 @@ class JobsList extends Component {
 }
 
 export default JobsList;
-
-
-/* <TableRow key={ind}>
-                                                <TableCell>{
-                                                    function () {
-                                                    var val = (this.state.users_applicant
-                                                        .filter(word => (word._id == val.applicant_id)));
-                                                    console.log("prince");
-                                                    console.log(val);
-                                                    return <text>hello</text>
-                                                }}
-                                                </TableCell>
-                                                <TableCell>{
-                                                    (this.state.users_applicant
-                                                        .filter(word => (word._id == val.applicant_id))).languages}
-                                                </TableCell>
-                                                <TableCell>{val.date_of_joining}</TableCell>
-                                                <TableCell>{
-                                                    (this.state.users_applicant
-                                                        .filter(word => (word._id == val.applicant_id))).education}
-                                                </TableCell>
-                                                <TableCell>{val.sop}</TableCell>
-                                                <TableCell>{
-                                                    (this.state.users_applicant
-                                                        .filter(word => (word._id == val.applicant_id))).rating}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {this.buttontext(val)}</TableCell>
-                                                <TableCell>
-                                                    <button id={val.title + val.email} style={{
-                                                        borderRadius: 5,
-                                                        backgroundColor: "#21b6ae",
-                                                    }}
-                                                        onClick={() => this.onClickSRbutton(val)}>
-                                                        {this.SRbuttontext(val)}
-                                                    </button>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <button id={val.title + val.email} style={{
-                                                        borderRadius: 5,
-                                                        backgroundColor: "#21b6ae",
-                                                    }}
-                                                        onClick={() => this.onClickRejectbutton(val)}>
-                                                        <text>Reject</text>
-                                                    </button>
-                                                </TableCell>
-                                            </TableRow> */

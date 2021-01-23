@@ -39,4 +39,28 @@ router.post("/jobappliedsave", (req, res) => {
         });
 });
 
+router.post("/updatestatus", (req, res) => {
+    const query = {
+        "_id": req.body.required_id,
+    };
+    const update = {
+        $set: {
+            status: parseInt(req.body.status)
+        }
+    };
+    const options = { "upsert": false };
+    JobApplied.updateOne(query, update, options)
+        .then(result => {
+            const { matchedCount, modifiedCount } = result;
+            if (matchedCount && modifiedCount) {
+                console.log(`Successfully added a new review (job status wala).`)
+            }
+            res.status(200).json(result);
+        })
+        .catch(err => {
+            console.error(`Failed to add review (job status wala) : ${err}`);
+            res.status(400).send(err);
+        });
+})
+
 module.exports = router;

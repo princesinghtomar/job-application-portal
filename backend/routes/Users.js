@@ -88,7 +88,7 @@ router.post("/update", (req, res) => {
         }
     };
     const options = { "upsert": false };
-    User.collection.updateOne(query, update, options)
+    User.updateOne(query, update, options)
         .then(result => {
             const { matchedCount, modifiedCount } = result;
             if (matchedCount && modifiedCount) {
@@ -138,7 +138,7 @@ router.post("/login", (req, res) => {
                     .then(result1 => {
                         if (result1) {
                             try {
-                                Login.collection.updateOne(query, update, options)
+                                Login.updateOne(query, update, options)
                                     .then(result => {
                                         const { matchedCount, modifiedCount } = result;
                                         if (matchedCount && modifiedCount) {
