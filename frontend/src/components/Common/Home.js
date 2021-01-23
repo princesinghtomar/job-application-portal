@@ -30,14 +30,18 @@ export default class Home extends Component {
                 </div>
                 <h3>
                     <div>
-                        <p style={{ textAlign: 'center' }}>
-                            <pre>Press to Log in: <a href="/login"> Login </a> </pre>
-                        </p>
+                        <pre>
+                            <p style={{ textAlign: 'center' }}>
+                                Press to Log in: <a href="/login"> Login </a>
+                            </p>
+                        </pre>
                     </div>
                     <div>
-                        <p style={{ textAlign: 'center' }}>
-                            <pre>New User! Press to register: <a href="/Register"> Register </a> </pre>
-                        </p>
+                        <pre>
+                            <p style={{ textAlign: 'center' }}>
+                                New User! Press to register: <a href="/Register"> Register </a>
+                            </p>
+                        </pre>
                     </div>
                 </h3>
             </div>

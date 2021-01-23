@@ -55,7 +55,7 @@ const JobSchema = {
         type: Number,
         required: true
     },
-    Number_of_applicants:{
+    number_of_applicants:{
         type:Number,
         required : true
     }

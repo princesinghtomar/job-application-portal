@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -27,6 +27,7 @@ class Profile extends Component {
             tempeduname: '',
             tempedusdate: '',
             tempeduedate: '',
+            gotomyapplication: false
         };
 
         this.OnSignout = this.OnSignout.bind(this);
@@ -123,7 +124,7 @@ class Profile extends Component {
                 this.setState({
                     username: this.state.users[i].username,
                     contact_number: this.state.users[i].contact,
-                    tempusername : this.state.users[i].username,
+                    tempusername: this.state.users[i].username,
                     company_name: this.state.users[i].company,
                     bio: this.state.users[i].bio,
                     tempbio: this.state.users[i].bio,
@@ -226,6 +227,11 @@ class Profile extends Component {
             console.log(items);
             return <pre><p key={items.id}>id: {items.id}, name: {items.name}, Start date: {items.sdate}, End date: {items.edate} </p></pre>
         })
+        /* if (this.state.gotomyapplication) {
+            var id = this.state.id_param;
+            console.log(id);
+            return <Redirect to={`/myapplication/${id}`} />
+        } */
         return (
             <div>
                 <div style={{ display: "block" }}>
@@ -240,7 +246,7 @@ class Profile extends Component {
                         </p>
                     </div>
                     <div>
-                        Click to go to Dashboard : <a href={"/users/" + this.state.motive + "/" + this.state.id_param} >Click</a>
+                        <tbody><a href={"/users/" + this.state.motive + "/" + this.state.id_param} >Click to move to dashboard</a></tbody>
                     </div>
                     <br /><br />
                     <div>
@@ -271,8 +277,8 @@ class Profile extends Component {
                                     <p>
                                         <label><pre> Bio :{this.state.bio} </pre></label>
                                     </p>
-                                    <p>
-                                        <pre>
+                                    <pre>
+                                        <p>
                                             <input type="text" placeholder="Enter your Bio" value={this.state.tempbio}
                                                 onChange={e => { this.setState({ tempbio: e.target.value }) }} /> <Button size="sm"
                                                     onClick={e => { this.setState({ bio: this.state.tempbio }) }}>
@@ -285,12 +291,13 @@ class Profile extends Component {
                                             }}>
                                                 Clear your Bio
                                         </Button>
-                                        </pre>
-                                    </p>
+                                        </p>
+                                    </pre>
                                 </div>
                                 <div>
                                     <p>
-                                        Want to create new job opening : <a href={'/newjob/' + this.state.id_param}> Create New jobs</a>
+                                        <a href={'/newjob/' + this.state.id_param + '/'}>
+                                            Click to create New job</a>
                                     </p>
                                 </div>
                             </div>
@@ -336,6 +343,12 @@ class Profile extends Component {
                                             Delete
                                     </Button><br /><br />
                                     </pre>
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    <a href={'/myapplication/' + this.state.id_param+ '/'} onClick={e => { this.setState({ gotomyapplication: true }) }}>
+                                        Click to view your all Application</a>
                                 </p>
                             </div>
                         </div>

@@ -25,13 +25,13 @@ export default class newjobregister extends Component {
             salary: '',
             rating: '',
             status: 1,  //0 -> open , 1 -> over
-            buttonstate : true
+            buttonstate: true
         }
         this.handleClick = e => {
             e.preventDefault();
             var temp = this.state.required_skills + ' ';
             temp = temp + ' ' + this.state.required_temp;
-            this.state.required_skills = temp   
+            this.state.required_skills = temp
             console.log(this.state.required_skills);
             console.log(this.state.required_temp);
             console.log(temp)
@@ -106,7 +106,7 @@ export default class newjobregister extends Component {
 
     onChangeDuration(event) {
         var temp = event.target.value;
-        if(temp>=0 && temp <=7){
+        if (temp >= 0 && temp <= 7) {
             this.setState({ duration: temp })
             return;
         }
@@ -140,17 +140,37 @@ export default class newjobregister extends Component {
             rating: '4',
             status: true
         }
-
+        console.log("newJob")
         console.log(newJob)
 
         var temp = this.state.email.length > 0 &&
             this.state.name.length > 0 &&
-            this.state.title.length > 0;
+            this.state.title.length > 0 &&
+            this.state.max_applicants > 0 &&
+            this.state.max_positions.length > 0 &&
+            this.state.deadline.length > 0 &&
+            this.state.salary > 0 &&
+            this.state.required_skills.length > 0 &&
+            this.state.job_type.length > 0 &&
+            this.state.duration > 0;
+
+        if (!temp) {
+            document.getElementById('para_id').innerHTML = "" + 
+            " * All fields are necessary"
+        }
+        else{
+            document.getElementById('para_id').innerHTML = "<br/>"
+        }
 
         if (temp) {
             axios.post('http://localhost:4000/job/newjob', newJob)
-                .then(res => { alert("Created\t" + res.data.title); console.log(newJob); console.log(res) })
-                .catch(err => {console.log(err)})
+                .then(res => { 
+                    alert("Created\t" + res.data.title); 
+                    console.log("newJob");
+                    console.log(newJob); 
+                    console.log("res");
+                    console.log(res); })
+                .catch(err => { console.log(err) })
                 ;
         }
     }
@@ -162,6 +182,13 @@ export default class newjobregister extends Component {
                     <h1 style={{ textAlign: "center" }}>
                         Enter Job Details
                     </h1>
+                </div>
+                <div>
+                    <h5>
+                        <p id="para_id" style={{ textAlign: 'center', color: 'red' }}>
+                            <br />
+                        </p>
+                    </h5>
                 </div>
                 <div className="Signup">
                     <form onSubmit={this.onSubmit}>
@@ -177,7 +204,7 @@ export default class newjobregister extends Component {
                                 Your Email :
                             </Form.Label>
                             <Form.Control autoFocus type="email" value={this.state.email}
-                                /* onChange={this.onChangeEmail}  *//>
+                                /* onChange={this.onChangeEmail}  */ />
                         </Form.Group>
                         <Form.Group size="lg" controlId="name">
                             <Form.Label>
@@ -214,7 +241,7 @@ export default class newjobregister extends Component {
                             <div><p id="inputrskills"><br /></p></div>
                             <Form.Control autoFocus type="text" value={this.state.required_temp}
                                 onChange={this.onChangeRequired_skills} />
-                                <br />
+                            <br />
                             <Button block size="md" onClick={this.handleClick}>
                                 Add languages / technologies
                             </Button>

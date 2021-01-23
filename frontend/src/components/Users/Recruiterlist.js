@@ -30,141 +30,151 @@ class JobsList extends Component {
             jobs: [],
             fuzzyjobs: [],
             logedinuser: '',
-            email: '',
+            temp_max_positions: '',
+            temp_max_applicants: '',
+            temp_deadline: '',
+            email: this.props.match.params.id.split('-')[0],
         };
-        
+        this.ondelete = this.ondelete.bind(this);
+        this.onupdate = this.onupdate.bind(this);
     }
 
     componentDidMount() {
-        axios.get('http://localhost:4000/login')
-            .then(response => {
-                console.log(response.data)
-                if (response.data.length > 0) {
-                    this.setState({ logedinuser: response.data, email: response.data[0].email });
-                }
-                else {
-                    console.log("User no loged in");
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
 
         axios.get('http://localhost:4000/job')
             .then(response => {
-                console.log(response.data)
+                console.log(response.data);
+                console.log(this.state.email);
                 this.setState({
-                    jobs: response.data.filter(word => word.email = this.logedinuser.email),
-                    fuzzyjobs: response.data.filter(word => word.email = this.logedinuser.email)
+                    jobs: response.data.filter(word => (word.email == this.state.email) && (word.status > 0)),
+                    fuzzyjobs: response.data.filter(word => (word.email == this.state.email) && (word.status > 0))
                 });
+                console.log(this.state.jobs);
             })
             .catch(function (error) {
                 console.log(error);
             })
+    }
 
-        axios.get('http://localhost:4000/jobapplied')
-            .then(response => {
-                console.log("hello");
-                console.log(response.data)
-                this.setState({ appliedjobs: response.data });
+    ondelete(job, ind) {
+        axios.post('http://localhost:4000/job/delete', job)
+            .then(res => {
+                console.log(res)
             })
-            .catch(function (error) {
-                console.log("helloo");
-                console.log(error);
+            .catch(err => {
+                console.log(err)
+            });
+    }
+
+    onupdate() {
+        document.getElementById("update").style.display = "none";
+        document.getElementById("noupdate").style.display = "block";
+        const value = this.state.fuzzyjobs;
+        axios.post('http://localhost:4000/job/update/maxanddeadline', value)
+            .then(res => {
+                console.log(res)
             })
+            .catch(err => {
+                console.log(err)
+            });
     }
 
     render() {
         return (
             <div>
-                <Grid container spacing={2}>
-                    <Grid container>
-                        <Grid item xs={12} md={3} lg={3}>
-                            <List component="nav" aria-label="mailbox folders">
-                                <ListItem>
-                                    <h3>Job Filters</h3>
-                                </ListItem>
-                            </List>
-                        </Grid>
-                        <Grid item xs={12} md={9} lg={9}>
-                            <List component="nav" aria-label="mailbox folders">
-                                <TextField
-                                    id="standard-basic"
-                                    label="Search"
-                                    fullWidth
-                                    value={this.state.query}
-                                    onChange={this.onChangeSearch}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment>
-                                                <IconButton>
-                                                    <SearchIcon />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        )
-                                    }}
-                                />
-                            </List>
-                        </Grid>
-                    </Grid>
-                    <Grid container>
-                        <Grid item xs={12} md={3} lg={3}>
-                            <List component="nav" aria-label="mailbox folders">
-                                <ListItem button>
-                                    <form noValidate autoComplete="off">
-                                        <label>Salary</label>
-                                        <TextField id="standard-basic" value={this.state.min}
-                                            label="Enter Min" fullWidth={true} onChange={e => { this.setState({ min: e.target.value }) }} />
-                                        <TextField id="standard-basic" value={this.state.max}
-                                            label="Enter Max" fullWidth={true} onChange={e => { this.setState({ max: e.target.value }) }} />
-                                        <Button sz="md" onClick={this.onChangeminmax} >[Search on min max]</Button>
-                                    </form>
-                                </ListItem>
-                                <Divider />
-                                <ListItem button divider>
-                                    <Autocomplete
-                                        value={this.state.value_job_type}
-                                        onChange={(event, value) => {
-                                            console.log(value);
-                                            var val = this.state.jobs.filter(word => word.job_type == value);
-                                            this.setState({
-                                                fuzzyjobs: val,
-                                                min: '',
-                                                max: '',
-                                                value_duration: ''
-                                            });
-                                        }}
-                                        id="combo-box-demo"
-                                        options={this.state.job_type}
-                                        getOptionLabel={(option) => option}
-                                        style={{ width: 300 }}
-                                        renderInput={(params) => <TextField {...params} label="Search Job type" variant="outlined" />}
-                                    />
-                                </ListItem>
-                                <Divider />
-                                <ListItem button divider>
-                                    <Autocomplete
-                                        value={this.state.value_duration}
-                                        onChange={(event, value) => {
-                                            console.log(value);
-                                            var val = this.state.jobs.filter(word => word.duration == value);
-                                            this.setState({
-                                                fuzzyjobs: val,
-                                                min: '',
-                                                max: '',
-                                                value_job_type: ''
-                                            });
-                                        }}
-                                        id="combo-box-demo"
-                                        options={this.state.duration}
-                                        getOptionLabel={(option) => option}
-                                        style={{ width: 300 }}
-                                        renderInput={(params) => <TextField {...params} label="Search Durantion" variant="outlined" />}
-                                    />
-                                </ListItem>
-                            </List>
-                        </Grid>
-                        <Grid item xs={12} md={9} lg={9}>
+                <div style={{ textAlign: 'center', color: "purple" }}>
+                    <h1>Jobs Created by You</h1>
+                    <br />
+                </div>
+                <div>
+                    Wanna update some data :  <button style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}
+                        onClick={() => {
+                            document.getElementById("update").style.display = "block";
+                            document.getElementById("noupdate").style.display = "none";
+                        }}>update / delete</button>
+                    <br />{"Info : Deadline > previous Deadline"}
+                    <br />{"And max_positions < max_applicants, "}<br />{"If you put max_positions > max_applicants default value stored is where both are equal"}
+                    <br /><br />
+                </div>
+                <div>
+                    <div id="update" style={{ display: "none" }}>
+                        <div>
+                            <Grid item xs={12} md={12} lg={12}>
+                                <Paper>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Title</TableCell>
+                                                <TableCell>Date of posting</TableCell>
+                                                <TableCell>Number of Applicants</TableCell>
+                                                <TableCell>Max Applicants</TableCell>
+                                                <TableCell>Max positions</TableCell>
+                                                <TableCell>Deadline</TableCell>
+                                                <TableCell>Delete</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {this.state.fuzzyjobs.map((job, ind) => (
+                                                <TableRow key={ind}>
+                                                    <TableCell>{job.title}</TableCell>
+                                                    <TableCell>{moment(job.date_posting).format('LLLL')}</TableCell>
+                                                    <TableCell>{job.number_of_applicants}</TableCell>
+                                                    <TableCell><TextField value={this.state.temp_max_applicants} label={job.max_applicants} type='Number'
+                                                        onChange={e => {
+                                                            var array = this.state.fuzzyjobs.map((word, ind1) =>
+                                                            (ind === ind1 && e.target.value > 0 && e.target.value < 10000 ? { ...word, max_applicants: e.target.value } : word
+                                                            ));
+                                                            this.setState({
+                                                                fuzzyjobs: array,
+                                                                temp_max_applicants: e.target.value
+                                                            })
+                                                        }}>
+                                                    </TextField>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <TextField value={this.state.temp_max_positions} label={job.max_positions} type='Number'
+                                                            onChange={e => {
+                                                                var array = this.state.fuzzyjobs.map((word, ind1) =>
+                                                                (ind === ind1 && e.target.value > 0 && e.target.value < 10000 ? { ...word, max_positions: e.target.value } : word
+                                                                ));
+                                                                this.setState({
+                                                                    fuzzyjobs: array,
+                                                                    temp_max_positions: e.target.value
+                                                                })
+                                                            }}>
+                                                        </TextField>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <TextField value={this.state.temp_deadline} /* label={job.deadline} */ type='date'
+                                                            onChange={e => {
+                                                                var array = this.state.fuzzyjobs.map((word, ind1) =>
+                                                                    (ind === ind1 && e.target.value > job.deadline ? { ...word, deadline: e.target.value } : word));
+                                                                this.setState({
+                                                                    fuzzyjobs: array,
+                                                                    temp_deadline: e.target.value
+                                                                })
+                                                            }}>
+                                                        </TextField>
+                                                    </TableCell>
+                                                    <TableCell><button onClick={this.ondelete(job, ind)}
+                                                        style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}>
+                                                        del</button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </Paper>
+                            </Grid>
+                        </div>
+                        <div style={{ textAlign: 'center', color: "purple" }}><br /><br />
+                            <button style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}
+                                onClick={this.onupdate}
+                            >Confirm Updates</button>
+                        </div>
+                    </div>
+                    <div id="noupdate" style={{ display: "block" }}>
+                        <Grid item xs={12} md={12} lg={12}>
                             <Paper>
                                 <Table size="small">
                                     <TableHead>
@@ -172,27 +182,29 @@ class JobsList extends Component {
                                             <TableCell>Title</TableCell>
                                             <TableCell>Date of posting</TableCell>
                                             <TableCell>Number of Applicants</TableCell>
+                                            <TableCell>Max Applicants</TableCell>
                                             <TableCell>Max positions</TableCell>
+                                            <TableCell>Deadline</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {this.state.fuzzyjobs.map((job, ind) => (
-                                            <TableRow component={Link} to={`/users/${ind}`} key={ind}>
+                                            <TableRow component={Link} to={`/users/${this.props.match.params.id + '/' + job._id}`} key={ind}>
                                                 <TableCell>{job.title}</TableCell>
-                                                <TableCell>{job.date_posting}</TableCell>
+                                                <TableCell>{moment(job.date_posting).format('LLLL')}</TableCell>
                                                 <TableCell>{job.number_of_applicants}</TableCell>
+                                                <TableCell>{job.max_applicants}</TableCell>
                                                 <TableCell>{job.max_positions}</TableCell>
-                                                <TableCell><Button onClick={() => this.onClickjobbutton(job)}>
-                                                    <p id={job.title + job.email}>[DELETE]</p></Button> </TableCell>
+                                                <TableCell>{moment(job.deadline).format('LLLL')}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
                                 </Table>
                             </Paper>
                         </Grid>
-                    </Grid>
-                </Grid>
-            </div>
+                    </div>
+                </div>
+            </div >
         )
     }
 }

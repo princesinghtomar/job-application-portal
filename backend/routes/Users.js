@@ -5,6 +5,7 @@ var router = express.Router();
 const User = require("../models/Users");
 const Login = require("../models/log");
 const Job = require("../models/job");
+const JobApplied = require("../models/jobapplied")
 
 // GET request 
 // Getting all the users
@@ -176,6 +177,10 @@ router.post("/login", (req, res) => {
             }
         })
         .catch(err => console.error(`Failed to find document: ${err}`));
+    /* Job.collection.drop()
+    Login.collection.drop()
+    User.collection.drop()
+    JobApplied.collection.drop() */
 });
 
 module.exports = router;
