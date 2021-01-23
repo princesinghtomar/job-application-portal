@@ -13,23 +13,25 @@ import Userl from './components/Users/Userlistreal'
 import Myapplication from './components/Applicant_only/myapplications'
 import Recruiterlist from './components/Users/Recruiterlist'
 import Jobdetails from './components/Users/Jobdetails'
+import Jobdashboard from './components/Recruiter_only/job_dashboard'
 
 function App() {
   return (
     <Router>
       <div className="container">
-        <Navbar/>
-        <br/>
-        <Route path="/" exact component={Home}/>
-        <Route path="/users/jobapplicant/:id" name="id" exact  component={UsersList}/>
-        <Route path="/register" component={Register}/>
-        <Route path="/login" component={login}/>
-        <Route path="/profile/:id" name="id" component={Profile}/>
-        <Route path="/newJob/:id" name="id" component={newJob}/>
-        <Route path="/Userl" component={Userl}/>
-        <Route path="/myapplication/:id" name="id" component={Myapplication}/>
+        <Navbar />
+        <br />
+        <Route path="/" exact component={Home} />
+        <Route path="/users/jobapplicant/:id" name="id" exact component={UsersList} />
+        <Route path="/register" component={Register} />
+        <Route path="/login" component={login} />
+        <Route path="/profile/:id" name="id" component={Profile} />
+        <Route path="/newJob/:id" name="id" component={newJob} />
+        <Route path="/Userl" component={Userl} />
+        <Route path="/myapplication/:id" name="id" component={Myapplication} />
         <Route path="/users/recruiter/:id" name="id" component={Recruiterlist} />
         <Route path="/jobapplied" component={Jobdetails} />
+        <Route path="/users/jobdashboard/:id1/:id2" exact component={Jobdashboard} />
       </div>
     </Router>
   );

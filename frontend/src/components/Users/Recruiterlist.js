@@ -195,7 +195,7 @@ class JobsList extends Component {
                                     </TableHead>
                                     <TableBody>
                                         {this.state.fuzzyjobs.map((job, ind) => (
-                                            <TableRow component={Link} to={`/users/${this.props.match.params.id + '/' + job._id}`} key={ind}>
+                                            <TableRow component={Link} to={`/users/jobdashboard/${this.props.match.params.id + '/' + job._id}`} key={ind}>
                                                 <TableCell>{job.title}</TableCell>
                                                 <TableCell>{moment(job.date_posting).format('LLLL')}</TableCell>
                                                 <TableCell>{job.number_of_applicants}</TableCell>
