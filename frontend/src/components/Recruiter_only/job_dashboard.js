@@ -213,10 +213,10 @@ class JobsList extends Component {
                     .filter(word => (word._id == a.applicant_id))).name;
                 var bname = (this.state.users
                     .filter(word => (word._id == b.applicant_id))).name;
-                return flag ? aname - bname : bname - aname;
+                return flag ? ('' + aname).localeCompare(bname) : ( '' + bname).localeCompare(aname);
             } else {
                 if (id === 2) {
-                    return flag ? a.date_of_joining - b.date_of_joining : b.date_of_joining - a.date_of_joining;
+                    return flag ? (new Date(a.date_of_joining)).getTime() - (new Date(b.date_of_joining)).getTime() : (new Date(b.date_of_joining)).getTime() - (new Date(a.date_of_joining)).getTime;
                 } else {
                     var arat = (this.state.users
                         .filter(word => (word._id == a.applicant_id))).rating;

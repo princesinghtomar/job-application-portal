@@ -18,6 +18,7 @@ class Profile extends Component {
             contact_number: '',
             id_param: this.props.match.params.id,
             bio: '',
+            needed_id: '',
             tempusername: '',
             tempbio: '',
             languages: '',
@@ -127,6 +128,7 @@ class Profile extends Component {
                     tempusername: this.state.users[i].username,
                     company_name: this.state.users[i].company,
                     bio: this.state.users[i].bio,
+                    needed_id: this.state.users[i]._id,
                     tempbio: this.state.users[i].bio,
                     education: this.state.users[i].education,
                     languages: this.state.users[i].languages,
@@ -302,7 +304,7 @@ class Profile extends Component {
                                 </div>
                                 <div>
                                     <p>
-                                        <a href={'/acceptedapplicants/' + this.state.id_param + '/'}>
+                                        <a href={'/acceptedapplicants/' + this.state.id_param + '/' + this.state.needed_id + '/'}>
                                             Checkout list of all Applicants Accepted by You</a>
                                     </p>
                                 </div>

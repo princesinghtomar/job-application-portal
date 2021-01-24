@@ -32,26 +32,32 @@ class JobsList extends Component {
             users: '',
             fuzzyjobs: [],
             jobs: [],
-            email: this.props.match.params.id.split('-')[0],
+            email: this.props.match.params.id1.split('-')[0],
+            needed_id: this.props.match.params.id2,
             sortName1: true,
             sortName2: true,
             sortName3: true,
             sortName4: true,
-            user_rating: new Array(100)
+            user_rating: '',
+            showbutton: false,
+            userrating: []
         };
 
         this.renderIcon = this.renderIcon.bind(this);
         this.sortChange = this.sortChange.bind(this);
-    }
+        this.onupdate = this.onupdate.bind(this);
+    };
 
     componentDidMount() {
         axios.get('http://localhost:4000/job')
             .then(response => {
                 this.setState({
-                    jobs: response.data,
+                    jobs: response.data.filter(word => word.email == this.state.email),
                 });
+                console.log(this.state.jobs);
             })
             .catch(function (error) {
+                console.log("helloo1")
                 console.log(error);
             });
 
@@ -62,25 +68,49 @@ class JobsList extends Component {
                 });
             })
             .catch(function (error) {
-                console.log("helloo");
+                console.log("helloo2");
                 console.log(error);
             });
 
         axios.get('http://localhost:4000/jobapplied')
             .then(response => {
+                console.log(this.state.email);
+                console.log(response.data);
+                var arr = []
+                for (var i = 0; i < this.state.jobs.length; i++) {
+                    var arrtemp = response.data.filter(word => word.job_id == this.state.jobs[i]._id /* && word.status > 2 */);
+                    for (var j = 0; j < arrtemp.length; j++) {
+                        arr.push(arrtemp[j]);
+                    }
+                }
+                console.log("here");
+                /* console.log(arr); */
                 this.setState({
-                    appliedjobs: response.data.filter(word => (word.applicant_email == this.state.email) && (word.status > 2)),
-                    fuzzyjobs: response.data.filter(word => (word.applicant_email == this.state.email) && (word.status > 2))
+                    appliedjobs: arr,
+                    fuzzyjobs: arr
                 });
+                /* console.log(this.state.appliedjobs); */
             })
             .catch(function (error) {
-                console.log("helloo");
+                console.log("helloo3");
+                console.log(error);
+            });
+
+        axios.get('http://localhost:4000/userrating')
+            .then(response => {
+                this.setState({
+                    userrating: response.data
+                });
+                /* console.log(response.data); */
+            })
+            .catch(function (error) {
+                console.log("helloo4");
                 console.log(error);
             });
     }
 
     sortChange(flag, id) {
-        /**
+        /*
          *      Note that this is sorting only at front-end.
          *      id => 1 == Name
          *      id => 2 == Date of Joining
@@ -88,28 +118,31 @@ class JobsList extends Component {
          *      id => 4 == Rating
          */
         var array = this.state.fuzzyjobs;
+        var arrayusers = this.state.users;
+        var arrayjobs = this.state.jobs;
+        console.log(arrayjobs);
+        console.log(arrayusers);
+        /* console.log("array"); */
+        console.log(array);
         array.sort(function (a, b) {
             if (id === 1) {
-                var aname = (this.state.users
-                    .filter(word => (word._id == a.applicant_id))).name;
-                var bname = (this.state.users
-                    .filter(word => (word._id == b.applicant_id))).name;
-                return flag ? aname - bname : bname - aname;
+                var aname = (arrayusers.find(word => (word._id == a.applicant_id))).username;
+                var bname = (arrayusers.find(word => (word._id == b.applicant_id))).username;
+                console.log(aname + " : " + bname);
+                return flag ? ('' + aname).localeCompare(bname) : ('' + bname).localeCompare(aname);
             } else {
                 if (id === 2) {
-                    return flag ? a.date_of_joining - b.date_of_joining : b.date_of_joining - a.date_of_joining;
+                    return flag ? (new Date(a.date_of_joining)).getTime() - (new Date(b.date_of_joining)).getTime() : (new Date(b.date_of_joining)).getTime() - (new Date(a.date_of_joining)).getTime();
                 } else {
                     if (id === 3) {
-                        var ajob = (this.state.jobs
-                            .filter(word => (word._id == a.job_id))).title
-                        var bjob = (this.state.jobs
-                            .filter(word => (word._id == b.job_id))).title
-                        return flag ? ajob - bjob : bjob - ajob;
+                        var ajob = (arrayjobs.find(word => (word._id == a.job_id))).title
+                        var bjob = (arrayjobs.find(word => (word._id == b.job_id))).title
+                        console.log(ajob - bjob);
+                        return flag ? ('' + ajob).localeCompare(bjob) : ('' + bjob).localeCompare(ajob);
                     } else {
-                        var arat = (this.state.users
-                            .filter(word => (word._id == a.applicant_id))).rating;
-                        var brat = (this.state.users
-                            .filter(word => (word._id == b.applicant_id))).rating;
+                        var arat = (arrayusers.find(word => (word._id == a.applicant_id))).rating;
+                        var brat = (arrayusers.find(word => (word._id == b.applicant_id))).rating;
+                        console.log(arat + " : " + brat);
                         return flag ? arat - brat : brat - arat;
                     }
 
@@ -134,15 +167,19 @@ class JobsList extends Component {
                         sortName3: !this.state.sortName3,
                     });
                 } else {
-                    if (id === 5) {
+                    if (id === 4) {
                         this.setState({
                             fuzzyjobs: array,
-                            sortName3: !this.state.sortName4,
+                            sortName4: !this.state.sortName4,
                         });
                     }
                 }
             }
         }
+    }
+
+    onupdate() {
+        console.log("on Update Activated")
     }
 
     renderIcon(flag) {
@@ -163,11 +200,17 @@ class JobsList extends Component {
             var temp1 = (this.state.users
                 .find(word => (word._id == val.applicant_id)));
             var temp2 = (this.state.jobs
-                .find(word => (word._id == val.job_id)))
+                .find(word => (word._id == val.job_id)));
+            /* var temp3 = (this.state.userrating
+                .find(word => word.)) */
+            /* console.log("Users :");
+            console.log(temp1);
+            console.log("jobs :");
+            console.log(temp2); */
             return (
                 <TableRow key={ind}>
                     <TableCell>
-                        {temp1.name}
+                        {temp1.username}
                     </TableCell>
                     <TableCell>
                         {val.date_of_joining}
@@ -179,16 +222,21 @@ class JobsList extends Component {
                         {temp2.title}
                     </TableCell>
                     <TableCell>
-                        {/* {temp1.rating} */}
                         {
-                            <TextField value={this.state.user_rating[ind]} label={temp1.rating} type="Number"
+                            <TextField value={this.state.user_rating} label={temp1.rating} type="Number"
                                 onChange={e => {
                                     var array = this.state.users.map((word, ind1) =>
                                     (ind1 === ind && e.target.value > 0 && e.target.value < 6 ? { ...word, rating: e.target.value } : word
                                     ))
-                                    this.setState({ jobs: array });
-                                }}
-                            ></TextField>
+                                    this.setState({
+                                        users: array,
+                                        showbutton: true
+                                    });
+                                    if (this.state.showbutton) {
+                                        document.getElementById("show_button").style.display = "block"
+                                    }
+                                }}>
+                            </TextField>
                         }
                     </TableCell>
                 </TableRow>
@@ -208,7 +256,7 @@ class JobsList extends Component {
                                     <Table size="small">
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
+                                                <TableCell><Button onClick={() => { this.sortChange(this.state.sortName1, 1) }}>
                                                     {this.renderIcon(this.state.sortName1)}</Button>Name</TableCell>
                                                 <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
                                                     {this.renderIcon(this.state.sortName2)}</Button>Date of Joining</TableCell>
@@ -227,6 +275,11 @@ class JobsList extends Component {
                             </Grid>
                         </Grid>
                     </Grid>
+                </div>
+                <div id="show_button" style={{ textAlign: 'center', color: "purple", display: "none" }}><br /><br />
+                    <button style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}
+                        onClick={() => this.onupdate()}
+                    >Confirm Updates</button>
                 </div>
             </div>
         )

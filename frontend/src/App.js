@@ -33,7 +33,7 @@ function App() {
         <Route path="/users/recruiter/:id" name="id" component={Recruiterlist} />
         <Route path="/jobapplied" component={Jobdetails} />
         <Route path="/users/jobdashboard/:id1/:id2" exact component={Jobdashboard} />
-        <Route path="/acceptedapplicants/:id" exact component={AcceptedApplicants} />
+        <Route path="/acceptedapplicants/:id1/:id2" exact component={AcceptedApplicants} />
       </div>
     </Router>
   );
