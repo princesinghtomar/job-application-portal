@@ -12,6 +12,7 @@ var UserRouter = require("./routes/Users");
 var JobRouter = require("./routes/Jobs");
 var LoginRouter = require("./routes/login");
 var JobAppliedRouter = require("./routes/jobapplied");
+var UserRating = require("./routes/userrating");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -30,6 +31,7 @@ app.use("/user", UserRouter);
 app.use("/job", JobRouter);
 app.use("/login", LoginRouter);
 app.use("/jobapplied", JobAppliedRouter);
+app.use("/userrating", UserRating);
 
 app.listen(PORT, function () {
     console.log("Server is running on Port: " + PORT);

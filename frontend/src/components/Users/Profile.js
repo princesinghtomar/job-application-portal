@@ -300,6 +300,12 @@ class Profile extends Component {
                                             Click to create New job</a>
                                     </p>
                                 </div>
+                                <div>
+                                    <p>
+                                        <a href={'/acceptedapplicants/' + this.state.id_param + '/'}>
+                                            Checkout list of all Applicants Accepted by You</a>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         <div id="applicant_section" style={{ display: "block" }}>

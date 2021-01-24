@@ -50,6 +50,10 @@ const UserSchema = new Schema({
 	rating: {
 		type: Number,
 		required: false
+	},
+	total_raters: {
+		type: Number,
+		required: false
 	}
 });
 

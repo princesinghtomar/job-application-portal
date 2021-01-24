@@ -137,7 +137,7 @@ export default class newjobregister extends Component {
             job_type: this.state.job_type,
             duration: this.state.duration,
             salary: this.state.salary,
-            rating: '4',
+            rating: 4,
             status: 1
         }
         console.log("newJob")

@@ -26,6 +26,10 @@ const JobAppliedSchema = new Schema({
     date_of_joining: {
         type: String,
         required: false
+    },
+    date_of_application: {
+        type: String,
+        required: false
     }
 });
 

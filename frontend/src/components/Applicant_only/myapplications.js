@@ -112,12 +112,6 @@ class Sop extends Component {
                                             <TableCell>Date of Joining</TableCell>
                                             <TableCell>Salary</TableCell>
                                             <TableCell>Name of recruiter</TableCell>
-                                            {/* <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
-                                                {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
-                                                {this.renderIcon(this.state.sortName2)}</Button>Duration</TableCell>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
-                                                {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell> */}
                                             <TableCell>Rating</TableCell>
                                             <TableCell>Change Rating</TableCell>
                                         </TableRow>

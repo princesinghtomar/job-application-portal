@@ -125,6 +125,7 @@ class JobsList extends Component {
         console.log(val._id);
         axios.post('http://localhost:4000/jobapplied/updatestatus', temp2)
             .then(res => {
+                window.location.reload();
                 console.log(res)
             })
             .catch(err => {
@@ -146,6 +147,7 @@ class JobsList extends Component {
                 }
                 axios.post('http://localhost:4000/jobapplied/updatestatus', temp)
                     .then(res => {
+                        window.location.reload();
                         console.log(res)
                     })
                     .catch(err => {
@@ -154,11 +156,12 @@ class JobsList extends Component {
             }
             else {
                 const temp1 = {
-                    status: 2,
+                    status: 3,
                     required_id: val._id
                 }
                 axios.post('http://localhost:4000/jobapplied/updatestatus', temp1)
                     .then(res => {
+                        window.location.reload();
                         console.log(res)
                     })
                     .catch(err => {
@@ -206,18 +209,18 @@ class JobsList extends Component {
         /* array = this.state.jobs; */
         array.sort(function (a, b) {
             if (id === 1) {
-                var aname = (this.state.users_applicant
+                var aname = (this.state.users
                     .filter(word => (word._id == a.applicant_id))).name;
-                var bname = (this.state.users_applicant
+                var bname = (this.state.users
                     .filter(word => (word._id == b.applicant_id))).name;
                 return flag ? aname - bname : bname - aname;
             } else {
                 if (id === 2) {
                     return flag ? a.date_of_joining - b.date_of_joining : b.date_of_joining - a.date_of_joining;
                 } else {
-                    var arat = (this.state.users_applicant
+                    var arat = (this.state.users
                         .filter(word => (word._id == a.applicant_id))).rating;
-                    var brat = (this.state.users_applicant
+                    var brat = (this.state.users
                         .filter(word => (word._id == b.applicant_id))).rating
                     //id == 3
                     return flag ? arat - brat : brat - arat;

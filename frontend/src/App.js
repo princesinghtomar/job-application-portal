@@ -14,6 +14,7 @@ import Myapplication from './components/Applicant_only/myapplications'
 import Recruiterlist from './components/Users/Recruiterlist'
 import Jobdetails from './components/Users/Jobdetails'
 import Jobdashboard from './components/Recruiter_only/job_dashboard'
+import AcceptedApplicants from './components/Recruiter_only/acptedaplcnts'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/users/recruiter/:id" name="id" component={Recruiterlist} />
         <Route path="/jobapplied" component={Jobdetails} />
         <Route path="/users/jobdashboard/:id1/:id2" exact component={Jobdashboard} />
+        <Route path="/acceptedapplicants/:id" exact component={AcceptedApplicants} />
       </div>
     </Router>
   );
