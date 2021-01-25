@@ -87,7 +87,7 @@ class JobsList extends Component {
                 console.log(response.data)
                 console.log(this.state.email);
                 this.setState({
-                    appliedjobs: response.data.filter(word => (word.applicant_email == this.state.email)),
+                    appliedjobs: response.data.filter(word => (word.applicant_email == this.state.email) && (word.status > 0)),
                     appliedjobs_all: response.data
                 });
             })
@@ -188,6 +188,13 @@ class JobsList extends Component {
                     alert("Total words should be less then 250 words")
                     return;
                 }
+                var current = temp.length + 1
+                console.log("ye h console :");
+                console.log(temp);
+                console.log(current);
+                var temperory = value;
+                temperory.number_of_applicants = current;
+                console.log(temperory);
                 const newjobapplication = {
                     job_id: value._id,
                     applicant_id: user[0]._id,
@@ -199,6 +206,13 @@ class JobsList extends Component {
                 axios.post('http://localhost:4000/jobapplied/jobappliedsave', newjobapplication)
                     .then(res => {
                         console.log("created");
+                        axios.post('http://localhost:4000/job/update/number_of_applicants', temperory)
+                            .then(res => {
+                                console.log("updated number of applicants");
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
                     })
                     .catch(err => { console.log(err); });
                 window.location.reload()
@@ -354,190 +368,197 @@ class JobsList extends Component {
         }
         return (
             <div>
-                <Grid container spacing={2}>
-                    <Grid container>
-                        <Grid item xs={12} md={3} lg={3}>
-                            <List component="nav" aria-label="mailbox folders">
-                                <ListItem>
-                                    <h3>Job Filters</h3>
-                                </ListItem>
-                            </List>
-                        </Grid>
-                        <Grid item xs={12} md={9} lg={9}>
-                            <List component="nav" aria-label="mailbox folders">
-                                <TextField
-                                    id="standard-basic"
-                                    label="Search"
-                                    fullWidth
-                                    value={this.state.query}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment>
-                                                <IconButton>
-                                                    <SearchIcon />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        )
-                                    }}
-                                />
-                            </List>
-                        </Grid>
-                    </Grid>
-                    <Grid container>
-                        <Grid item xs={12} md={3} lg={3}>
-                            <List component="nav" aria-label="mailbox folders">
-                                <ListItem button>
-                                    <form noValidate autoComplete="off">
-                                        <label>Salary</label>
-                                        <TextField id="standard-basic" value={this.state.min}
-                                            label="Enter Min" fullWidth={true} onChange={e => {
-                                                this.setState({ min: e.target.value })
-                                            }} />
-                                        <TextField id="standard-basic" value={this.state.max}
-                                            label="Enter Max" fullWidth={true} onChange={e => {
-                                                this.setState({ max: e.target.value })
-                                            }} />
-                                        <Button sz="md" onClick={this.onChangeminmax} >
-                                            [Search on min max]</Button>
-                                    </form>
-                                </ListItem>
-                                <Divider />
-                                <ListItem button divider>
-                                    <Autocomplete
-                                        value={this.state.value_job_type}
-                                        onChange={(event, value) => {
-                                            console.log(value);
-                                            var val;
-                                            if (value !== null) {
-                                                val = this.state.jobs.filter(word => word.job_type == value);
-                                            } else {
-                                                val = this.state.jobs;
-                                            }
-                                            this.setState({
-                                                fuzzyjobs: val,
-                                                min: '',
-                                                max: '',
-                                                value_duration: ''
-                                            });
+                <div>
+                    <h6 style={{ textAlign: "right" }}>
+                        <a href={"/profile/" + sessionStorage.getItem('email') + '-' + sessionStorage.getItem('motive')}>Go to main Profile Page</a>
+                    </h6>
+                </div>
+                <div>
+                    <Grid container spacing={2}>
+                        <Grid container>
+                            <Grid item xs={12} md={3} lg={3}>
+                                <List component="nav" aria-label="mailbox folders">
+                                    <ListItem>
+                                        <h3>Job Filters</h3>
+                                    </ListItem>
+                                </List>
+                            </Grid>
+                            <Grid item xs={12} md={9} lg={9}>
+                                <List component="nav" aria-label="mailbox folders">
+                                    <TextField
+                                        id="standard-basic"
+                                        label="Search"
+                                        fullWidth
+                                        value={this.state.query}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment>
+                                                    <IconButton>
+                                                        <SearchIcon />
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
                                         }}
-                                        id="combo-box-demo"
-                                        options={this.state.job_type}
-                                        getOptionLabel={(option) => option}
-                                        style={{ width: 300 }}
-                                        renderInput={(params) => <TextField {...params} label="Search Job type" variant="outlined" />}
                                     />
-                                </ListItem>
-                                <Divider />
-                                <ListItem button divider>
-                                    <InputLabel htmlFor="outlined-age-native-simple">Duration</InputLabel>
-                                    <Select
-                                        native
-                                        value={this.state.value_duration}
-                                        onChange={(event) => {
-                                            var val;
-                                            if (event.target.value !== null) {
-                                                val = this.state.jobs.filter(word => word.duration < event.target.value);
-                                            } else {
-                                                val = this.state.jobs;
-                                            }
-                                            this.setState({
-                                                fuzzyjobs: val,
-                                                min: '',
-                                                max: '',
-                                                value_job_type: ''
-                                            });
-                                        }}
-                                        label="Duration"
-                                        inputProps={{
-                                            name: 'duration',
-                                            id: 'outlined-age-native-simple',
-                                        }}
-                                    >
-                                        <option aria-label="None" value="" />
-                                        <option value={0}>0</option>
-                                        <option value={1}>1</option>
-                                        <option value={2}>2</option>
-                                        <option value={3}>3</option>
-                                        <option value={4}>4</option>
-                                        <option value={5}>5</option>
-                                        <option value={6}>6</option>
-                                        <option value={7}>7</option>
+                                </List>
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={12} md={3} lg={3}>
+                                <List component="nav" aria-label="mailbox folders">
+                                    <ListItem button>
+                                        <form noValidate autoComplete="off">
+                                            <label>Salary</label>
+                                            <TextField id="standard-basic" value={this.state.min}
+                                                label="Enter Min" fullWidth={true} onChange={e => {
+                                                    this.setState({ min: e.target.value })
+                                                }} />
+                                            <TextField id="standard-basic" value={this.state.max}
+                                                label="Enter Max" fullWidth={true} onChange={e => {
+                                                    this.setState({ max: e.target.value })
+                                                }} />
+                                            <Button sz="md" onClick={this.onChangeminmax} >
+                                                [Search on min max]</Button>
+                                        </form>
+                                    </ListItem>
+                                    <Divider />
+                                    <ListItem button divider>
+                                        <Autocomplete
+                                            value={this.state.value_job_type}
+                                            onChange={(event, value) => {
+                                                console.log(value);
+                                                var val;
+                                                if (value !== null) {
+                                                    val = this.state.jobs.filter(word => word.job_type == value);
+                                                } else {
+                                                    val = this.state.jobs;
+                                                }
+                                                this.setState({
+                                                    fuzzyjobs: val,
+                                                    min: '',
+                                                    max: '',
+                                                    value_duration: ''
+                                                });
+                                            }}
+                                            id="combo-box-demo"
+                                            options={this.state.job_type}
+                                            getOptionLabel={(option) => option}
+                                            style={{ width: 300 }}
+                                            renderInput={(params) => <TextField {...params} label="Search Job type" variant="outlined" />}
+                                        />
+                                    </ListItem>
+                                    <Divider />
+                                    <ListItem button divider>
+                                        <InputLabel htmlFor="outlined-age-native-simple">Duration</InputLabel>
+                                        <Select
+                                            native
+                                            value={this.state.value_duration}
+                                            onChange={(event) => {
+                                                var val;
+                                                if (event.target.value !== null) {
+                                                    val = this.state.jobs.filter(word => word.duration < event.target.value);
+                                                } else {
+                                                    val = this.state.jobs;
+                                                }
+                                                this.setState({
+                                                    fuzzyjobs: val,
+                                                    min: '',
+                                                    max: '',
+                                                    value_job_type: ''
+                                                });
+                                            }}
+                                            label="Duration"
+                                            inputProps={{
+                                                name: 'duration',
+                                                id: 'outlined-age-native-simple',
+                                            }}
+                                        >
+                                            <option aria-label="None" value="" />
+                                            <option value={0}>0</option>
+                                            <option value={1}>1</option>
+                                            <option value={2}>2</option>
+                                            <option value={3}>3</option>
+                                            <option value={4}>4</option>
+                                            <option value={5}>5</option>
+                                            <option value={6}>6</option>
+                                            <option value={7}>7</option>
 
-                                    </Select>
-                                </ListItem>
-                                <Divider />
-                                <ListItem button divider>
-                                    <Autocomplete
-                                        value={this.state.value_title}
-                                        onChange={(event, value) => {
-                                            console.log(value);
-                                            var val;
-                                            if (value !== null) {
-                                                val = this.state.jobs.filter(word => word.title == value.title);
-                                            } else {
-                                                val = this.state.jobs
-                                            }
-                                            //console.log(val);
-                                            this.setState({
-                                                fuzzyjobs: val,
-                                                min: '',
-                                                max: '',
-                                                value_job_type: ''
-                                            });
-                                            //console.log(this.state.fuzzyjobs);
-                                        }}
-                                        id="combo-box-demo"
-                                        options={this.state.jobs}
-                                        getOptionLabel={(option) => option.title}
-                                        style={{ width: 300 }}
-                                        renderInput={(params) => <TextField {...params} label="Search Title" variant="outlined" />}
-                                    />
-                                </ListItem>
-                            </List>
-                        </Grid>
-                        <Grid item xs={12} md={9} lg={9}>
-                            <Paper>
-                                <Table size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Title</TableCell>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Email</TableCell>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
-                                                {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
-                                                {this.renderIcon(this.state.sortName2)}</Button>Duration</TableCell>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
-                                                {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell>
-                                            <TableCell>Deadline</TableCell>
-                                            <TableCell>Status</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {this.state.fuzzyjobs.map((job, ind) => (
-                                            <TableRow key={ind}>
-                                                <TableCell>{job.title}</TableCell>
-                                                <TableCell>{job.name}</TableCell>
-                                                <TableCell>{job.email}</TableCell>
-                                                <TableCell>{job.salary}</TableCell>
-                                                <TableCell>{job.duration}</TableCell>
-                                                <TableCell>{job.rating}</TableCell>
-                                                <TableCell>{moment(job.deadline).format('LLLL')}</TableCell>
-                                                <TableCell>
-                                                    <button id={job.title + job.email} style={{
-                                                        borderRadius: 5,
-                                                        backgroundColor: "#21b6ae",
-                                                    }}
-                                                        onClick={(e) => this.onClickjobbutton(e, job)}>
-                                                        {this.buttontext(job)}</button></TableCell>
+                                        </Select>
+                                    </ListItem>
+                                    <Divider />
+                                    <ListItem button divider>
+                                        <Autocomplete
+                                            value={this.state.value_title}
+                                            onChange={(event, value) => {
+                                                console.log(value);
+                                                var val;
+                                                if (value !== null) {
+                                                    val = this.state.jobs.filter(word => word.title == value.title);
+                                                } else {
+                                                    val = this.state.jobs
+                                                }
+                                                //console.log(val);
+                                                this.setState({
+                                                    fuzzyjobs: val,
+                                                    min: '',
+                                                    max: '',
+                                                    value_job_type: ''
+                                                });
+                                                //console.log(this.state.fuzzyjobs);
+                                            }}
+                                            id="combo-box-demo"
+                                            options={this.state.jobs}
+                                            getOptionLabel={(option) => option.title}
+                                            style={{ width: 300 }}
+                                            renderInput={(params) => <TextField {...params} label="Search Title" variant="outlined" />}
+                                        />
+                                    </ListItem>
+                                </List>
+                            </Grid>
+                            <Grid item xs={12} md={9} lg={9}>
+                                <Paper>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Title</TableCell>
+                                                <TableCell>Name</TableCell>
+                                                <TableCell>Email</TableCell>
+                                                <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
+                                                    {this.renderIcon(this.state.sortName1)}</Button>Salary</TableCell>
+                                                <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
+                                                    {this.renderIcon(this.state.sortName2)}</Button>Duration</TableCell>
+                                                <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
+                                                    {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell>
+                                                <TableCell>Deadline</TableCell>
+                                                <TableCell>Status</TableCell>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </Paper>
+                                        </TableHead>
+                                        <TableBody>
+                                            {this.state.fuzzyjobs.map((job, ind) => (
+                                                <TableRow key={ind}>
+                                                    <TableCell>{job.title}</TableCell>
+                                                    <TableCell>{job.name}</TableCell>
+                                                    <TableCell>{job.email}</TableCell>
+                                                    <TableCell>{job.salary}</TableCell>
+                                                    <TableCell>{job.duration}</TableCell>
+                                                    <TableCell>{job.rating}</TableCell>
+                                                    <TableCell>{moment(job.deadline).format('LLLL')}</TableCell>
+                                                    <TableCell>
+                                                        <button id={job.title + job.email} style={{
+                                                            borderRadius: 5,
+                                                            backgroundColor: "#21b6ae",
+                                                        }}
+                                                            onClick={(e) => this.onClickjobbutton(e, job)}>
+                                                            {this.buttontext(job)}</button></TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </Paper>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
+                </div>
             </div>
         )
     }

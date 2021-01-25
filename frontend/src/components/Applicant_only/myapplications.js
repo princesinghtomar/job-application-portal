@@ -138,7 +138,11 @@ class Sop extends Component {
         return (
             <div>
                 <div style={{ textAlign: "center", color: "Blue" }}>
-                    <h1>My Applications</h1><br />
+                    <h1>My Applications</h1>
+                    <h6 style={{ textAlign: "right" }}>
+                        <a href={"/profile/" + sessionStorage.getItem('email') + '-' + sessionStorage.getItem('motive')}>Go to main Profile Page</a>
+                    </h6>
+                    <br />
                 </div>
                 <div id="warning" style={{ textAlign: "center", color: "red" }}>
                     <br />

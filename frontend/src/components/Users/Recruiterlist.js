@@ -17,7 +17,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment"; */
 import moment from 'moment';
-import { Link } from 'react-router-dom'/* 
+import { Link, Redirect } from 'react-router-dom'/* 
 import SearchIcon from "@material-ui/icons/Search";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'; */
@@ -40,6 +40,12 @@ class JobsList extends Component {
     }
 
     componentDidMount() {
+
+        if (sessionStorage.getItem('email') == null) {
+            this.setState({
+                gotologin: true
+            })
+        }
 
         axios.get('http://localhost:4000/job')
             .then(response => {
@@ -85,10 +91,18 @@ class JobsList extends Component {
     }
 
     render() {
+        if (this.state.gotologin) {
+            var id = this.state.id_param;
+            console.log(id);
+            return <Redirect to={`/login`} />
+        }
         return (
             <div>
                 <div style={{ textAlign: 'center', color: "purple" }}>
                     <h1>Jobs Created by You</h1>
+                    <h6 style={{ textAlign: "right" }}>
+                        <a href={"/profile/" + sessionStorage.getItem('email') + '-' + sessionStorage.getItem('motive')}>Go to main Profile Page</a>
+                    </h6>
                     <br />
                 </div>
                 <div>
@@ -97,7 +111,7 @@ class JobsList extends Component {
                             document.getElementById("update").style.display = "block";
                             document.getElementById("noupdate").style.display = "none";
                         }}>update / delete</button>
-                    <br />{"Info : Deadline > previous Deadline"}
+                    <br />{"Some imp points: Deadline > previous Deadline"}
                     <br />{"And max_positions < max_applicants, "}<br />{"If you put max_positions > max_applicants default value stored is where both are equal"}
                     <br /><br />
                 </div>

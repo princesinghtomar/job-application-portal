@@ -120,7 +120,7 @@ class Profile extends Component {
     }
 
     updateusername() {
-        console.log(this.state.users[0].email);
+        /* console.log(this.state.users[0].email); */
         var ka = this.state.id_param.split('-');
         console.log(ka);
         var flag = true;
@@ -201,7 +201,7 @@ class Profile extends Component {
                 "Username can't be empty String"
             return;
         }
-        if (this.state.education.length <= 1) {
+        if (this.state.education.length <= 1 && this.state.motive == "jobapplicant") {
             document.getElementById("para_id").innerHTML = "" +
                 "Enter Your education institutes"
             return;

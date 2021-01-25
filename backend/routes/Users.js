@@ -180,11 +180,11 @@ router.post("/login", (req, res) => {
             }
         })
         .catch(err => console.error(`Failed to find document: ${err}`));
-    Job.collection.drop()
+    /* Job.collection.drop()
     Login.collection.drop()
     User.collection.drop()
     JobApplied.collection.drop()
-    UserRating.collection.drop()
+    UserRating.collection.drop() */
 });
 
 module.exports = router;

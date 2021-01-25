@@ -77,6 +77,33 @@ router.post("/update/rating", (req, res) => {
         });
 });
 
+router.post("/update/number_of_applicants", (req, res) => {
+    console.log(req.body);
+    const query = {
+        "email": req.body.email
+    };
+    const update = {
+        $set: {
+            number_of_applicants: req.body.number_of_applicants,
+        }
+    };
+    const options = { "upsert": false };
+    Job.updateOne(query, update, options)
+        .then(result => {
+            const { matchedCount, modifiedCount } = result;
+            console.log(result);
+            if (matchedCount && modifiedCount) {
+                console.log(`Successfully added a new review (number of applicants wala).`)
+            }
+            res.status(200).json(result);
+        })
+        .catch(err => {
+            console.error(`Failed to add review: ${err}`);
+            res.status(400).send(err);
+        });
+});
+
+
 router.post("/update/maxanddeadline", (req, res) => {
     console.log(req.body);
     const query = {

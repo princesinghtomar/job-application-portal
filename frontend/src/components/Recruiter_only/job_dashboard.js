@@ -31,6 +31,7 @@ class JobsList extends Component {
         this.state = {
             users_applicant: [],
             users_recruiter: [],
+            allappliedjobs: [],
             users: '',
             fuzzyjobs: [],
             jobs: [],
@@ -89,7 +90,8 @@ class JobsList extends Component {
                 console.log("could find");
                 this.setState({
                     appliedjobs: response.data.filter(word => (word.job_id == this.state.job_id) && (word.status > 0)),
-                    fuzzyjobs: response.data.filter(word => (word.job_id == this.state.job_id) && (word.status > 0))
+                    fuzzyjobs: response.data.filter(word => (word.job_id == this.state.job_id) && (word.status > 0)),
+                    allappliedjobs: response.data
                 });
             })
             .catch(function (error) {
@@ -123,15 +125,18 @@ class JobsList extends Component {
             status: 0,
             required_id: val._id
         }
-        console.log(val._id);
-        axios.post('http://localhost:4000/jobapplied/updatestatus', temp2)
-            .then(res => {
-                window.location.reload();
-                console.log(res)
-            })
-            .catch(err => {
-                console.log(err)
-            });
+        console.log("kasd :")
+        console.log(val.status);
+        if (val.status !== 3) {
+            axios.post('http://localhost:4000/jobapplied/updatestatus', temp2)
+                .then(res => {
+                    window.location.reload();
+                    console.log(res)
+                })
+                .catch(err => {
+                    console.log(err)
+                });
+        }
     }
 
     onClickSRbutton(val) {
@@ -156,18 +161,20 @@ class JobsList extends Component {
                     });
             }
             else {
-                const temp1 = {
-                    status: 3,
-                    required_id: val._id
+                if (val.status !== 3) {
+                    const temp1 = {
+                        status: 3,
+                        required_id: val._id
+                    }
+                    axios.post('http://localhost:4000/jobapplied/updatestatus', temp1)
+                        .then(res => {
+                            console.log(res)
+                            window.location.reload();
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        });
                 }
-                axios.post('http://localhost:4000/jobapplied/updatestatus', temp1)
-                    .then(res => {
-                        window.location.reload();
-                        console.log(res)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    });
             }
         }
     }
@@ -207,23 +214,51 @@ class JobsList extends Component {
          *      id => 3 == applicants rating
          */
         var array = this.state.fuzzyjobs;
-        /* array = this.state.jobs; */
+        var value = this.state.users
         array.sort(function (a, b) {
             if (id === 1) {
-                var aname = (this.state.users
-                    .filter(word => (word._id == a.applicant_id))).name;
-                var bname = (this.state.users
-                    .filter(word => (word._id == b.applicant_id))).name;
-                return flag ? ('' + aname).localeCompare(bname) : ( '' + bname).localeCompare(aname);
+                var a_index = -1;
+                var b_index = -1;
+                for (var i = 0; i < value.length; i++) {
+                    if (a.applicant_id == value[i]._id) {
+                        a_index = i;
+                        break;
+                    }
+                }
+                for (var i = 0; i < value.length; i++) {
+                    if (b.applicant_id == value[i]._id) {
+                        b_index = i;
+                        break;
+                    }
+                }
+                var aname = (value[a_index]).username;
+                var bname = (value[b_index]).username;
+                console.log(flag ? ('' + aname).localeCompare(bname) : ('' + bname).localeCompare(aname));
+                return flag ? ('' + aname).localeCompare(bname) : ('' + bname).localeCompare(aname);
             } else {
                 if (id === 2) {
-                    return flag ? (new Date(a.date_of_joining)).getTime() - (new Date(b.date_of_joining)).getTime() : (new Date(b.date_of_joining)).getTime() - (new Date(a.date_of_joining)).getTime;
+                    console.log("values are here :")
+                    console.log(a.date_of_application);
+                    console.log(b.date_of_application);
+                    return flag ? a.date_of_application - b.date_of_application : b.date_of_application - a.date_of_application;
                 } else {
-                    var arat = (this.state.users
-                        .filter(word => (word._id == a.applicant_id))).rating;
-                    var brat = (this.state.users
-                        .filter(word => (word._id == b.applicant_id))).rating
                     //id == 3
+                    var a_index = -1;
+                    var b_index = -1;
+                    for (var i = 0; i < value.length; i++) {
+                        if (a.applicant_id == value[i]._id) {
+                            a_index = i;
+                            break;
+                        }
+                    }
+                    for (var i = 0; i < value.length; i++) {
+                        if (b.applicant_id == value[i]._id) {
+                            b_index = i;
+                            break;
+                        }
+                    }
+                    var arat = (value[a_index]).rating;
+                    var brat = (value[b_index]).rating;
                     return flag ? arat - brat : brat - arat;
 
                 }
@@ -288,7 +323,7 @@ class JobsList extends Component {
                     <TableCell>{
                         temp[needed_index].languages}
                     </TableCell>
-                    <TableCell>{val.date_of_joining}</TableCell>
+                    <TableCell>{val.date_of_application}</TableCell>
                     <TableCell>{
                         JSON.stringify(temp[needed_index].education)}
                     </TableCell>
@@ -321,35 +356,44 @@ class JobsList extends Component {
         });
         return (
             <div>
-                <Grid container spacing={2}>
-                    <Grid container>
-                        <Grid item xs={12} md={12} lg={12}>
-                            <Paper>
-                                <Table size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
-                                                {this.renderIcon(this.state.sortName1)}</Button>Name</TableCell>
-                                            <TableCell>Skills</TableCell>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
-                                                {this.renderIcon(this.state.sortName2)}</Button>Date of application</TableCell>
-                                            <TableCell>Education</TableCell>
-                                            <TableCell>Sop</TableCell>
-                                            <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
-                                                {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell>
-                                            <TableCell>Stage</TableCell>
-                                            <TableCell>Shortlist/Reject</TableCell>
-                                            <TableCell>Reject</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {value_render}
-                                    </TableBody>
-                                </Table>
-                            </Paper>
+                <div>
+                    <h6 style={{ textAlign: "right" }}>
+                        <a href={"/users/recruiter/" + sessionStorage.getItem('email') + '-' + sessionStorage.getItem('motive') + '/'}>Go to Job Dashboard Page</a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href={"/profile/" + sessionStorage.getItem('email') + '-' + sessionStorage.getItem('motive') + '/  '}>Go to main Profile Page</a>
+                    </h6><br /><br />
+                </div>
+                <div>
+                    <Grid container spacing={2}>
+                        <Grid container>
+                            <Grid item xs={12} md={12} lg={12}>
+                                <Paper>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell><Button onClick={() => this.sortChange(this.state.sortName1, 1)}>
+                                                    {this.renderIcon(this.state.sortName1)}</Button>Name</TableCell>
+                                                <TableCell>Skills</TableCell>
+                                                <TableCell><Button onClick={() => this.sortChange(this.state.sortName2, 2)}>
+                                                    {this.renderIcon(this.state.sortName2)}</Button>Date of application</TableCell>
+                                                <TableCell>Education</TableCell>
+                                                <TableCell>Sop</TableCell>
+                                                <TableCell><Button onClick={() => this.sortChange(this.state.sortName3, 3)}>
+                                                    {this.renderIcon(this.state.sortName3)}</Button>Rating</TableCell>
+                                                <TableCell>Stage</TableCell>
+                                                <TableCell>Shortlist/Reject</TableCell>
+                                                <TableCell>Reject</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {value_render}
+                                        </TableBody>
+                                    </Table>
+                                </Paper>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
+                </div>
             </div>
         )
     }

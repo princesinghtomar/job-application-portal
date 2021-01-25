@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import { BrowserRouter, Redirect, Route } from 'react-router-dom'
 import "../css/login.css"
 import Language from "../templates/language"
 import axios from 'axios';
@@ -14,8 +15,8 @@ export default class newjobregister extends Component {
             title: '',
             email: this.props.match.params.id.split('-')[0],
             name: '',
-            max_applicants: '',
-            max_positions: '',
+            max_applicants: 1,
+            max_positions: 1,
             date_posting: '',
             deadline: '',
             required_temp: '',
@@ -50,6 +51,14 @@ export default class newjobregister extends Component {
         this.onChangeDuration = this.onChangeDuration.bind(this);
         this.onChangeSalary = this.onChangeSalary.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        if (sessionStorage.getItem('email') == null) {
+            this.setState({
+                gotologin: true
+            })
+        }
     }
 
     onChangeTitle(event) {
@@ -129,9 +138,9 @@ export default class newjobregister extends Component {
             title: this.state.title,
             email: this.props.match.params.id.split('-')[0],
             name: this.state.name,
-            max_applicants: this.state.max_applicants,
+            max_applicants: parseInt(this.state.max_applicants),
             required_skills: this.state.required_skills.trim(),
-            max_positions: this.state.max_positions,
+            max_positions: parseInt(this.state.max_positions),
             date_posting: Date.now(),
             deadline: this.state.deadline,
             job_type: this.state.job_type,
@@ -146,42 +155,68 @@ export default class newjobregister extends Component {
         var temp = this.state.email.length > 0 &&
             this.state.name.length > 0 &&
             this.state.title.length > 0 &&
-            this.state.max_applicants > 0 &&
-            this.state.max_positions.length > 0 &&
+            parseInt(this.state.max_applicants) > 0 &&
+            parseInt(this.state.max_positions) > 0 &&
             this.state.deadline.length > 0 &&
-            this.state.salary > 0 &&
+            parseInt(this.state.salary) >= 0 &&
             this.state.required_skills.length > 0 &&
             this.state.job_type.length > 0 &&
-            this.state.duration > 0;
+            parseInt(this.state.duration) >= 0;
 
         if (!temp) {
-            document.getElementById('para_id').innerHTML = "" + 
-            " * All fields are necessary"
+            document.getElementById('para_id').innerHTML = "" +
+                " * All fields are necessary"
+            return;
         }
-        else{
-            document.getElementById('para_id').innerHTML = "<br/>"
+        else {
+            var temperary1 = parseInt(this.state.max_applicants) >= parseInt(this.state.max_positions);
+            var temperary2 = (new Date(this.state.deadline).getTime() > Date.now())
+            if (!temperary1) {
+                document.getElementById('para_id').innerHTML = "" +
+                    "* Max Applicants >= Max positions (check this)"
+                return;
+            } else {
+                if (!temperary2) {
+                    document.getElementById('para_id').innerHTML = "" +
+                        "* Check your Deadline"
+                    return;
+                }
+                else {
+                    document.getElementById('para_id').innerHTML = "<br/>"
+                }
+            }
         }
 
         if (temp) {
             axios.post('http://localhost:4000/job/newjob', newJob)
-                .then(res => { 
-                    alert("Created\t" + res.data.title); 
+                .then(res => {
+                    /* alert("Created\t" + res.data.title); */
                     console.log("newJob");
-                    console.log(newJob); 
+                    console.log(newJob);
                     console.log("res");
-                    console.log(res); })
+                    console.log(res);
+                })
                 .catch(err => { console.log(err) })
                 ;
+            window.location.reload()
         }
     }
 
     render() {
+        if (this.state.gotologin) {
+            var id = this.state.id_param;
+            console.log(id);
+            return <Redirect to={`/login`} />
+        }
         return (
             <div>
                 <div>
                     <h1 style={{ textAlign: "center" }}>
                         Enter Job Details
                     </h1>
+                    <h6 style={{ textAlign: "right" }}>
+                        <a href={"/profile/"+sessionStorage.getItem('email')+ '-' + sessionStorage.getItem('motive')}>Go to main Profile Page</a>
+                    </h6>
                 </div>
                 <div>
                     <h5>
