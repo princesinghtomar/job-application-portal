@@ -85,16 +85,6 @@ class Sop extends Component {
             .catch(function (error) {
                 console.log(error);
             })
-        /* 
-                axios.get('http://localhost:4000/userrating')
-                    .then(response => {
-                        this.setState({
-                            ratedusers: response.data
-                        })
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    }); */
     }
 
     onClickjobbutton(value) {

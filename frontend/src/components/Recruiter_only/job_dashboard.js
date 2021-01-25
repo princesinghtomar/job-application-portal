@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Fuse from 'fuse.js';
+import { BrowserRouter, Redirect, Route } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import TableCell from '@material-ui/core/TableCell';
@@ -40,7 +41,8 @@ class JobsList extends Component {
             needed_user: '',
             sortName1: true,
             sortName2: true,
-            sortName3: true
+            sortName3: true,
+            gotologin: false
         };
 
         this.renderIcon = this.renderIcon.bind(this);
@@ -52,6 +54,11 @@ class JobsList extends Component {
     }
 
     componentDidMount() {
+        if (sessionStorage.getItem('email') == null) {
+            this.setState({
+                gotologin: true
+            })
+        }
         axios.get('http://localhost:4000/job')
             .then(response => {
                 console.log(this.state.job_id);
@@ -125,8 +132,6 @@ class JobsList extends Component {
             status: 0,
             required_id: val._id
         }
-        console.log("kasd :")
-        console.log(val.status);
         if (val.status !== 3) {
             axios.post('http://localhost:4000/jobapplied/updatestatus', temp2)
                 .then(res => {
@@ -169,7 +174,27 @@ class JobsList extends Component {
                     axios.post('http://localhost:4000/jobapplied/updatestatus', temp1)
                         .then(res => {
                             console.log(res)
-                            window.location.reload();
+                            console.log("rejectval :");
+                            console.log(val._id + ' + ' + val.applicant_email);
+                            var rejectval = this.state.allappliedjobs.filter(word => word.applicant_email == val.applicant_email);
+                            for (var i = 0; i < rejectval.length; i++) {
+                                const tempvariable = {
+                                    status: 0,
+                                    required_id: rejectval[i]._id
+                                }
+                                if (rejectval[i]._id !== val._id) {
+                                    console.log("Here's our losers");
+                                    console.log(rejectval[i]);
+                                    axios.post('http://localhost:4000/jobapplied/updatestatus', tempvariable)
+                                        .then(res => {
+                                            console.log(res);
+                                        })
+                                        .catch(err => {
+                                            console.log(err);
+                                        });
+                                }
+                            }
+                            /* window.location.reload(); */
                         })
                         .catch(err => {
                             console.log(err)
@@ -300,6 +325,11 @@ class JobsList extends Component {
     }
 
     render() {
+        if (this.state.gotologin) {
+            var id = this.state.id_param;
+            console.log(id);
+            return <Redirect to={`/login`} />
+        }
         const value_render = this.state.fuzzyjobs.map((val, ind) => {
             console.log("hello");
             var temp = this.state.users;

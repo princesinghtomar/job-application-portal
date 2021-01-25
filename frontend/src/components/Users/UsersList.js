@@ -66,6 +66,7 @@ class JobsList extends Component {
     componentDidMount() {
         axios.get('http://localhost:4000/job')
             .then(response => {
+                console.log("here are all the jobs :");
                 console.log(response.data)
                 this.setState({
                     jobs: response.data.filter(word => (new Date(word.deadline)).getTime() > Date.now()),
@@ -83,7 +84,7 @@ class JobsList extends Component {
 
         axios.get('http://localhost:4000/jobapplied')
             .then(response => {
-                console.log("hello");
+                console.log("here is the all jbob applied ever : ");
                 console.log(response.data)
                 console.log(this.state.email);
                 this.setState({
@@ -213,9 +214,13 @@ class JobsList extends Component {
                             .catch(err => {
                                 console.log(err);
                             })
+                        console.log("here is the changes jobs list :")
+                        console.log(value._id);
+                        console.log(this.state.jobs);
                     })
                     .catch(err => { console.log(err); });
-                window.location.reload()
+                 window.location.reload()
+
 
             } else {
                 return

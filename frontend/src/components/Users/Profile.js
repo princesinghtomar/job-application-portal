@@ -46,6 +46,7 @@ class Profile extends Component {
     componentDidMount() {
         axios.get('http://localhost:4000/user')
             .then(response => {
+                console.log("here are the users : ")
                 console.log(response.data)
                 this.setState({ users: response.data });
                 if (sessionStorage.getItem('email') == null) {

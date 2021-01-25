@@ -48,7 +48,7 @@ router.post("/newjob", (req, res) => {
 router.post("/update/rating", (req, res) => {
     console.log(req.body._id);
     const query = {
-        "_id":req.body._id,
+        "_id": req.body._id,
         "email": req.body.email,
         "title": req.body.title,
         "salary": req.body.salary,
@@ -80,6 +80,7 @@ router.post("/update/rating", (req, res) => {
 router.post("/update/number_of_applicants", (req, res) => {
     console.log(req.body);
     const query = {
+        "_id": req.body._id,
         "email": req.body.email
     };
     const update = {
@@ -156,7 +157,7 @@ router.post("/delete", (req, res) => {
 
 router.post("/updatestatus", (req, res) => {
     const query = {
-        "_id" : req.body.required_id,
+        "_id": req.body.required_id,
     };
     const update = {
         $set: {

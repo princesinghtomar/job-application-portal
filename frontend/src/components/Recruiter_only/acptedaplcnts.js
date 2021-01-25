@@ -9,6 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import Button from '@material-ui/core/Button';
+import { BrowserRouter, Redirect, Route } from 'react-router-dom'
 import TextField from '@material-ui/core/TextField';/* 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -40,7 +41,7 @@ class JobsList extends Component {
             sortName4: true,
             user_rating: '',
             showbutton: false,
-            userrating: []
+            gotologin: false
         };
 
         this.renderIcon = this.renderIcon.bind(this);
@@ -49,6 +50,11 @@ class JobsList extends Component {
     };
 
     componentDidMount() {
+        if (sessionStorage.getItem('email') == null) {
+            this.setState({
+                gotologin: true
+            })
+        }
         axios.get('http://localhost:4000/job')
             .then(response => {
                 this.setState({
@@ -93,18 +99,6 @@ class JobsList extends Component {
             })
             .catch(function (error) {
                 console.log("helloo3");
-                console.log(error);
-            });
-
-        axios.get('http://localhost:4000/userrating')
-            .then(response => {
-                this.setState({
-                    userrating: response.data
-                });
-                /* console.log(response.data); */
-            })
-            .catch(function (error) {
-                console.log("helloo4");
                 console.log(error);
             });
     }
@@ -203,6 +197,11 @@ class JobsList extends Component {
     }
 
     render() {
+        if (this.state.gotologin) {
+            var id = this.state.id_param;
+            console.log(id);
+            return <Redirect to={`/login`} />
+        }
         const value_render = this.state.fuzzyjobs.map((val, ind) => {
             var temp1 = (this.state.users
                 .find(word => (word._id == val.applicant_id)));
