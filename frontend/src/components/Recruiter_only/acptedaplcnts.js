@@ -201,12 +201,6 @@ class JobsList extends Component {
                 .find(word => (word._id == val.applicant_id)));
             var temp2 = (this.state.jobs
                 .find(word => (word._id == val.job_id)));
-            /* var temp3 = (this.state.userrating
-                .find(word => word.)) */
-            /* console.log("Users :");
-            console.log(temp1);
-            console.log("jobs :");
-            console.log(temp2); */
             return (
                 <TableRow key={ind}>
                     <TableCell>
@@ -230,7 +224,8 @@ class JobsList extends Component {
                                     ))
                                     this.setState({
                                         users: array,
-                                        showbutton: true
+                                        showbutton: true,
+                                        user_rating:e.target.value
                                     });
                                     if (this.state.showbutton) {
                                         document.getElementById("show_button").style.display = "block"

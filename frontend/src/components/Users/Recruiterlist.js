@@ -64,6 +64,7 @@ class JobsList extends Component {
             .catch(err => {
                 console.log(err)
             });
+        window.location.reload()
     }
 
     onupdate() {
@@ -79,6 +80,7 @@ class JobsList extends Component {
                 .catch(err => {
                     console.log(err)
                 });
+            window.location.reload()
         }
     }
 
@@ -135,7 +137,7 @@ class JobsList extends Component {
                                                     </TextField>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <TextField value={this.state.temp_max_positions} label={"current val : " +  job.max_positions} type='Number'
+                                                        <TextField value={this.state.temp_max_positions} label={"current val : " + job.max_positions} type='Number'
                                                             onChange={e => {
                                                                 var array = this.state.fuzzyjobs.map((word, ind1) =>
                                                                 (ind === ind1 && e.target.value > 0 && e.target.value < 10000 ? { ...word, max_positions: e.target.value } : word
