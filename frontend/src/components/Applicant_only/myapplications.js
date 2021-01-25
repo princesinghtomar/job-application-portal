@@ -23,10 +23,11 @@ class Sop extends Component {
             appliedjobs: [],    // not accepted jobs
             acceptedappliedjobs: [],
             email: this.props.match.params.id.split('-')[0],
+            ratedusers: [],
             jobs: [],
             otherjobs: [],
             gotologin: false,
-            job_rating: new Array(100)
+            job_rating: new Array(100),
         };
         this.onClickjobbutton = this.onClickjobbutton.bind(this);
     }
@@ -84,6 +85,16 @@ class Sop extends Component {
             .catch(function (error) {
                 console.log(error);
             })
+        /* 
+                axios.get('http://localhost:4000/userrating')
+                    .then(response => {
+                        this.setState({
+                            ratedusers: response.data
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    }); */
     }
 
     onClickjobbutton(value) {
@@ -103,14 +114,18 @@ class Sop extends Component {
             status: value.status,
             number_of_applicants: value.max_applicants
         } */
+        var temp = this.state.acceptedappliedjobs.find(word => word.job_id == value._id);
         console.log(value)
-        axios.post('http://localhost:4000/job/update/rating', value)
-            .then(res => {
-                console.log(res)
-            })
-            .catch(err => {
-                console.log(err)
-            });
+        console.log(temp);
+        if (temp !== null) {
+            axios.post('http://localhost:4000/jobapplied/update/rating', temp)
+                .then(res => {
+                    console.log(res)
+                })
+                .catch(err => {
+                    console.log(err)
+                });
+        }
 
     }
 
@@ -151,12 +166,14 @@ class Sop extends Component {
                                                 <TableCell>{job.salary}</TableCell>
                                                 <TableCell>{job.name}</TableCell>
                                                 <TableCell>
-                                                    <TextField value={this.state.job_rating[ind]} label={job.rating} type="Number"
+                                                    <TextField value={this.state.job_rating[ind]}
+                                                        label={this.state.acceptedappliedjobs.find(word => word.job_id == job._id).recruiter_rating}
+                                                        type="Number"
                                                         onChange={e => {
-                                                            var array = this.state.jobs.map((word, ind1) =>
-                                                            (ind1 === ind && e.target.value > 0 && e.target.value < 6 ? { ...word, rating: e.target.value } : word
+                                                            var array = this.state.acceptedappliedjobs.map((word, ind1) =>
+                                                            (word.job_id == job._id && e.target.value > 0 && e.target.value < 6 ? { ...word, recruiter_rating: e.target.value } : word
                                                             ))
-                                                            this.setState({ jobs: array });
+                                                            this.setState({ acceptedappliedjobs: array });
                                                         }}
                                                     ></TextField>
                                                 </TableCell>
@@ -166,7 +183,8 @@ class Sop extends Component {
                                                         backgroundColor: "#21b6ae",
                                                     }}
                                                         onClick={() => this.onClickjobbutton(job)}>
-                                                        change</button></TableCell>
+                                                        change</button>
+                                                </TableCell>
                                             </TableRow>
                                         ))}
                                         {this.state.otherjobs.map((job, ind) => (

@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 //create schema
 const RatingSchema = new Schema({
-    applicant_id: {
+    by_id: {
         type: String,
         required: true
     },
-    jobapplicant_id: {
+    rated_id: {
         type: String,
         required: false
     },

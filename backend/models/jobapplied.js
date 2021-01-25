@@ -30,6 +30,16 @@ const JobAppliedSchema = new Schema({
     date_of_application: {
         type: String,
         required: false
+    },
+    recruiter_rating: {
+        type: Number,
+        required: false,
+        default: 4
+    },
+    applicant_rating: {
+        type: Number,
+        required: false,
+        default: 4
     }
 });
 

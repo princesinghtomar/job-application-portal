@@ -193,7 +193,8 @@ class JobsList extends Component {
                     applicant_id: user[0]._id,
                     applicant_email: this.state.email,
                     sop: enteredName,
-                    status: 1
+                    status: 1,
+                    date_of_application: Date.now()
                 }
                 axios.post('http://localhost:4000/jobapplied/jobappliedsave', newjobapplication)
                     .then(res => {

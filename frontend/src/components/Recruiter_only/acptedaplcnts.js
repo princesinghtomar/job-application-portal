@@ -78,7 +78,7 @@ class JobsList extends Component {
                 console.log(response.data);
                 var arr = []
                 for (var i = 0; i < this.state.jobs.length; i++) {
-                    var arrtemp = response.data.filter(word => word.job_id == this.state.jobs[i]._id /* && word.status > 2 */);
+                    var arrtemp = response.data.filter(word => word.job_id == this.state.jobs[i]._id && word.status > 2);
                     for (var j = 0; j < arrtemp.length; j++) {
                         arr.push(arrtemp[j]);
                     }
@@ -178,8 +178,15 @@ class JobsList extends Component {
         }
     }
 
-    onupdate() {
-        console.log("on Update Activated")
+    onupdate(value) {
+        console.log(value)
+        axios.post('http://localhost:4000/jobapplied/update/rating', value)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            });
     }
 
     renderIcon(flag) {
@@ -217,22 +224,30 @@ class JobsList extends Component {
                     </TableCell>
                     <TableCell>
                         {
-                            <TextField value={this.state.user_rating} label={temp1.rating} type="Number"
+                            <TextField value={this.state.user_rating} label={val.applicant_rating} type="Number"
                                 onChange={e => {
-                                    var array = this.state.users.map((word, ind1) =>
+                                    var array = this.state.fuzzyjobs.map((word, ind1) =>
                                     (ind1 === ind && e.target.value > 0 && e.target.value < 6 ? { ...word, rating: e.target.value } : word
                                     ))
                                     this.setState({
-                                        users: array,
+                                        fuzzyjobs: array,
                                         showbutton: true,
-                                        user_rating:e.target.value
+                                        user_rating: e.target.value
                                     });
-                                    if (this.state.showbutton) {
+                                    /* if (this.state.showbutton) {
                                         document.getElementById("show_button").style.display = "block"
-                                    }
+                                    } */
                                 }}>
                             </TextField>
                         }
+                    </TableCell>
+                    <TableCell>
+                        <button style={{
+                            borderRadius: 5,
+                            backgroundColor: "#21b6ae",
+                        }}
+                            onClick={() => this.onupdate(val)}>
+                            change</button>
                     </TableCell>
                 </TableRow>
             )
@@ -260,6 +275,7 @@ class JobsList extends Component {
                                                     {this.renderIcon(this.state.sortName3)}</Button>Job Title</TableCell>
                                                 <TableCell><Button onClick={() => this.sortChange(this.state.sortName4, 4)}>
                                                     {this.renderIcon(this.state.sortName4)}</Button>Rating</TableCell>
+                                                <TableCell>Change</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -270,11 +286,6 @@ class JobsList extends Component {
                             </Grid>
                         </Grid>
                     </Grid>
-                </div>
-                <div id="show_button" style={{ textAlign: 'center', color: "purple", display: "none" }}><br /><br />
-                    <button style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}
-                        onClick={() => this.onupdate()}
-                    >Confirm Updates</button>
                 </div>
             </div>
         )
