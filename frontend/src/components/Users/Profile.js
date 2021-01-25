@@ -1,3 +1,5 @@
+// you have to make Update password here okay Which is really neccesary
+
 import React, { Component } from 'react';
 import axios from 'axios';
 import { BrowserRouter, Redirect, Route } from 'react-router-dom'
@@ -12,14 +14,15 @@ class Profile extends Component {
         super(props);
         this.state = {
             users: [{ _id: 1, username: "", email: "" }],
-            logedin_user: [{ _id: 1, email: "loading" }],
             username: '',
             company_name: '',
             contact_number: '',
             id_param: this.props.match.params.id,
+            email: '',
             bio: '',
             needed_id: '',
             tempusername: '',
+            password: '',
             tempbio: '',
             languages: '',
             addlanguage: '',
@@ -28,7 +31,7 @@ class Profile extends Component {
             tempeduname: '',
             tempedusdate: '',
             tempeduedate: '',
-            gotomyapplication: false
+            gotologin: false
         };
 
         this.OnSignout = this.OnSignout.bind(this);
@@ -41,16 +44,20 @@ class Profile extends Component {
     }
     /* array = [] */
     componentDidMount() {
-        axios.get('http://localhost:4000/login')
-            .then(response => {
-                console.log(response.data);
-                this.setState({ logedin_user: response.data });
-            });
-
         axios.get('http://localhost:4000/user')
             .then(response => {
                 console.log(response.data)
                 this.setState({ users: response.data });
+                if (sessionStorage.getItem('email') == null) {
+                    this.setState({
+                        gotologin: true
+                    })
+                } else {
+                    this.setState({
+                        email: sessionStorage.getItem('email'),
+                        motive: sessionStorage.getItem('motive')
+                    });
+                }
                 this.updateusername();
             })
     }
@@ -118,10 +125,7 @@ class Profile extends Component {
         console.log(ka);
         var flag = true;
         for (var i = 0; i < this.state.users.length; i++) {
-            if (this.state.logedin_user[0].email == this.state.users[i].email &&
-                this.state.logedin_user[0].password == this.state.users[i].password &&
-                this.state.logedin_user[0].motive == this.state.users[i].motive
-            ) {
+            if (this.state.email == this.state.users[i].email) {
                 this.setState({
                     username: this.state.users[i].username,
                     contact_number: this.state.users[i].contact,
@@ -132,7 +136,7 @@ class Profile extends Component {
                     tempbio: this.state.users[i].bio,
                     education: this.state.users[i].education,
                     languages: this.state.users[i].languages,
-                    motive: ka[1]
+                    password: this.state.users[i].password
                 });
                 console.log(this.state.users[i].education)
                 console.log(this.state.tempbio);
@@ -145,7 +149,7 @@ class Profile extends Component {
                 "There is some ambiguity log data and users data (# matching failed)"
             return;
         }
-        if (this.state.logedin_user[0].motive == "recruiter") {
+        if (this.state.motive == "recruiter") {
             document.getElementById("recruiter_section").style.display = "block";
             document.getElementById("applicant_section").style.display = "none";
         }
@@ -170,9 +174,9 @@ class Profile extends Component {
             username: this.state.tempusername,
             languages: this.state.languages,
             education: this.state.education,
-            email: this.state.logedin_user[0].email,
-            password: this.state.logedin_user[0].password,
-            motive: this.state.logedin_user[0].motive,
+            email: this.state.email,
+            password: this.state.password,
+            motive: this.state.motive,
             company_name: this.state.company_name,
             contact_number: this.state.contact_number,
             bio: this.state.bio
@@ -181,7 +185,7 @@ class Profile extends Component {
         var sflag = 0;
         var eflag = 2;
         var flag_imp = true;
-        if (this.state.logedin_user[0].motive == "recruiter") {
+        if (this.state.motive == "recruiter") {
             sflag = 3;
             eflag = 5;
         }
@@ -190,6 +194,16 @@ class Profile extends Component {
         if (value.length >= 250) {
             document.getElementById("para_id").innerHTML = "" +
                 "250 word limit in bio Please Change it"
+            return;
+        }
+        if (this.state.tempusername.length <= 0) {
+            document.getElementById("para_id").innerHTML = "" +
+                "Username can't be empty String"
+            return;
+        }
+        if (this.state.education.length <= 1) {
+            document.getElementById("para_id").innerHTML = "" +
+                "Enter Your education institutes"
             return;
         }
         console.log(switch_val[3]);
@@ -212,16 +226,21 @@ class Profile extends Component {
                 .then(() => { console.log('Resolved 1') })
                 .catch(() => { console.log('Rejected 1') })
         }
-
+        window.location.reload()
     }
 
     OnSignout(event) {
         event.preventDefault();
         console.log(this.state.users);
+        sessionStorage.clear();
         axios.post('http://localhost:4000/user/signout')
             .then(res => {
-                alert("Signed out");
+                /* alert("Signed out"); */
+                console.log("Signed out")
             });
+        this.setState({
+            gotologin: true
+        })
     }
 
     render() {
@@ -229,11 +248,11 @@ class Profile extends Component {
             console.log(items);
             return <pre><p key={items.id}>id: {items.id}, name: {items.name}, Start date: {items.sdate}, End date: {items.edate} </p></pre>
         })
-        /* if (this.state.gotomyapplication) {
+        if (this.state.gotologin) {
             var id = this.state.id_param;
             console.log(id);
-            return <Redirect to={`/myapplication/${id}`} />
-        } */
+            return <Redirect to={`/login`} />
+        }
         return (
             <div>
                 <div style={{ display: "block" }}>
@@ -243,9 +262,11 @@ class Profile extends Component {
                         </h1>
                     </div>
                     <div>
-                        <p style={{ textAlign: "center", color: "red" }} id="para_id">
-                            <br />
-                        </p>
+                        <h4>
+                            <p style={{ textAlign: "center", color: "red" }} id="para_id">
+                                <br />
+                            </p>
+                        </h4>
                     </div>
                     <div>
                         <tbody><a href={"/users/" + this.state.motive + "/" + this.state.id_param} >Click to move to dashboard</a></tbody>
@@ -261,7 +282,7 @@ class Profile extends Component {
                                         onChange={this.onChangeusername} />
 
                                 </pre>
-                                <pre><label>Email :  {this.state.logedin_user[0].email}</label></pre>
+                                <pre><label>Email :  {this.state.email}</label></pre>
                                 <pre><label>Rating :  {this.state.rating}</label></pre>
                             </p>
                             <div id="recruiter_section" style={{ display: "none" }}>
@@ -355,7 +376,7 @@ class Profile extends Component {
                             </div>
                             <div>
                                 <p>
-                                    <a href={'/myapplication/' + this.state.id_param+ '/'} onClick={e => { this.setState({ gotomyapplication: true }) }}>
+                                    <a href={'/myapplication/' + this.state.id_param + '/'} >
                                         Click to view your all Application</a>
                                 </p>
                             </div>

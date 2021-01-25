@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route } from 'react-router-dom'
 import PropTypes, { array } from 'prop-types'
 import Form from "react-bootstrap/Form";
 import TableCell from '@material-ui/core/TableCell';
@@ -20,9 +20,12 @@ class Sop extends Component {
         super(props);
         this.state = {
             user: [],
-            appliedjobs: [],
+            appliedjobs: [],    // not accepted jobs
+            acceptedappliedjobs: [],
             email: this.props.match.params.id.split('-')[0],
             jobs: [],
+            otherjobs: [],
+            gotologin: false,
             job_rating: new Array(100)
         };
         this.onClickjobbutton = this.onClickjobbutton.bind(this);
@@ -32,13 +35,21 @@ class Sop extends Component {
         axios.get('http://localhost:4000/user')
             .then(response => {
                 this.setState({ users: response.data });
+                if (sessionStorage.getItem('email') == null) {
+                    this.setState({
+                        gotologin: true
+                    })
+                }
             })
             .catch(function (error) {
                 console.log(error);
             })
         axios.get('http://localhost:4000/jobapplied')
             .then(response => {
-                this.setState({ appliedjobs: response.data.filter(word => (word.applicant_email == this.state.email)) })
+                this.setState({
+                    appliedjobs: response.data.filter(word => ((word.applicant_email == this.state.email) && (word.status < 3))),
+                    acceptedappliedjobs: response.data.filter(word => ((word.applicant_email == this.state.email) && (word.status == 3)))
+                })
             })
             .catch(err => {
                 console.log(err);
@@ -46,17 +57,29 @@ class Sop extends Component {
 
         axios.get('http://localhost:4000/job')
             .then(response => {
-                var result = []
+                var result1 = []
                 for (var i = 0; i < this.state.appliedjobs.length; i++) {
                     var value = response.data.filter(word => word._id == this.state.appliedjobs[i].job_id);
+                    result1.push.apply(result1, value);
+                }
+                console.log(result1);
+                result1 = result1.filter(function (item, index, inputarray) {
+                    return inputarray.indexOf(item) == index;
+                });
+                var result = []
+                for (var i = 0; i < this.state.acceptedappliedjobs.length; i++) {
+                    var value = response.data.filter(word => word._id == this.state.acceptedappliedjobs[i].job_id);
                     result.push.apply(result, value);
                 }
                 console.log(result);
                 result = result.filter(function (item, index, inputarray) {
                     return inputarray.indexOf(item) == index;
                 });
-                console.log(result);
-                this.setState({ jobs: result });
+                console.log(result1);
+                this.setState({
+                    jobs: result,
+                    otherjobs: result1
+                });
             })
             .catch(function (error) {
                 console.log(error);
@@ -92,6 +115,11 @@ class Sop extends Component {
     }
 
     render() {
+        if (this.state.gotologin) {
+            var id = this.state.id_param;
+            console.log(id);
+            return <Redirect to={`/login`} />
+        }
         return (
             <div>
                 <div style={{ textAlign: "center", color: "Blue" }}>
@@ -107,7 +135,6 @@ class Sop extends Component {
                                 <Table size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>id</TableCell>
                                             <TableCell>Title</TableCell>
                                             <TableCell>Date of Joining</TableCell>
                                             <TableCell>Salary</TableCell>
@@ -119,12 +146,11 @@ class Sop extends Component {
                                     <TableBody>
                                         {this.state.jobs.map((job, ind) => (
                                             <TableRow key={ind}>
-                                                <TableCell>{ind}</TableCell>
                                                 <TableCell>{job.title}</TableCell>
                                                 <TableCell>{job.date_of_joining}</TableCell>
                                                 <TableCell>{job.salary}</TableCell>
                                                 <TableCell>{job.name}</TableCell>
-                                                <TableCell>{/* <input value={job.rating} ></input> */}
+                                                <TableCell>
                                                     <TextField value={this.state.job_rating[ind]} label={job.rating} type="Number"
                                                         onChange={e => {
                                                             var array = this.state.jobs.map((word, ind1) =>
@@ -141,6 +167,19 @@ class Sop extends Component {
                                                     }}
                                                         onClick={() => this.onClickjobbutton(job)}>
                                                         change</button></TableCell>
+                                            </TableRow>
+                                        ))}
+                                        {this.state.otherjobs.map((job, ind) => (
+                                            <TableRow key={ind}>
+                                                <TableCell>{job.title}</TableCell>
+                                                <TableCell>{job.date_of_joining}</TableCell>
+                                                <TableCell>{job.salary}</TableCell>
+                                                <TableCell>{job.name}</TableCell>
+                                                <TableCell>
+                                                    {job.rating}
+                                                </TableCell>
+                                                <TableCell>
+                                                    [NOT ACCEPTED]</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>

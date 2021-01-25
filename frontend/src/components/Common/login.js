@@ -4,6 +4,7 @@ import { BrowserRouter, Redirect, Route } from 'react-router-dom'
 import Button from "react-bootstrap/Button";
 import "../css/signup.css"
 import axios from 'axios';
+const bcrypt = require('bcryptjs');
 
 export default class Home extends Component {
 
@@ -14,7 +15,8 @@ export default class Home extends Component {
             password: '',
             motive: '',
             company_name: '',
-            gotoprofile: false
+            gotoprofile: false,
+            users: []
         };
 
         this.handleEmail = this.handleEmail.bind(this);
@@ -23,6 +25,28 @@ export default class Home extends Component {
         this.handleCompany_name = this.handleCompany_name.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
 
+    }
+
+    componentDidMount() {
+        axios.get('http://localhost:4000/user')
+            .then(response => {
+                console.log(response.data)
+                this.setState({
+                    users: response.data,
+                });
+                if (sessionStorage.getItem('email') !== null) {
+                    console.log("yes");
+                    this.setState({
+                        motive: sessionStorage.getItem('motive'),
+                        email: sessionStorage.getItem('email'),
+                        gotoprofile: true
+                    })
+                }
+                /* this.updateusername(); */
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 
     handleEmail(event) {
@@ -45,11 +69,15 @@ export default class Home extends Component {
         else {
             xi = document.getElementById("recruiter_id");
             xi.style.display = "none";
+            this.setState({
+                company_name: ''
+            })
         }
     }
 
     handleCompany_name(event) {
         this.setState({ company_name: event.target.value });
+
     }
 
     onSubmit(event) {
@@ -79,12 +107,48 @@ export default class Home extends Component {
         console.log(temp);
 
         if (temp) {
-            document.getElementById("para_id").innerHTML = "<br/>";
-            axios.post('http://localhost:4000/user/login', newSignin)
-                .then(res => { 
-                    this.setState({gotoprofile:true});
-                })
-                .catch(err => { console.log(err); });
+            var temp = this.state.users.filter(word => word.email == this.state.email);
+            console.log(temp)
+            if (temp.length <= 0) {
+                document.getElementById("para_id").innerHTML = "* Please Enter Correct Email Address";
+                document.getElementById("show_register").style.display = "block";
+                console.log("false");
+            } else {
+                if (temp[0].password !== this.state.password) {
+                    document.getElementById("para_id").innerHTML = "* Please Enter Correct Password";
+                    document.getElementById("show_register").style.display = "block";
+                    console.log("false");
+                } else {
+                    console.log("company_name :");
+                    console.log(this.state.company_name);
+                    console.log(temp[0].company);
+                    if ((temp[0].company !== this.state.company_name) || (temp[0].motive !== this.state.motive)) {
+                        document.getElementById("para_id").innerHTML = "* Please Enter Correct motive or Company Name";
+                        document.getElementById("show_register").style.display = "block";
+                        console.log("false");
+                    } else {
+                        console.log("true");
+                        sessionStorage.setItem('email', this.state.email);       //sessionStorage
+                        sessionStorage.setItem('motive', this.state.motive);
+                        var salt = bcrypt.genSaltSync(10);
+                        var hash = bcrypt.hashSync(this.state.password, salt);
+                        console.log("Hashed Password : ")
+                        console.log(hash);
+                        sessionStorage.setItem('password', hash)                 //sessionStorage
+                        var temptoken = this.state.email + '-' + this.state.password
+                        var tokenhash = bcrypt.hashSync(temptoken, salt);
+                        sessionStorage.setItem('token', tokenhash);
+                        document.getElementById("para_id").innerHTML = "<br/>";
+                        console.log(sessionStorage.getItem('token'));
+                        axios.post('http://localhost:4000/user/login', newSignin)
+                            .then(res => {
+                                console.log(res);
+                            })
+                            .catch(err => { console.log(err); });
+                        this.setState({ gotoprofile: true });
+                    }
+                }
+            }
         }
         else {
             document.getElementById("para_id").innerHTML = "* Please Enter" +
@@ -102,10 +166,10 @@ export default class Home extends Component {
     }
 
     render() {
-        if(this.state.gotoprofile){
+        if (this.state.gotoprofile) {
             var id = this.state.email + '-' + this.state.motive;
             console.log(id);
-            return <Redirect to={`/profile/${id}`} />
+            return <Redirect to={`/profile/${id}/`} />
         }
         return (
             <div>
@@ -120,6 +184,9 @@ export default class Home extends Component {
                             <br />
                         </p>
                     </h4>
+                </div>
+                <div id="show_register" style={{ display: "none", textAlign: "center" }}>
+                    <a href="/register/">Click to Register</a>
                 </div>
                 <div className="Login">
                     <form onSubmit={this.onSubmit}>

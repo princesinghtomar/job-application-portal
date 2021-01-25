@@ -17,7 +17,8 @@ export default class Register extends Component {
             motive: '',
             company_name: '',
             contact_number: '',
-            tologin: false
+            tologin: false,
+            users: []
         }
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
@@ -27,6 +28,19 @@ export default class Register extends Component {
         this.onChangeCompany_name = this.onChangeCompany_name.bind(this);
         this.onChangeContact_number = this.onChangeContact_number.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        axios.get('http://localhost:4000/user')
+            .then(response => {
+                console.log(response.data)
+                this.setState({
+                    users: response.data,
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 
     onChangeUsername(event) {
@@ -54,6 +68,10 @@ export default class Register extends Component {
             var x = document.getElementById("recruiter_id");
             x.style.display = "none";
             document.getElementById("recruiter_id2").style.display = "none";
+            this.setState({
+                company_name: '',
+                contact_number: ''
+            })
         }
     }
 
@@ -91,15 +109,21 @@ export default class Register extends Component {
         console.log(temp);
 
         if (temp) {
-            document.getElementById("para_id").innerHTML = "<br/>";
-            axios.post('http://localhost:4000/user/register', newUser)
-            .then(res => {
-                alert("Registered");
-                this.setState({ tologin: true });
-                })
-                .catch(err => {
-                    console.log("Failed to Register")
-                });
+            var findemail = this.state.users.filter(word => word.email == this.state.email);
+            if (findemail.length > 0) {
+                document.getElementById("para_id").innerHTML = "The Email is already used by" +
+                    " someone else please Use Another"
+            } else {
+                document.getElementById("para_id").innerHTML = "<br/>";
+                axios.post('http://localhost:4000/user/register', newUser)
+                    .then(res => {
+                        /* alert("Registered"); */
+                        this.setState({ tologin: true });
+                    })
+                    .catch(err => {
+                        console.log("Failed to Register")
+                    });
+            }
         }
         else {
             document.getElementById("para_id").innerHTML = "* All Fields" +
@@ -121,9 +145,11 @@ export default class Register extends Component {
                     </h1>
                 </div>
                 <div>
-                    <p id="para_id" style={{ textAlign: 'center', color: 'red' }}>
-                        <br />
-                    </p>
+                    <h4>
+                        <p id="para_id" style={{ textAlign: 'center', color: 'red' }}>
+                            <br />
+                        </p>
+                    </h4>
                 </div>
                 <div className="Signup">
                     <form onSubmit={this.onSubmit}>
@@ -161,7 +187,7 @@ export default class Register extends Component {
                         <div id="recruiter_id2" style={{ display: "none" }}>
                             <Form.Group size="lg" controlId="after_recruiter">
                                 <label> Contact Number : </label>
-                                <Form.Control type="text" value={this.state.contact_number} onChange={this.onChangeContact_number} />
+                                <Form.Control type="Number" value={this.state.contact_number} onChange={this.onChangeContact_number} />
                             </Form.Group>
                         </div>
                         <Button block size="lg" type="submit" value="Signin">

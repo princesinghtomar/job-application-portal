@@ -47,8 +47,8 @@ router.post("/newjob", (req, res) => {
 
 router.post("/update/rating", (req, res) => {
     console.log(req.body._id);
-    console.log(req.params)
     const query = {
+        "_id":req.body._id,
         "email": req.body.email,
         "title": req.body.title,
         "salary": req.body.salary,
@@ -65,6 +65,7 @@ router.post("/update/rating", (req, res) => {
     Job.updateOne(query, update, options)
         .then(result => {
             const { matchedCount, modifiedCount } = result;
+            console.log(result);
             if (matchedCount && modifiedCount) {
                 console.log(`Successfully added a new review (rating wala).`)
             }

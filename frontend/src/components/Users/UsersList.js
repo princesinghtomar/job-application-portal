@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Fuse from 'fuse.js';
+import { BrowserRouter, Redirect, Route } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import TableCell from '@material-ui/core/TableCell';
@@ -17,6 +18,8 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from "@material-ui/core/styles";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import IconButton from "@material-ui/core/IconButton";
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import moment from 'moment';
 import SearchIcon from "@material-ui/icons/Search";
@@ -33,19 +36,21 @@ class JobsList extends Component {
             user: [],
             query: '',
             appliedjobs: '',
+            appliedjobs_all: '',
             id_param: this.props.match.params.id,
             email: this.props.match.params.id.split('-')[0],
             motive: this.props.match.params.id.split('-')[1],
             min: 0,
             max: 0,
             job_type: ["full_time", "part_time", "work_from_home"],
-            duration: ['0', '1', '2', '3', '4', '5', '6', '7'],
             value_job_type: '',
             value_duration: '',
+            value_title: '',
             sortName1: true,
             sortName2: true,
             sortName3: true,
             sop: '',
+            gotologin: false,
             openapplication: 0
         };
 
@@ -66,6 +71,11 @@ class JobsList extends Component {
                     jobs: response.data.filter(word => (new Date(word.deadline)).getTime() > Date.now()),
                     fuzzyjobs: response.data.filter(word => (new Date(word.deadline)).getTime() > Date.now())
                 });
+                if (sessionStorage.getItem('email') == null) {
+                    this.setState({
+                        gotologin: true
+                    })
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -77,7 +87,8 @@ class JobsList extends Component {
                 console.log(response.data)
                 console.log(this.state.email);
                 this.setState({
-                    appliedjobs: response.data.filter(word => (word.applicant_email == this.state.email))
+                    appliedjobs: response.data.filter(word => (word.applicant_email == this.state.email)),
+                    appliedjobs_all: response.data
                 });
             })
             .catch(function (error) {
@@ -132,76 +143,67 @@ class JobsList extends Component {
         console.log(this.state.query);
     }; */
 
-    onClickjobbutton(value) {
+    onClickjobbutton(e, value) {
+        e.preventDefault();
         var id = value.title + value.email;
         var temp = []
         console.log("applied jobs")
-        console.log(this.state.appliedjobs.length);
-        if (this.state.appliedjobs.length > 0) {
-            temp = this.state.appliedjobs.filter(word => word.job_id == value._id);
-            var max = value.max_applicants;
-            var current = temp.length;
-            console.log("temp");
-            console.log(temp);
-            var temp1 = [];
-            if (temp.length > 0) {
-                console.log(this.state.email);
-                var temp1 = temp.filter(word => (word.applicant_email == this.state.email))
-                if (temp1.length > 0) {
-                    return;
-                }
-                else {
-                    if (max > current) {
-                        return;
+        console.log(this.state.email);
+        console.log(this.state.appliedjobs);
+        console.log(value);
+        if (this.state.appliedjobs_all.length > 0) {
+            var val = this.state.appliedjobs.filter(word => word.status == 1);
+            if (val.length >= 10) {
+                alert("You already have 10 open apllications");
+                return;
+            } else {
+                temp = this.state.appliedjobs_all.filter(word => word.job_id == value._id);
+                var max = value.max_applicants;
+                var current = temp.length;
+                var temp1 = [];
+                if (temp.length > 0) {
+                    var temp1 = temp.filter(word => (word.applicant_email == this.state.email));
+                    if (temp1.length > 0) {
+                        return {/* <text style={{ color: 'Green' }}>Applied</text> */ }
+                    } else {
+                        if (max <= current) {
+                            return {/* <text style={{ color: 'Red' }}>Full</text> */ }
+                        }
                     }
                 }
             }
         }
         var user = this.state.users.filter(word => (word.motive == this.state.motive));
-        var openjobapplication = this.state.appliedjobs.filter(word => (word.status > 0));
-        console.log(this.state.users);
-        console.log(user);
         if (user.length > 0) {
-            console.log("here");
-            console.log(user[0])
-            /* if (user[0].length > 0) { */
-            if (openjobapplication.length <= 10) {
-                const enteredName = prompt('Please enter your Statement of Purpose ( SOP )');
-                this.setState({
-                    sop: enteredName,
-                })
-                console.log("enteredname");
-                console.log(enteredName);
-                if (!enteredName) {
+            const enteredName = prompt('Please enter your Statement of Purpose ( SOP )');
+            this.setState({
+                sop: enteredName,
+            })
+            if (!enteredName) {
+                return;
+            }
+            if (enteredName.length > 0) {
+                var arraydata = enteredName.split(' ');
+                if (arraydata.length >= 250) {
+                    alert("Total words should be less then 250 words")
                     return;
                 }
-                if (enteredName.length > 0) {
-                    var arraydata = enteredName.split(' ');
-                    if (arraydata.length >= 250) {
-                        alert("word length dhould be less then 150 words")
-                        return;
-                    }
-                    /* console.log(this.state.sop); */
-                    const newjobapplication = {
-                        job_id: value._id,
-                        applicant_id: user[0]._id,
-                        applicant_email: this.state.email,
-                        sop: enteredName,
-                        status: 1
-                    }
-                    axios.post('http://localhost:4000/jobapplied/jobappliedsave', newjobapplication)
-                        .then(res => {
-                            alert("created");
-                            /* this.setState({ gotoprofile: true }); */
-                        })
-                        .catch(err => { console.log(err); });
-
-                } else {
-                    return
+                const newjobapplication = {
+                    job_id: value._id,
+                    applicant_id: user[0]._id,
+                    applicant_email: this.state.email,
+                    sop: enteredName,
+                    status: 1
                 }
+                axios.post('http://localhost:4000/jobapplied/jobappliedsave', newjobapplication)
+                    .then(res => {
+                        console.log("created");
+                    })
+                    .catch(err => { console.log(err); });
+                window.location.reload()
+
             } else {
-                alert("You already have 10 open apllications");
-                return;
+                return
             }
         } else {
             console.log('121');
@@ -212,8 +214,8 @@ class JobsList extends Component {
     buttontext(value) {
         const id = value.title + value.email;
         var temp = []
-        if (this.state.appliedjobs.length > 0) {
-            temp = this.state.appliedjobs.filter(word => word.job_id == value._id);
+        if (this.state.appliedjobs_all.length > 0) {
+            temp = this.state.appliedjobs_all.filter(word => word.job_id == value._id);
             var max = value.max_applicants;
             var current = temp.length;
             var temp1 = [];
@@ -223,7 +225,7 @@ class JobsList extends Component {
                     return <text style={{ color: 'Green' }}>Applied</text>
                 }
                 else {
-                    if (max > current) {
+                    if (max <= current) {
                         return <text style={{ color: 'Red' }}>Full</text>
                     }
                     else {
@@ -344,6 +346,11 @@ class JobsList extends Component {
     }
 
     render() {
+        if (this.state.gotologin) {
+            var id = this.state.id_param;
+            console.log(id);
+            return <Redirect to={`/login`} />
+        }
         return (
             <div>
                 <Grid container spacing={2}>
@@ -399,7 +406,12 @@ class JobsList extends Component {
                                         value={this.state.value_job_type}
                                         onChange={(event, value) => {
                                             console.log(value);
-                                            var val = this.state.jobs.filter(word => word.job_type == value);
+                                            var val;
+                                            if (value !== null) {
+                                                val = this.state.jobs.filter(word => word.job_type == value);
+                                            } else {
+                                                val = this.state.jobs;
+                                            }
                                             this.setState({
                                                 fuzzyjobs: val,
                                                 min: '',
@@ -416,11 +428,17 @@ class JobsList extends Component {
                                 </ListItem>
                                 <Divider />
                                 <ListItem button divider>
-                                    <Autocomplete
+                                    <InputLabel htmlFor="outlined-age-native-simple">Duration</InputLabel>
+                                    <Select
+                                        native
                                         value={this.state.value_duration}
-                                        onChange={(event, value) => {
-                                            console.log(value);
-                                            var val = this.state.jobs.filter(word => word.duration == value);
+                                        onChange={(event) => {
+                                            var val;
+                                            if (event.target.value !== null) {
+                                                val = this.state.jobs.filter(word => word.duration < event.target.value);
+                                            } else {
+                                                val = this.state.jobs;
+                                            }
                                             this.setState({
                                                 fuzzyjobs: val,
                                                 min: '',
@@ -428,11 +446,50 @@ class JobsList extends Component {
                                                 value_job_type: ''
                                             });
                                         }}
+                                        label="Duration"
+                                        inputProps={{
+                                            name: 'duration',
+                                            id: 'outlined-age-native-simple',
+                                        }}
+                                    >
+                                        <option aria-label="None" value="" />
+                                        <option value={0}>0</option>
+                                        <option value={1}>1</option>
+                                        <option value={2}>2</option>
+                                        <option value={3}>3</option>
+                                        <option value={4}>4</option>
+                                        <option value={5}>5</option>
+                                        <option value={6}>6</option>
+                                        <option value={7}>7</option>
+
+                                    </Select>
+                                </ListItem>
+                                <Divider />
+                                <ListItem button divider>
+                                    <Autocomplete
+                                        value={this.state.value_title}
+                                        onChange={(event, value) => {
+                                            console.log(value);
+                                            var val;
+                                            if (value !== null) {
+                                                val = this.state.jobs.filter(word => word.title == value.title);
+                                            } else {
+                                                val = this.state.jobs
+                                            }
+                                            //console.log(val);
+                                            this.setState({
+                                                fuzzyjobs: val,
+                                                min: '',
+                                                max: '',
+                                                value_job_type: ''
+                                            });
+                                            //console.log(this.state.fuzzyjobs);
+                                        }}
                                         id="combo-box-demo"
-                                        options={this.state.duration}
-                                        getOptionLabel={(option) => option}
+                                        options={this.state.jobs}
+                                        getOptionLabel={(option) => option.title}
                                         style={{ width: 300 }}
-                                        renderInput={(params) => <TextField {...params} label="Search Durantion" variant="outlined" />}
+                                        renderInput={(params) => <TextField {...params} label="Search Title" variant="outlined" />}
                                     />
                                 </ListItem>
                             </List>
@@ -470,7 +527,7 @@ class JobsList extends Component {
                                                         borderRadius: 5,
                                                         backgroundColor: "#21b6ae",
                                                     }}
-                                                        onClick={() => this.onClickjobbutton(job)}>
+                                                        onClick={(e) => this.onClickjobbutton(e, job)}>
                                                         {this.buttontext(job)}</button></TableCell>
                                             </TableRow>
                                         ))}
