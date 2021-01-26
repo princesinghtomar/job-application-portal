@@ -86,6 +86,7 @@ router.post("/update/rating", (req, res) => {
             applicant_rating: parseInt(req.body.applicant_rating)
         }
     };
+    console.log(update);
     const options = { "upsert": false };
     JobApplied.updateOne(query, update, options)
         .then(result => {

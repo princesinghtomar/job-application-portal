@@ -183,6 +183,7 @@ class JobsList extends Component {
             .catch(err => {
                 console.log(err)
             });
+        window.location.reload()
     }
 
     renderIcon(flag) {

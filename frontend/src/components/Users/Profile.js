@@ -65,7 +65,7 @@ class Profile extends Component {
 
         axios.get('http://localhost:4000/jobapplied')
             .then(response => {
-                console.log("jobsapplied :")
+                console.log("jobsapplied")
                 console.log(response.data);
                 this.setState({
                     jobsapplied: response.data
@@ -188,6 +188,7 @@ class Profile extends Component {
                     education: this.state.users[i].education,
                     languages: this.state.users[i].languages,
                     password: this.state.users[i].password,
+                    rating:this.state.users[i].rating
                 });
                 console.log(this.state.users[i].education)
                 console.log(this.state.tempbio);
@@ -268,7 +269,7 @@ class Profile extends Component {
                 var tempval = this.state.jobsapplied.filter(word => word.applicant_id == this.state.needed_id);
                 var rate_total = 0;
                 for (var i = 0; i < tempval.length; i++) {
-                    rate_total = rate_total + tempval[i].recruiter_rating;
+                    rate_total = rate_total + tempval[i].applicant_rating;
                 }
                 var total_raters = tempval.length;
                 var real_rate = rate_total / total_raters;

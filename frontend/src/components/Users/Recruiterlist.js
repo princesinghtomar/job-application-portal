@@ -64,7 +64,7 @@ class JobsList extends Component {
     }
 
     ondelete(job, ind) {
-        axios.post('http://localhost:4000/job/delete', job)
+        axios.post('http://localhost:4000/job/delete', job) //using delete one
             .then(res => {
                 console.log(res)
             })

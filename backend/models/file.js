@@ -11,10 +11,14 @@ const FileSchema = new Schema({
         type: String,
         required: false
     },
-	image: {
-		type: String,
-		required: false
-	}
+    image: {
+        type: String,
+        required: false
+    },
+    cv: {
+        type: String,
+        required: false
+    }
 });
 
 module.exports = File = mongoose.model("Files", FileSchema);

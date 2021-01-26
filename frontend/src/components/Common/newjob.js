@@ -146,7 +146,7 @@ export default class newjobregister extends Component {
             job_type: this.state.job_type,
             duration: this.state.duration,
             salary: this.state.salary,
-            rating: 4,
+            rating: this.state.rating,
             status: 1
         }
         console.log("newJob")
@@ -215,7 +215,7 @@ export default class newjobregister extends Component {
                         Enter Job Details
                     </h1>
                     <h6 style={{ textAlign: "right" }}>
-                        <a href={"/profile/"+sessionStorage.getItem('email')+ '-' + sessionStorage.getItem('motive')}>Go to main Profile Page</a>
+                        <a href={"/profile/" + sessionStorage.getItem('email') + '-' + sessionStorage.getItem('motive')}>Go to main Profile Page</a>
                     </h6>
                 </div>
                 <div>
@@ -247,6 +247,27 @@ export default class newjobregister extends Component {
                             </Form.Label>
                             <Form.Control autoFocus type="text" value={this.state.name}
                                 onChange={this.onChangeName} />
+                        </Form.Group>
+                        <Form.Group size="lg" controlId="name">
+                            <Form.Label>
+                                Rating :
+                            </Form.Label>
+                            <Form.Control autoFocus type="number" value={this.state.rating}
+                                onChange={e => {
+                                    var temp = 4;
+                                    if (e.target.value > 5) {
+                                        temp = 5
+                                    } else {
+                                        if (e.target.value < 1) {
+                                            temp = 1
+                                        }
+                                        else {
+                                            temp = e.target.value
+                                        }
+                                    }
+                                    this.setState({ rating: temp });
+                                }
+                                } />
                         </Form.Group>
                         <Form.Group size="lg" controlId="max_applicants">
                             <Form.Label>

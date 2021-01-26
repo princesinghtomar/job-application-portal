@@ -205,6 +205,7 @@ class JobsList extends Component {
                     alert("Total words should be less then 250 words")
                     return;
                 }
+                temp = this.state.appliedjobs_all.filter(word => word.job_id == value._id);
                 var current = temp.length + 1
                 console.log("ye h console :");
                 console.log(temp);
