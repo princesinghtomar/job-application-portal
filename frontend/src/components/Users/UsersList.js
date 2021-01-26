@@ -170,21 +170,27 @@ class JobsList extends Component {
         console.log(value);
         if (this.state.appliedjobs_all.length > 0) {
             var val = this.state.appliedjobs.filter(word => word.status == 1);
-            if (val.length >= 10) {
-                alert("You already have 10 open apllications");
-                return;
-            } else {
-                temp = this.state.appliedjobs_all.filter(word => word.job_id == value._id);
-                var max = value.max_applicants;
-                var current = temp.length;
-                var temp1 = [];
-                if (temp.length > 0) {
-                    var temp1 = temp.filter(word => (word.applicant_email == this.state.email));
-                    if (temp1.length > 0) {
-                        return {/* <text style={{ color: 'Green' }}>Applied</text> */ }
-                    } else {
-                        if (max <= current) {
-                            return {/* <text style={{ color: 'Red' }}>Full</text> */ }
+            var kapaval = this.state.appliedjobs.filter(word => word.status = 3);
+            if (kapaval.length > 0) {
+                alert("You already have been accepted for a job");
+                    return;
+            }else{
+                if (val.length >= 10) {
+                    alert("You already have 10 open apllications");
+                    return;
+                } else {
+                    temp = this.state.appliedjobs_all.filter(word => word.job_id == value._id);
+                    var max = value.max_applicants;
+                    var current = temp.length;
+                    var temp1 = [];
+                    if (temp.length > 0) {
+                        var temp1 = temp.filter(word => (word.applicant_email == this.state.email));
+                        if (temp1.length > 0) {
+                            return {/* <text style={{ color: 'Green' }}>Applied</text> */ }
+                        } else {
+                            if (max <= current) {
+                                return {/* <text style={{ color: 'Red' }}>Full</text> */ }
+                            }
                         }
                     }
                 }
@@ -219,7 +225,7 @@ class JobsList extends Component {
                     applicant_email: this.state.email,
                     sop: enteredName,
                     status: 1,
-                    date_of_application: Date.now()
+                    date_of_application: new Date(Date.now())
                 }
                 axios.post('http://localhost:4000/jobapplied/jobappliedsave', newjobapplication)
                     .then(res => {
@@ -236,7 +242,7 @@ class JobsList extends Component {
                         console.log(this.state.jobs);
                     })
                     .catch(err => { console.log(err); });
-                window.location.reload()
+                /* window.location.reload() */
 
 
             } else {

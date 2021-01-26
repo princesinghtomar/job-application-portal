@@ -141,7 +141,7 @@ export default class newjobregister extends Component {
             max_applicants: parseInt(this.state.max_applicants),
             required_skills: this.state.required_skills.trim(),
             max_positions: parseInt(this.state.max_positions),
-            date_posting: Date.now(),
+            date_posting: new Date(Date.now()),
             deadline: this.state.deadline,
             job_type: this.state.job_type,
             duration: this.state.duration,

@@ -128,6 +128,59 @@ class Sop extends Component {
             console.log(id);
             return <Redirect to={`/login`} />
         }
+        const value_render = this.state.jobs.map((job, ind) => {
+            /* var temp = this.state.appliedjobs; */
+            var temp1 = this.state.acceptedappliedjobs;
+            /* var index1 = -1; */
+            var index2 = -1;
+            /* for (var i = 0; i < temp.length; i++) {
+                if (temp[i].job_id == job._id) {
+                    index1 = i;
+                    break;
+                }
+            } */
+            for (var i = 0; i < temp1.length; i++) {
+                if (temp1[i].job_id == job._id) {
+                    index2 = i;
+                    break;
+                }
+            }
+            /* console.log(temp); */
+            console.log(temp1[index2].date_of_joining);
+            var date = temp1[index2].date_of_joining
+            /* console.log(index1); */
+            console.log(index2);
+            var datevariable = new Date(temp1[index2].date_of_joining);
+            console.log(datevariable);
+            return (
+                <TableRow key={ind}>
+                    <TableCell>{job.title}</TableCell>
+                    <TableCell>{temp1[index2].date_of_joining}</TableCell>
+                    <TableCell>{job.salary}</TableCell>
+                    <TableCell>{job.name}</TableCell>
+                    <TableCell>
+                        <TextField value={this.state.job_rating[ind]}
+                            label={this.state.acceptedappliedjobs.find(word => word.job_id == job._id).recruiter_rating}
+                            type="Number"
+                            onChange={e => {
+                                var array = this.state.acceptedappliedjobs.map((word, ind1) =>
+                                (word.job_id == job._id && e.target.value > 0 && e.target.value < 6 ? { ...word, recruiter_rating: e.target.value } : word
+                                ))
+                                this.setState({ acceptedappliedjobs: array });
+                            }}
+                        ></TextField>
+                    </TableCell>
+                    <TableCell>
+                        <button id={job._id + job.applicant_email} style={{
+                            borderRadius: 5,
+                            backgroundColor: "#21b6ae",
+                        }}
+                            onClick={() => this.onClickjobbutton(job)}>
+                            change</button>
+                    </TableCell>
+                </TableRow>
+            )
+        });
         return (
             <div>
                 <div style={{ textAlign: "center", color: "Blue" }}>
@@ -156,34 +209,7 @@ class Sop extends Component {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {this.state.jobs.map((job, ind) => (
-                                            <TableRow key={ind}>
-                                                <TableCell>{job.title}</TableCell>
-                                                <TableCell>{job.date_of_joining}</TableCell>
-                                                <TableCell>{job.salary}</TableCell>
-                                                <TableCell>{job.name}</TableCell>
-                                                <TableCell>
-                                                    <TextField value={this.state.job_rating[ind]}
-                                                        label={this.state.acceptedappliedjobs.find(word => word.job_id == job._id).recruiter_rating}
-                                                        type="Number"
-                                                        onChange={e => {
-                                                            var array = this.state.acceptedappliedjobs.map((word, ind1) =>
-                                                            (word.job_id == job._id && e.target.value > 0 && e.target.value < 6 ? { ...word, recruiter_rating: e.target.value } : word
-                                                            ))
-                                                            this.setState({ acceptedappliedjobs: array });
-                                                        }}
-                                                    ></TextField>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <button id={job._id + job.applicant_email} style={{
-                                                        borderRadius: 5,
-                                                        backgroundColor: "#21b6ae",
-                                                    }}
-                                                        onClick={() => this.onClickjobbutton(job)}>
-                                                        change</button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {value_render}
                                         {this.state.otherjobs.map((job, ind) => (
                                             <TableRow key={ind}>
                                                 <TableCell>{job.title}</TableCell>

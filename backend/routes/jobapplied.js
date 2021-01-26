@@ -49,7 +49,7 @@ router.post("/updatestatus", (req, res) => {
         update = {
             $set: {
                 status: parseInt(req.body.status),
-                date_of_joining: Date.now()
+                date_of_joining: new Date(Date.now())
             }
         };
     } else {

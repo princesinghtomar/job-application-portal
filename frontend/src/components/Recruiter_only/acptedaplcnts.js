@@ -125,7 +125,7 @@ class JobsList extends Component {
                 return flag ? ('' + aname).localeCompare(bname) : ('' + bname).localeCompare(aname);
             } else {
                 if (id === 2) {
-                    return flag ? a.date_of_joining - b.date_of_joining : b.date_of_joining - a.date_of_joining;
+                    return flag ? (new Date(a.date_of_joining)).getTime() - (new Date(b.date_of_joining)).getTime() : (new Date(b.date_of_joining)).getTime() - (new Date(a.date_of_joining)).getTime();
                 } else {
                     if (id === 3) {
                         var ajob = (arrayjobs.find(word => (word._id == a.job_id))).title

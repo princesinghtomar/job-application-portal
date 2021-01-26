@@ -265,7 +265,7 @@ class JobsList extends Component {
                     console.log("values are here :")
                     console.log(a.date_of_application);
                     console.log(b.date_of_application);
-                    return flag ? a.date_of_application - b.date_of_application : b.date_of_application - a.date_of_application;
+                    return flag ? (new Date(a.date_of_application)).getTime() - (new Date(b.date_of_application)).getTime() : (new Date(b.date_of_application)).getTime() - (new Date(a.date_of_application)).getTime();
                 } else {
                     //id == 3
                     var a_index = -1;
