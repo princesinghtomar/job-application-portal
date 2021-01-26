@@ -50,15 +50,10 @@ router.post("/update/rating", (req, res) => {
     const query = {
         "_id": req.body._id,
         "email": req.body.email,
-        "title": req.body.title,
-        "salary": req.body.salary,
-        "required_skills": req.body.required_skills,
-        "job_type": req.body.job_type,
-        "max_positions": req.body.max_positions
     };
     const update = {
         $set: {
-            rating: req.body.rating
+            rating: parseInt(req.body.rating)
         }
     };
     const options = { "upsert": false };
@@ -108,7 +103,8 @@ router.post("/update/number_of_applicants", (req, res) => {
 router.post("/update/maxanddeadline", (req, res) => {
     console.log(req.body);
     const query = {
-        "email": req.body.email,
+        "_id": req.body._id,
+        "email": req.body.email
     };
     console.log("hello");
     console.log(query);

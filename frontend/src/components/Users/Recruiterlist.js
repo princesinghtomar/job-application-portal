@@ -30,13 +30,14 @@ class JobsList extends Component {
             jobs: [],
             fuzzyjobs: [],
             logedinuser: '',
-            temp_max_positions: '',
-            temp_max_applicants: '',
+            temp_max_positions: new Array(100),
+            temp_max_applicants: new Array(100),
             temp_deadline: '',
             email: this.props.match.params.id.split('-')[0],
         };
         this.ondelete = this.ondelete.bind(this);
         this.onupdate = this.onupdate.bind(this);
+        this.doneonupdate = this.doneonupdate.bind(this);
     }
 
     componentDidMount() {
@@ -73,21 +74,26 @@ class JobsList extends Component {
         window.location.reload()
     }
 
-    onupdate() {
+    onupdate(value) {
+        /* document.getElementById("update").style.display = "none";
+        document.getElementById("noupdate").style.display = "block"; */
+        console.log(value);
+        /* for (var i = 0; i < this.state.fuzzyjobs.length; i++) { */
+        axios.post('http://localhost:4000/job/update/maxanddeadline', value)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            });
+        /* window.location.reload() */
+        /* } */
+    }
+
+    doneonupdate(){
         document.getElementById("update").style.display = "none";
         document.getElementById("noupdate").style.display = "block";
-        const value = this.state.fuzzyjobs;
-        console.log(this.state.fuzzyjobs);
-        for (var i = 0; i < this.state.fuzzyjobs.length; i++) {
-            axios.post('http://localhost:4000/job/update/maxanddeadline', this.state.fuzzyjobs[i])
-                .then(res => {
-                    console.log(res)
-                })
-                .catch(err => {
-                    console.log(err)
-                });
-            window.location.reload()
-        }
+        window.location.reload()
     }
 
     render() {
@@ -130,6 +136,7 @@ class JobsList extends Component {
                                                 <TableCell>Max positions</TableCell>
                                                 <TableCell>Deadline</TableCell>
                                                 <TableCell>Delete</TableCell>
+                                                <TableCell>Update</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -138,42 +145,43 @@ class JobsList extends Component {
                                                     <TableCell>{job.title}</TableCell>
                                                     <TableCell>{moment(job.date_posting).format('LLLL')}</TableCell>
                                                     <TableCell>{job.number_of_applicants}</TableCell>
-                                                    <TableCell><TextField value={this.state.temp_max_applicants} label={"current val : " + job.max_applicants} type='Number'
+                                                    <TableCell><TextField value={this.state.temp_max_applicants[ind]}
+                                                        label={"current val : " + /* job.max_applicants */ this.state.fuzzyjobs.find(word => word._id == job._id).max_applicants}
+                                                        type='Number'
                                                         onChange={e => {
                                                             var array = this.state.fuzzyjobs.map((word, ind1) =>
-                                                            (ind === ind1 && e.target.value > 0 && e.target.value < 10000 ? { ...word, max_applicants: e.target.value } : word
+                                                            (job._id === word._id && e.target.value > 0 && e.target.value < 10000 ? { ...word, max_applicants: e.target.value } : word
                                                             ));
                                                             this.setState({
-                                                                fuzzyjobs: array,
-                                                                temp_max_applicants: e.target.value
+                                                                fuzzyjobs: array
                                                             })
                                                         }}>
                                                     </TextField>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <TextField value={this.state.temp_max_positions} label={"current val : " + job.max_positions} type='Number'
+                                                        <TextField value={this.state.temp_max_positions[ind]}
+                                                            label={"current val : " + job.max_positions}
+                                                            type='Number'
                                                             onChange={e => {
                                                                 var array = this.state.fuzzyjobs.map((word, ind1) =>
-                                                                (ind === ind1 && e.target.value > 0 && e.target.value < 10000 ? { ...word, max_positions: e.target.value } : word
+                                                                (job._id === word._id && e.target.value > 0 && e.target.value < 10000 ? { ...word, max_positions: e.target.value } : word
                                                                 ));
                                                                 this.setState({
-                                                                    fuzzyjobs: array,
-                                                                    temp_max_positions: e.target.value
+                                                                    fuzzyjobs: array
                                                                 })
                                                             }}>
                                                         </TextField>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <TextField value={this.state.temp_deadline} label={"current val : " + job.deadline} type='date'
+                                                        <TextField value={this.state.temp_deadline[ind]} label={"current val : " + job.deadline} type='date'
                                                             onChange={e => {
                                                                 var array = this.state.fuzzyjobs;
                                                                 if (e.target.value > job.deadline) {
                                                                     array = this.state.fuzzyjobs.map((word, ind1) =>
-                                                                        (ind === ind1 && e.target.value > job.deadline ? { ...word, deadline: e.target.value } : word));
+                                                                        (job._id === word._id && e.target.value > job.deadline ? { ...word, deadline: e.target.value } : word));
                                                                 }
                                                                 this.setState({
-                                                                    fuzzyjobs: array,
-                                                                    temp_deadline: e.target.value
+                                                                    fuzzyjobs: array
                                                                 })
                                                             }}>
                                                         </TextField>
@@ -181,6 +189,13 @@ class JobsList extends Component {
                                                     <TableCell><button onClick={() => this.ondelete(job, ind)}
                                                         style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}>
                                                         del</button>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div style={{ textAlign: 'center', color: "purple" }}><br /><br />
+                                                            <button style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}
+                                                                onClick={() => this.onupdate(job)}
+                                                            >Update</button>
+                                                        </div>
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -191,8 +206,8 @@ class JobsList extends Component {
                         </div>
                         <div style={{ textAlign: 'center', color: "purple" }}><br /><br />
                             <button style={{ borderRadius: 5, backgroundColor: "#21b6ae" }}
-                                onClick={() => this.onupdate()}
-                            >Confirm Updates</button>
+                                onClick={() => this.doneonupdate()}
+                            >Done Updating</button>
                         </div>
                     </div>
                     <div id="noupdate" style={{ display: "block" }}>

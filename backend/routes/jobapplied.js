@@ -49,7 +49,7 @@ router.post("/updatestatus", (req, res) => {
         update = {
             $set: {
                 status: parseInt(req.body.status),
-                date_of_joining : Date.now()
+                date_of_joining: Date.now()
             }
         };
     } else {
@@ -77,12 +77,13 @@ router.post("/updatestatus", (req, res) => {
 router.post("/update/rating", (req, res) => {
     console.log(req.body._id);
     const query = {
-        "_id": req.body._id
+        "_id": req.body._id,
+        "applicant_email": req.body.applicant_email
     };
     const update = {
         $set: {
-            recruiter_rating: req.body.recruiter_rating,
-            applicant_rating: req.body.applicant_rating
+            recruiter_rating: parseInt(req.body.recruiter_rating),
+            applicant_rating: parseInt(req.body.applicant_rating)
         }
     };
     const options = { "upsert": false };

@@ -31,7 +31,8 @@ class Profile extends Component {
             tempeduname: '',
             tempedusdate: '',
             tempeduedate: '',
-            gotologin: false
+            gotologin: false,
+            filename: ''
         };
 
         this.OnSignout = this.OnSignout.bind(this);
@@ -41,6 +42,8 @@ class Profile extends Component {
         this.handleedudelClick = this.handleedudelClick.bind(this);
         this.updateusername = this.updateusername.bind(this);
         this.Savevalue = this.Savevalue.bind(this);
+        // this.onChangeimage = this.onChangeimage.bind(this);
+        // this.changeonClick = this.changeonClick.bind(this);
     }
     /* array = [] */
     componentDidMount() {
@@ -62,6 +65,25 @@ class Profile extends Component {
                 this.updateusername();
             })
     }
+
+    // onChangeimage(event) {
+    //     this.setState({
+    //         filename: event.target.value
+    //     });
+    // }
+
+    // changeonClick(event) {
+    //     event.preventDefault();
+    //     var temp = this.state.users.find(word => word.email == this.state.email);
+    //     const formData = new FormData();
+    //     formData.append("profilepic", filename);
+    //     formData.append("user_email", this.state.email);
+    //     formData.append("user_id", temp._id);
+
+    //     axios.post('http://localhost:4000/addfile/', formData)
+    //         .then(() => { console.log('Resolved 1') })
+    //         .catch(() => { console.log('Rejected 1') });
+    // }
 
     onChangeusername(event) {
         console.log(this.state.id_param);

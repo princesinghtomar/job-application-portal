@@ -1,11 +1,24 @@
 var express = require("express");
 var router = express.Router();
+// var multer = require("multer");
 
 // Load User model
 const User = require("../models/Users");
 const Login = require("../models/log");
 const Job = require("../models/job");
 const JobApplied = require("../models/jobapplied");
+
+
+// const Storage = multer.diskStorage({
+//     destination: (req, file, callback) => {
+//         callback(null, "../uploads");
+//     },
+//     filename: (req, file, callback) => {
+//         callback(null, file.originalname);
+//     }
+// })
+
+// const upload = multer({ storage: storage });
 
 // GET request 
 // Getting all the users
@@ -53,6 +66,36 @@ router.post("/register", (req, res) => {
             console.log(err);
         });
 });
+
+// - image/file
+
+// router.post("/upload", upload.single("profilepic"), (req, res) => {
+//     const query = {
+//         "email": req.body.email,
+//         "_id": req.body._id
+//     };
+//     const update = {
+//         $set: {
+//             image: req.file.profilepic
+//         }
+//     };
+//     const options = { "upsert": false };
+//     User.updateOne(query, update, options)
+//         .then(result => {
+//             const { matchedCount, modifiedCount } = result;
+//             console.log(result);
+//             if (matchedCount && modifiedCount) {
+//                 console.log(`Successfully added a new file .`)
+//             }
+//             res.status(200).json(result);
+//         })
+//         .catch(err => {
+//             console.error(`Failed to add review: ${err}`);
+//             res.status(400).send(err);
+//         });
+
+// })
+
 
 // POST request 
 // Login

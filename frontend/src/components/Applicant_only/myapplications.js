@@ -105,6 +105,7 @@ class Sop extends Component {
             number_of_applicants: value.max_applicants
         } */
         var temp = this.state.acceptedappliedjobs.find(word => word.job_id == value._id);
+        console.log("something is here");
         console.log(value)
         console.log(temp);
         if (temp !== null) {

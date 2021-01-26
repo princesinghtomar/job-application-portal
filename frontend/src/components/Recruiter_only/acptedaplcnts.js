@@ -39,8 +39,7 @@ class JobsList extends Component {
             sortName2: true,
             sortName3: true,
             sortName4: true,
-            user_rating: '',
-            showbutton: false,
+            user_rating: new Array(100),
             gotologin: false
         };
 
@@ -203,35 +202,54 @@ class JobsList extends Component {
             return <Redirect to={`/login`} />
         }
         const value_render = this.state.fuzzyjobs.map((val, ind) => {
-            var temp1 = (this.state.users
-                .find(word => (word._id == val.applicant_id)));
-            var temp2 = (this.state.jobs
-                .find(word => (word._id == val.job_id)));
+            var temp1 = this.state.users
+            /* .find(word => (word._id == val.applicant_id))); */
+            var user_index = -1;
+            var job_index = -1;
+            var temp2 = this.state.jobs
+            /* .find(word => (word._id == val.job_id))); */
+            for (var i = 0; i < temp1.length; i++) {
+                if (val.applicant_id == temp1[i]._id) {
+                    user_index = i;
+                    break;
+                }
+            }
+            for (var i = 0; i < temp2.length; i++) {
+                if (val.job_id == temp2[i]._id) {
+                    job_index = i;
+                    break;
+                }
+            }
+            console.log("here is the value :")
+            console.log(temp1);
+            console.log(temp2);
+            console.log(user_index);
+            console.log(job_index);
             return (
                 <TableRow key={ind}>
                     <TableCell>
-                        {temp1.username}
+                        {temp1[user_index].username}
                     </TableCell>
                     <TableCell>
                         {val.date_of_joining}
                     </TableCell>
                     <TableCell>
-                        {temp2.job_type}
+                        {temp2[job_index].job_type}
                     </TableCell>
                     <TableCell>
-                        {temp2.title}
+                        {temp2[job_index].title}
                     </TableCell>
                     <TableCell>
                         {
-                            <TextField value={this.state.user_rating} label={val.applicant_rating} type="Number"
+                            <TextField value={this.state.user_rating[ind]}
+                                label={val.applicant_rating}
+                                type="Number"
                                 onChange={e => {
                                     var array = this.state.fuzzyjobs.map((word, ind1) =>
-                                    (ind1 === ind && e.target.value > 0 && e.target.value < 6 ? { ...word, rating: e.target.value } : word
+                                    (ind1 === ind && e.target.value > 0 && e.target.value < 6 ? { ...word, applicant_rating: e.target.value } : word
                                     ))
                                     this.setState({
                                         fuzzyjobs: array,
-                                        showbutton: true,
-                                        user_rating: e.target.value
                                     });
                                     /* if (this.state.showbutton) {
                                         document.getElementById("show_button").style.display = "block"
@@ -255,7 +273,9 @@ class JobsList extends Component {
             <div>
                 <div style={{ textAlign: "center", color: "Blue" }}>
                     <h1>Accepted Applicants</h1>
-                    <br /><br />
+                    <h6 style={{ textAlign: "right" }}>
+                        <a href={"/profile/" + sessionStorage.getItem('email') + '-' + sessionStorage.getItem('motive') + '/  '}>Go to main Profile Page</a>
+                    </h6><br /><br />
                 </div>
                 <div>
                     <Grid container spacing={2}>
