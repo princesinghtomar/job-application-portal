@@ -19,6 +19,7 @@ class Profile extends Component {
             contact_number: '',
             id_param: this.props.match.params.id,
             email: '',
+            jobs: [],
             bio: '',
             needed_id: '',
             tempusername: '',
@@ -26,13 +27,15 @@ class Profile extends Component {
             tempbio: '',
             languages: '',
             addlanguage: '',
-            rating: '4',
+            rating: '',
             education: [{ "id": 0, "name": '', "sdate": '', "edate": '' }],
             tempeduname: '',
             tempedusdate: '',
             tempeduedate: '',
             gotologin: false,
-            filename: ''
+            filename: '',
+            motive: '',
+            jobsapplied: []
         };
 
         this.OnSignout = this.OnSignout.bind(this);
@@ -47,6 +50,31 @@ class Profile extends Component {
     }
     /* array = [] */
     componentDidMount() {
+
+        axios.get('http://localhost:4000/job')
+            .then(response => {
+                console.log("jobs :")
+                console.log(response.data);
+                this.setState({
+                    jobs: response.data
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        axios.get('http://localhost:4000/jobapplied')
+            .then(response => {
+                console.log("jobsapplied :")
+                console.log(response.data);
+                this.setState({
+                    jobsapplied: response.data
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
         axios.get('http://localhost:4000/user')
             .then(response => {
                 console.log("here are the users : ")
@@ -159,7 +187,7 @@ class Profile extends Component {
                     tempbio: this.state.users[i].bio,
                     education: this.state.users[i].education,
                     languages: this.state.users[i].languages,
-                    password: this.state.users[i].password
+                    password: this.state.users[i].password,
                 });
                 console.log(this.state.users[i].education)
                 console.log(this.state.tempbio);
@@ -175,10 +203,102 @@ class Profile extends Component {
         if (this.state.motive == "recruiter") {
             document.getElementById("recruiter_section").style.display = "block";
             document.getElementById("applicant_section").style.display = "none";
+            if (this.state.users.length > 0 && this.state.jobsapplied.length > 0) {
+                var halftemp = this.state.jobs.filter(word => word.email == this.state.email);
+                var allaplied = []
+                console.log("kteemp here")
+                console.log(this.state.jobs);
+                console.log(halftemp);
+                console.log(this.state.users);
+                for (var i = 0; i < halftemp.length; i++) {
+                    var ktemp = this.state.jobsapplied.filter(word => word.job_id == halftemp[i]._id && word.status > 2);
+                    console.log(ktemp);
+                    console.log(" ----- ")
+                    for (var j = 0; j < ktemp.length; j++) {
+                        allaplied.push(ktemp[j]);
+                    }
+                }
+                console.log("allaplied :")
+                console.log(allaplied);
+                var rate_total = 0;
+                for (var i = 0; i < allaplied.length; i++) {
+                    rate_total = rate_total + allaplied[i].recruiter_rating;
+                }
+                var total_raters = allaplied.length;
+                var real_rate;
+                if (total_raters !== 0) {
+                    real_rate = rate_total / total_raters;
+                }
+                console.log("rating system :");
+                console.log(rate_total);
+                console.log(total_raters);
+                console.log(real_rate);
+                if (real_rate !== null || total_raters !== 0 || real_rate !== NaN) {
+                    const data = {
+                        rating: real_rate,
+                        total_raters: total_raters,
+                        user_id: this.state.needed_id,
+                        user_email: this.state.email,
+                        motive: this.state.email
+                    }
+                    this.setState({
+                        rating: real_rate
+                    });
+                    console.log(data);
+                    axios.post('http://localhost:4000/user/update/ratinghere', data)
+                        .then((res) => {
+                            console.log('Resolved 1');
+                            console.log(res);
+                        })
+                        .catch((err) => {
+                            console.log('Rejected 1');
+                            console.log(err);
+                        })
+                }
+            }
+
+            console.log(this.state.needed_id);
         }
         else {
+            if (this.state.motive == "jobapplicant")
+                console.log("hello jobapplicant ");
             document.getElementById("recruiter_section").style.display = "none";
             document.getElementById("applicant_section").style.display = "block";
+            if (this.state.users.length > 0 && this.state.jobsapplied.length > 0) {
+                var tempval = this.state.jobsapplied.filter(word => word.applicant_id == this.state.needed_id);
+                var rate_total = 0;
+                for (var i = 0; i < tempval.length; i++) {
+                    rate_total = rate_total + tempval[i].recruiter_rating;
+                }
+                var total_raters = tempval.length;
+                var real_rate = rate_total / total_raters;
+                console.log("rating system :");
+                console.log(rate_total);
+                console.log(total_raters);
+                console.log(real_rate);
+                if (real_rate !== null || total_raters !== 0 || real_rate !== NaN) {
+                    const data = {
+                        rating: real_rate,
+                        total_raters: total_raters,
+                        user_id: this.state.needed_id,
+                        user_email: this.state.email,
+                        motive: this.state.email
+                    }
+                    this.setState({
+                        rating: real_rate
+                    });
+                    console.log(data);
+                    axios.post('http://localhost:4000/user/update/ratinghere', data)
+                        .then((res) => {
+                            console.log('Resolved 1');
+                            console.log(res);
+                        })
+                        .catch((err) => {
+                            console.log('Rejected 1');
+                            console.log(err);
+                        })
+                }
+            }
         }
     }
 

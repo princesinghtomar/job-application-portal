@@ -125,7 +125,7 @@ class JobsList extends Component {
                 return flag ? ('' + aname).localeCompare(bname) : ('' + bname).localeCompare(aname);
             } else {
                 if (id === 2) {
-                    return flag ? (new Date(a.date_of_joining)).getTime() - (new Date(b.date_of_joining)).getTime() : (new Date(b.date_of_joining)).getTime() - (new Date(a.date_of_joining)).getTime();
+                    return flag ? a.date_of_joining - b.date_of_joining : b.date_of_joining - a.date_of_joining;
                 } else {
                     if (id === 3) {
                         var ajob = (arrayjobs.find(word => (word._id == a.job_id))).title
@@ -133,8 +133,8 @@ class JobsList extends Component {
                         console.log(ajob - bjob);
                         return flag ? ('' + ajob).localeCompare(bjob) : ('' + bjob).localeCompare(ajob);
                     } else {
-                        var arat = (arrayusers.find(word => (word._id == a.applicant_id))).rating;
-                        var brat = (arrayusers.find(word => (word._id == b.applicant_id))).rating;
+                        var arat = a.applicant_rating;
+                        var brat = b.applicant_rating;
                         console.log(arat + " : " + brat);
                         return flag ? arat - brat : brat - arat;
                     }
@@ -173,9 +173,12 @@ class JobsList extends Component {
 
     onupdate(value) {
         console.log(value)
+        var flag = false;
         axios.post('http://localhost:4000/jobapplied/update/rating', value)
             .then(res => {
-                console.log(res)
+                console.log("response :")
+                console.log(res);
+                flag = !flag;
             })
             .catch(err => {
                 console.log(err)

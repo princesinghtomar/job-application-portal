@@ -148,6 +148,34 @@ router.post("/update", (req, res) => {
 
 });
 
+router.post("/update/ratinghere", (req, res) => {
+    console.log(req.body._id);
+    const query = {
+        "_id": req.body.user_id,
+        "email": req.body.user_email
+    };
+    const update = {
+        $set: {
+            rating: req.body.rating,
+            total_raters: req.body.total_raters
+        }
+    };
+    const options = { "upsert": false };
+    User.updateOne(query, update, options)
+        .then(result => {
+            const { matchedCount, modifiedCount } = result;
+            console.log(result);
+            if (matchedCount && modifiedCount) {
+                console.log(`Successfully added a new review (user rating wala).`)
+            }
+            res.status(200).json(result);
+        })
+        .catch(err => {
+            console.error(`Failed to add review: ${err}`);
+            res.status(400).send(err);
+        });
+});
+
 router.post("/login", (req, res) => {
     const email = req.body.email;
     const newSignin = new Login({
