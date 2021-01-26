@@ -58,7 +58,7 @@ class JobsList extends Component {
         this.sortChange = this.sortChange.bind(this);
         /* this.onChangeSearch = this.onChangeSearch.bind(this); */
         this.onChangeminmax = this.onChangeminmax.bind(this);
-        /* this.handleClick = this.handleClick.bind(this); */
+        this.handleClick = this.handleClick.bind(this);
         this.onClickjobbutton = this.onClickjobbutton.bind(this);
         this.buttontext = this.buttontext.bind(this);
     }
@@ -114,7 +114,7 @@ class JobsList extends Component {
             })
     }
 
-    /* onChangeSearch(event) {
+    onChangeSearch(event) {
         var arraytemp = this.state.jobs
         const dat = event.target.value;
         const fuse = new Fuse(arraytemp, { keys: ['email', 'title', 'name'] });
@@ -130,19 +130,35 @@ class JobsList extends Component {
         });
         console.log(this.state.fuzzyjobs);
         console.log(this.state.query);
-    } */
+    }
 
-    /* handleClick(e) {
+    handleClick(e) {
         e.preventDefault();
-        const fuse = new Fuse(this.state.jobs, { keys: ['email', 'title', 'name', 'Job type'] });
+        const fuse = new Fuse(this.state.jobs, { keys: ['title'] });
         const data = this.state.query ? fuse.search(this.state.query) : this.state.jobs;
         //this.state.fuzzyjobs = data;
-        this.setState({
-            fuzzyjobs: data
-        });
-        console.log(this.state.fuzzyjobs);
-        console.log(this.state.query);
-    }; */
+        console.log("here is fuzzzy search data");
+        if (data.length > 0) {
+            console.log(data[0].item)
+            var temp = [];
+            for (var i = 0; i < data.length; i++) {
+                temp.push(data[i].item);
+            }
+            console.log(temp);
+            if (this.state.query == '') {
+                temp = this.state.jobs;
+            }
+            this.setState({
+                fuzzyjobs: temp
+            });
+            console.log(this.state.fuzzyjobs);
+            console.log(this.state.query);
+        } else {
+            this.setState({
+                fuzzyjobs: []
+            })
+        }
+    };
 
     onClickjobbutton(e, value) {
         e.preventDefault();
@@ -219,7 +235,7 @@ class JobsList extends Component {
                         console.log(this.state.jobs);
                     })
                     .catch(err => { console.log(err); });
-                 window.location.reload()
+                window.location.reload()
 
 
             } else {
@@ -295,6 +311,7 @@ class JobsList extends Component {
         }
         this.setState({
             fuzzyjobs: array,
+            query: ''
         });
     }
 
@@ -395,10 +412,21 @@ class JobsList extends Component {
                                         label="Search"
                                         fullWidth
                                         value={this.state.query}
+                                        onChange={(event, value) => {
+                                            console.log("value :");
+                                            console.log(value);
+                                            var temp = (event.target.value !== null) ? event.target.value : '';
+                                            this.setState({
+                                                query: temp,
+                                                min: '',
+                                                max: '',
+                                                value_duration: '',
+                                            })
+                                        }}
                                         InputProps={{
                                             endAdornment: (
                                                 <InputAdornment>
-                                                    <IconButton>
+                                                    <IconButton onClick={this.handleClick}>
                                                         <SearchIcon />
                                                     </IconButton>
                                                 </InputAdornment>
@@ -442,7 +470,8 @@ class JobsList extends Component {
                                                     fuzzyjobs: val,
                                                     min: '',
                                                     max: '',
-                                                    value_duration: ''
+                                                    value_duration: '',
+                                                    query: ''
                                                 });
                                             }}
                                             id="combo-box-demo"
@@ -469,7 +498,8 @@ class JobsList extends Component {
                                                     fuzzyjobs: val,
                                                     min: '',
                                                     max: '',
-                                                    value_job_type: ''
+                                                    value_job_type: '',
+                                                    query: ''
                                                 });
                                             }}
                                             label="Duration"
@@ -507,7 +537,9 @@ class JobsList extends Component {
                                                     fuzzyjobs: val,
                                                     min: '',
                                                     max: '',
-                                                    value_job_type: ''
+                                                    value_job_type: '',
+                                                    query: ''
+
                                                 });
                                                 //console.log(this.state.fuzzyjobs);
                                             }}
